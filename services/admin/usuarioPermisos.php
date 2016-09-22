@@ -14,7 +14,6 @@
 			if ($res) {
 				if (isset($_POST["estado"])) {
 				$mail = new PHPMailer;
-				$mail->SMTPDebug = 3;
 				$mail->isSMTP();                                         // Set mailer to use SMTP
 				$mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
 				$mail->SMTPAuth = true;                               // Enable SMTP authentication

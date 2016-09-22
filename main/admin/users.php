@@ -35,7 +35,7 @@
    
    <!-- RESPONSIVE LEFT SIDEBAR & LOGO -->
    <div class="left hidden-xs">
-    <div class="logo"><img id="logo" src="../../lib/img/logo3.png" style="width:159px !important; height:52px; !important"></div>
+     <div class="logo"> <img id="logo" src="../../Imagenes/logo.png" style="width:159px !important; height:52px; !important"> </div>
     <div class="sidebar">
      <div class="accordion">
       <div class="accordion-group">
@@ -56,15 +56,69 @@
        </div>
       </div>
       <?php } ?>
+
+      <div class="accordion-group">
+       <div class="accordion-heading">
+        <a class="sbtn btn-default" data-toggle="collapse" href="#c-tables">
+         <span class="fa fa-table"></span>
+         &nbsp;&nbsp;Partidas
+         <span class="caret"></span>
+        </a>
+       </div>
+       <div id="c-tables" class="accordion-body collapse"><div class="accordion-inner">
+        <a href="table_static.html" class="sbtn sbtn-default">Ver Partidas<span class="label label-soft">2</span></a>
+        <a href="table_datatables.html" class="sbtn sbtn-default">Crear Partida</a> 
+       </div></div>
+      </div>
+
+      <div class="accordion-group">
+       <div class="accordion-heading">
+        <a class="sbtn sbtn-default" data-toggle="collapse" href="#c-forms">
+         <span class="fa fa-pencil-square-o"></span>
+         &nbsp;&nbsp;Recursos
+         <span class="caret"></span>
+        </a>
+       </div>
+       <div id="c-forms" class="accordion-body collapse in"><div class="accordion-inner">
+        <a href="../tabla_recursos.php" class="sbtn sbtn-default active">Ver Recursos</a>
+        <a href="../ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
+       </div></div>
+      </div>
+
       </div>
       </div>
       </div>
+
+   <!-- RESPONSIVE NAVIGATION -->
+   <div id="secondary" class="btn-group visible-xs">
+    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"><span class="icon icon-th-large"></span>&nbsp;&nbsp;Menu&nbsp;&nbsp;<span class="caret"></span></button>
+    <ul class="dropdown-menu dropdown-info pull-right" role="menu">
+      <li><a href="../home.php">Home</a></li>
+      <li class="dropdown-header">Recursos</li>
+      <li><a href="../tabla_recursos.php">Ver Recursos</a></li>
+      <li><a href="../ingresar.php">Agregar Recurso</a></li>
+      <li class="divider" style="border-bottom:1px solid #ddd; margin:0px; margin-top:5px;"></li>
+      <li class="dropdown-header">Partidas</li>
+      <li><a href="">Ver Partidas</a></li>
+      <li><a href="form_advanced.html">Crear Partida</a></li>
+      <li class="divider" style="border-bottom:1px solid #ddd; margin:0px; margin-top:5px;"></li>
+    </ul>
+   </div>
+   
+   <div id="secondary-search" class="input-icon visible-xs">
+    <i class="icon icon-search"></i>
+    <input class="form-control form-warning input-sm" type="text">
+   </div>
+   <!-- END RESPONSIVE NAVIGATION -->   
    
    <!-- RIGHT NAV, CRUMBS, & CONTENT -->
    <div class="right">
    
      <div class="nav">
     <div class="bar">
+
+       <div class="logo-small visible-xs"><img  style="width:120px; !important; height:32px; !important" src="../Imagenes/logo.png"></div>
+      
       <div class="hov">
         <div class="btn-group">
         <a class="con" href="" data-toggle="dropdown"><span class="icon icon-user"></span></a>
