@@ -148,7 +148,7 @@
     <!-- BEGIN PAGE CONTENT -->
     <div class="content">
      <div class="page-h1">
-      <h1>Bienvenido <strong><?php echo $userData->getNombres()." ".$userData->getApellidos() ?></strong> ha ingresado al sistema como <strong>Administrador</strong></h1>
+      <h1>Bienvenido <strong><?php echo $userData->getNombres()." ".$userData->getApellidos() ?></strong> ha ingresado al sistema como <strong><?= $userData->getPerfil() ?></strong></h1>
      </div>
      <div class="tbl">
      	<div class="col-md-11">
