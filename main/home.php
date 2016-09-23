@@ -70,8 +70,8 @@
         </a>
        </div>
        <div id="c-tables" class="accordion-body collapse"><div class="accordion-inner">
-        <a href="table_static.html" class="sbtn sbtn-default">Ver Partidas<span class="label label-soft">2</span></a>
-        <a href="table_datatables.html" class="sbtn sbtn-default">Crear Partida</a> 
+        <a href="consultarPartidas.php" class="sbtn sbtn-default">Ver Partidas</a>
+        <a href="crear_partida.php" class="sbtn sbtn-default">Crear Partida</a> 
        </div></div>
       </div>
 
@@ -106,8 +106,8 @@
       <li><a href="ingresar.php">Agregar Recurso</a></li>
       <li class="divider" style="border-bottom:1px solid #ddd; margin:0px; margin-top:5px;"></li>
       <li class="dropdown-header">Partidas</li>
-      <li><a href="">Ver Partidas</a></li>
-      <li><a href="form_advanced.html">Crear Partida</a></li>
+      <li><a href="consultarPartidas.php">Ver Partidas</a></li>
+      <li><a href="crear_partida.php">Crear Partida</a></li>
       <li class="divider" style="border-bottom:1px solid #ddd; margin:0px; margin-top:5px;"></li>
     </ul>
    </div>
