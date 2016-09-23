@@ -84,7 +84,7 @@
         </a>
        </div>
        <div id="c-forms" class="accordion-body collapse in"><div class="accordion-inner">
-        <a href="tabla_recursos.php" class="sbtn sbtn-default active">Ver Recursos</a>
+        <a href="tabla_recursos.php" class="sbtn sbtn-default">Ver Recursos</a>
         <a href="ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
        </div></div>
       </div>
