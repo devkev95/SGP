@@ -14,6 +14,7 @@
 ?>
 
 <?php 
+error_reporting(0);
   include ("conexionK.php");
   $objCon = new Connection();
 $objCon->get_connected();
