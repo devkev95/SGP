@@ -58,6 +58,7 @@ error_reporting(0);
   <div class="cntnr">
 
     <!-- RESPONSIVE LEFT SIDEBAR & LOGO -->
+    <div class="left hidden-xs">
      <div class="logo"> <img id="logo" src="../Imagenes/logo.png" style="width:159px !important; height:52px; !important"> </div>
     <div class="sidebar">
      <div class="accordion">
@@ -108,7 +109,7 @@ error_reporting(0);
        </div></div>
       </div>
 
-      
+        </div>
       </div>
       </div>
    <!-- END LEFT SIDEBAR & LOGO -->
@@ -158,7 +159,7 @@ error_reporting(0);
         <!-- BREADCRUMBS -->
         <div class="crumbs">
           <ol class="breadcrumb hidden-xs">
-            <li><i class="fa fa-home"></i> <a href="index.html">Home</a></li>
+            <li><i class="fa fa-home"></i> <a href="home.php">Home</a></li>
             <li class="active">Creación de Partidas</li>
           </ol>
         </div>
