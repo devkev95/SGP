@@ -85,7 +85,7 @@ $objCon->get_connected();
         </a>
        </div>
        <div id="c-tables" class="accordion-body collapse"><div class="accordion-inner">
-        <a href="table_static.html" class="sbtn sbtn-default">Ver Partidas<span class="label label-soft">2</span></a>
+        <a href="table_static.html" class="sbtn sbtn-default">Ver Partidas</a>
         <a href="crear_partida.php" class="sbtn sbtn-default">Crear Partida</a> 
        </div></div>
       </div>
