@@ -1,20 +1,21 @@
 <?php 
-  require'../services/conn.php';
-  $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
-  $numeroMO=0;
+  require_once '../../services/conn.php';
+  
+   $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
+
 $numeroPartida = $_GET['numero'];
 
 $query= "SELECT numero,nombre FROM partida WHERE numero=".$numeroPartida;
-                $resultado= mysqli_query($db,$query);
-            
+                $resultado= mysql_query($query);
+                $numrows = mysql_num_rows($resultado);
 $query1="SELECT a.nombre, a.unidad, b.cantidad, a.total, b.subTotal FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo WHERE numero =".$numeroPartida;
-          $resultado1=mysqli_query($db,$query1);
+          $resultado1=mysql_query($query1);
 $query2="SELECT descripcion, jornada, FP, jornadaTotal, rendimiento, subTotal FROM lineamanoobra WHERE numero =".$numeroPartida;
-          $resultado2=mysqli_query($db,$query2);
+          $resultado2=mysql_query($query2);
 $query3="SELECT descripcion, tipo, capacidad, rendimiento, costoHora, subTotal FROM  `lineaequipoherramienta` WHERE numero =".$numeroPartida;
-           $resultado3=mysqli_query($db,$query3);
+           $resultado3=mysql_query($query3);
 $query4="SELECT descripcion, unidad, cantidad, valor, subTotal FROM lineasubcontrato WHERE numero =".$numeroPartida;
-$resultado4=mysqli_query($db,$query4);
+$resultado4=mysql_query($query4);
 
 
 ?>
@@ -25,10 +26,10 @@ $resultado4=mysqli_query($db,$query4);
   <title>Static Tables // Soft Admin</title>
   
   <!-- Default Styles (DO NOT TOUCH) -->
- <link rel="stylesheet" href="../lib/CSS/font-awesome.min.css">
-  <link rel="stylesheet" href="../lib/CSS/bootstrap.min.css">
-  <link rel="stylesheet" href="../lib/CSS/fonts.css">
-  <link type="text/css" rel="stylesheet" href="../lib/CSS/soft-admin.css"/>
+  <link rel="stylesheet" href="lib/css/font-awesome.min.css">
+  <link rel="stylesheet" href="lib/css/bootstrap.min.css">
+  <link rel="stylesheet" href="lib/css/fonts.css">
+  <link type="text/css" rel="stylesheet" href="lib/css/soft-admin.css"/>
   
   <!-- Adjustable Styles -->
   <link type="text/css" rel="stylesheet" href="lib/css/icheck.css?v=1.0.1">
@@ -329,7 +330,7 @@ $resultado4=mysqli_query($db,$query4);
     <!-- BEGIN PAGE CONTENT -->
     <div class="content">
      <div class="page-h1">
-      <h1>ACTUALIZAR PARTIDA </h1>
+      <h1>Detalles de Partida </h1>
      </div>
 
      <div class="tbl">
@@ -348,7 +349,7 @@ $resultado4=mysqli_query($db,$query4);
           <div class="wdgt-body wdgt-table" align="center">
         
         <?php  
-        while ($fila = mysqli_fetch_array($resultado)) {?>
+        while ($fila = mysql_fetch_array($resultado)) {?>
           Partida N°  <?php echo "$fila[numero] ";?>  UNIDAD: <br>
           <?php
           echo "$fila[nombre]<br>";
@@ -364,7 +365,7 @@ $resultado4=mysqli_query($db,$query4);
        </div>
          
         <div class="wdgt-body wdgt-table">
-        <form  action="modPartida_exe.php?numero= <?php echo "$numeroPartida";?>" method="POST">
+
          <table class="table">
           <thead >
             <tr >
@@ -377,12 +378,7 @@ $resultado4=mysqli_query($db,$query4);
             </tr>
           </thead>
           <?php  
-          $num_rows = mysqli_num_rows($resultado);
-          $numero=0;
-          if($num_rows > 0){
-
-        
-        while ($fila1 = mysqli_fetch_array($resultado1)) {?>
+        while ($fila1 = mysql_fetch_array($resultado1)) {?>
          
           <tbody>
             <tr>
@@ -390,24 +386,18 @@ $resultado4=mysqli_query($db,$query4);
            <td><?php echo "$fila1[nombre]";?></td>
            <td><?php echo "$fila1[unidad]";?></td>
            
-           <td><input type="text" name="cantidadMaterial[<?php echo "$numero"; ?>]" style="border:none" value="<?php echo "$fila1[cantidad]";?>"></td>
+           <td><?php echo "$fila1[cantidad]";?></td>
            <td><?php echo "$fila1[total]";?></td>
-           <?php $subT="$fila1[subTotal]";?>
-           
-
-           <td><?php echo "$subT";?></td>
-
+           <td><?php echo "$fila1[subTotal]";?></td>
             </tr>
-            <?php $numero=$numero+1;} }?>
+            <?php } ?>s
           </tbody>
 
 
          </table>
-      
+        
         </div>
        </div>
-       
-         
        <!-- SEGUNDA TABLA-->
         <div class="wdgt wdgt-primary" hide-btn="true">
         <div class="wdgt-header" align="center">
@@ -429,27 +419,22 @@ $resultado4=mysqli_query($db,$query4);
             </tr>
           </thead>
           <?php  
-          
-           $num_rowsMO = mysqli_num_rows($resultado2);
-           
-          if($num_rowsMO > 0){
-         
-        while ($fila2 = mysqli_fetch_array($resultado2)) { ?>
+        while ($fila2 = mysql_fetch_array($resultado2)) {?>
           
           <tbody>
             <tr>
            
-           <td><input type="text" style="border:none"  name="descripcionMO[<?php echo "$numeroMO"; ?>]"      value="<?php echo "$fila2[descripcion]";?>"  ></td>
-           <td><input type="text" style="border:none"  name="jornadaMO[<?php echo "$numeroMO"; ?>]"      value="<?php echo "$fila2[jornada]";?>"      ></td>
-           <td><input type="text" style="border:none"  name="FPMO[<?php echo "$numeroMO"; ?>]"      value="<?php echo "$fila2[FP]";?>"           ></td>
-           <td><input type="text" style="border:none"  name="jornadaTotalMO[<?php echo "$numeroMO"; ?>]"      value="<?php echo "$fila2[jornadaTotal]";?>" ></td>
-           <td><input type="text" style="border:none"  name="rendimientoMO[<?php echo "$numeroMO"; ?>]"      value="<?php echo "$fila2[rendimiento]";?>"  ></td>
-           <td><input type="text" style="border:none"  name="subTotalMO[<?php echo "$numeroMO"; ?>]"      value="<?php echo "$fila2[subTotal]";?>"     ></td>
+           <td><?php echo "$fila2[descripcion]";?></td>
+           <td><?php echo "$fila2[jornada]";?></td>
+           <td><?php echo "$fila2[FP]";?></td>
+           <td><?php echo "$fila2[jornadaTotal]";?></td>
+           <td><?php echo "$fila2[rendimiento]";?></td>
+           <td><?php echo "$fila2[subTotal]";?></td>
             </tr>
           
-            <?php $numeroMO=$numeroMO+1;}  } ?>
+            
           </tbody>
-          
+          <?php } ?>
 
          </table>
         
@@ -477,24 +462,18 @@ $resultado4=mysqli_query($db,$query4);
             </tr>
           </thead>
             <?php  
-
-          $num_rowsEH = mysqli_num_rows($resultado3);
-          
-          $numEH=0;
-
-          if( $num_rowsEH > 0){
-                while ($fila3 = mysqli_fetch_array($resultado3)) {?>
+        while ($fila3 = mysql_fetch_array($resultado3)) {?>
           <tbody>
             <tr>
            
-           <td><input type="text" style="border:none"  value="<?php echo "$fila3[descripcion]";?>" name="descripcionEH[<?php echo "$numEH"; ?>]"></td>
-           <td><input type="text" style="border:none"  value="<?php echo "$fila3[tipo]";?>"        name="tipoEH[<?php echo "$numEH"; ?>]"></td>
-           <td><input type="text" style="border:none"  value="<?php echo "$fila3[capacidad]";?>"   name="capacidadEH[<?php echo "$numEH"; ?>]"></td>
-           <td><input type="text" style="border:none"  value="<?php echo "$fila3[rendimiento]";?>" name="rendimientoEH[<?php echo "$numEH"; ?>]"></td>
-           <td><input type="text" style="border:none"  value="<?php echo "$fila3[costoHora]";?>"   name="costoHoraEH[<?php echo "$numEH"; ?>]"></td>
-           <td><input type="text" style="border:none"  value="<?php echo "$fila3[subTotal]";?>"    name="subTotalEH[<?php echo "$numEH"; ?>]"></td>
+           <td><?php echo "$fila3[descripcion]";?></td>
+           <td><?php echo "$fila3[tipo]";?></td>
+           <td><?php echo "$fila3[capacidad]";?></td>
+           <td><?php echo "$fila3[rendimiento]";?></td>
+           <td><?php echo "$fila3[costoHora]";?></td>
+           <td><?php echo "$fila3[subTotal]";?></td>
             </tr>
-            <?php $numEH=$numEH+1; } } ?>
+            <?php } ?>
           </tbody>
 
 
@@ -522,20 +501,17 @@ $resultado4=mysqli_query($db,$query4);
             </tr>
           </thead>
           <?php  
-          $num_rowsSC = mysqli_num_rows($resultado4);
-          $numSC=0;
-          if( $num_rowsEH > 0){
-          while ($fila4 = mysqli_fetch_array($resultado4)) {?>
+        while ($fila4 = mysql_fetch_array($resultado4)) {?>
           <tbody>
             <tr>
            
-           <td><input type="text" style="border:none"  value="<?php echo "$fila4[descripcion]";?>" name="descripcionSC[<?php echo "$numSC"; ?>]"   ></td>
-           <td><input type="text" style="border:none"  value="<?php echo "$fila4[unidad]";?>"      name="unidadSC[<?php echo "$numSC"; ?>]"   ></td>
-           <td><input type="text" style="border:none"  value="<?php echo "$fila4[cantidad]";?>"    name="cantidadSC[<?php echo "$numSC"; ?>]"   ></td>
-           <td><input type="text" style="border:none"  value="<?php echo "$fila4[valor]";?>"       name="valorSC[<?php echo "$numSC"; ?>]"   ></td>
-           <td><input type="text" style="border:none"  value="<?php echo "$fila4[subTotal]";?>"    name="subTotalSC[<?php echo "$numSC"; ?>]"   ></td>
+           <td><?php echo "$fila4[descripcion]";?></td>
+           <td><?php echo "$fila4[unidad]";?></td>
+           <td><?php echo "$fila4[cantidad]";?></td>
+           <td><?php echo "$fila4[valor]";?></td>
+           <td><?php echo "$fila4[subTotal]";?></td>
             </tr>
-            <?php $numSC=$numSC+1; } }?>
+            <?php } ?>
             
           </tbody>
 
@@ -576,38 +552,17 @@ $resultado4=mysqli_query($db,$query4);
 
       </div>
      
-      <div class="modal fade" id="confirmacion" tabindex="-1" role=dialog aria-labelledby="MyModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-           <div class="alert alert-success"><span class="icon icon-ok-sign"></span> <strong>GUARDADO</strong> Partida modificada correctamente </div>
-            
-            </div>
-          </div>
-        </div>
+
       </div>
-
-     <div align="right">  
-
-        	<button  type="submit" class="btn btn-primary btn-round" name="enviarCambios"data-toggle="modal" data-target="#confirmacion">Relizar cambios</button>
-          <br>    <br>   <br>              
-          
-               
-        </div>
- </form><br> 
-      </div><br> 
-
      </div>
 
     </div>
     <!-- END PAGE CONTENT -->
 
-
    </div>
    <!-- END NAV, CRUMBS, & CONTENT -->
    
   </div>
-
   
   <!-- Default JS (DO NOT TOUCH) -->
   <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
