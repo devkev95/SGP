@@ -131,6 +131,7 @@
     		<a class="con" href="" data-toggle="dropdown"><span class="icon icon-user"></span></a>
     		 <ul class="dropdown-menu pull-right dropdown-profile" role="menu">
     		 	<li class="title"><span class="icon icon-user"></span>&nbsp;&nbsp;Bienvenido, <?= $userData->getNombres()?></li>
+             <li><a href="changePassword.php">Cambiar contraseña</a></li>
          		<li><a href="../services/user/logout.php"><span class="fa fa-power-off"></span>Desconectar</a></li>
     		 </ul>
     		</div>

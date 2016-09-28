@@ -135,6 +135,18 @@
 			}
 		}
 
+		public function cambiarPasswd($email, $newPaswd){
+			$email = $this->db->real_escape_string($email);
+			$newPaswd = $this->db->real_escape_string($newPaswd);
+			$query = "UPDATE usuario SET password='".$newPaswd."' WHERE email='".$email."'";
+			if($this->db->query($query)){
+				return true;
+			}else{
+				$this->error = 1;
+				return $this->error;
+			}
+		}
+
 	}
 
 ?>
