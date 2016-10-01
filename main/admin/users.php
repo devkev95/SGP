@@ -117,13 +117,14 @@
      <div class="nav">
     <div class="bar">
 
-       <div class="logo-small visible-xs"><img  style="width:120px; !important; height:32px; !important" src="../Imagenes/logo.png"></div>
+       <div class="logo-small visible-xs"><img  style="width:120px; !important; height:32px; !important" src="../../Imagenes/logo.png"></div>
       
       <div class="hov">
         <div class="btn-group">
         <a class="con" href="" data-toggle="dropdown"><span class="icon icon-user"></span></a>
          <ul class="dropdown-menu pull-right dropdown-profile" role="menu">
           <li class="title"><span class="icon icon-user"></span>&nbsp;&nbsp;Bienvenido, <?= $userData->getNombres()?></li>
+             <li><a href="../changePassword.php">Cambiar contraseña</a></li>
             <li><a href="../../services/user/logout.php"><span class="fa fa-power-off"></span>Desconectar</a></li>
          </ul>
         </div>
