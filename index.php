@@ -46,7 +46,7 @@
 					?>
 						 <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
 						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-						 <span class="icon icon-remove-sign">
+						 <span class="icon icon-remove-sign"></span>
 						 	
 						 </span> <strong>Error:</strong>
 					<?php
@@ -91,7 +91,7 @@
 				</div>
 				<div class="tbl">
      				<div class="col-md-12" >
-      					<a href="#" class="btn btn-warning" style="float:left;"><i class="fa fa-question"></i>&nbsp;&nbsp;&nbsp;Restablecer contraseña</a>
+      					<a href="recoveryMail.php" class="btn btn-warning" style="float:left;"><i class="fa fa-question"></i>&nbsp;&nbsp;&nbsp;Restablecer contraseña</a>
       					<a href="new_account.php" class="btn btn-soft" style="float:right;">Nueva cuenta&nbsp;&nbsp;&nbsp;<i class="fa fa-arrow-right"></i></a>
      				</div>
     			</div>

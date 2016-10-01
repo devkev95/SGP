@@ -36,9 +36,7 @@
 					?>
 						 <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
 						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-						 <span class="icon icon-remove-sign">
-						 	
-						 </span> <strong>Error:</strong>
+						 <span class="icon icon-remove-sign"></span><strong>Error:</strong>
 					<?php
 						if ($_GET["error"] == 1){
 
