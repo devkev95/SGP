@@ -133,7 +133,7 @@ error_reporting(0);
    
    <div id="secondary-search" class="input-icon visible-xs">
     <i class="icon icon-search"></i>
-    <input class="form-control form-warning input-sm" type="text">
+    <input class="form-control form-info input-sm" type="text">
    </div>
    <!-- END RESPONSIVE NAVIGATION -->
 
@@ -171,7 +171,7 @@ error_reporting(0);
           <h1>Nueva Partida <small>// Ingrese datos de la partida</small></h1>
         </div>
         <div class="col-md-12">
-          <div class="alert alert-warning" style="margin-bottom:0px;margin-top:10px;">
+          <div class="alert alert-success" style="margin-bottom:0px;margin-top:10px;">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             <span class="icon icon-exclamation-sign"></span> <strong>Verifique antes de aceptar!</strong>
           </div>
@@ -233,13 +233,12 @@ error_reporting(0);
                       <td></td>
                       <td></td>
                       <td></td>
-                      
-                      <td><div class="center" ><button data-toggle="modal" data-target="#squarespaceModal" class="btn btn-primary center-block btn-sm"><i class="icon icon-plus sm"></i></button></div></td>
                     </tr>
                     
                   </tbody>
                 </table>
-
+                <div><button data-toggle="modal" data-target="#squarespaceModal" class="btn btn-info btn-sm" ><i class="icon icon-plus"></i></button></div>
+                <br>
               </div>
             </div>
 
@@ -408,7 +407,7 @@ error_reporting(0);
                   <tbody>
                   </tbody>
                 </table>
-                <a class="btn btn-success btn-sm new-row" ><i class="icon icon-plus"></i></a>
+                <a class="btn btn-info btn-sm new-row" ><i class="icon icon-plus"></i></a>
 
               </div>
             </div>
@@ -433,7 +432,7 @@ error_reporting(0);
                   <tbody>
                   </tbody>
                 </table>
-                <a class="btn btn-success btn-sm new-row" ><i class="icon icon-plus"></i></a>
+                <a class="btn btn-info btn-sm new-row" ><i class="icon icon-plus"></i></a>
 
               </div>
             </div>
@@ -457,7 +456,7 @@ error_reporting(0);
                   <tbody>
                   </tbody>
                 </table>
-                <a class="btn btn-success btn-sm new-row" ><i class="icon icon-plus"></i></a>
+                <a class="btn btn-info btn-sm new-row" ><i class="icon icon-plus"></i></a>
 
               </div>
             </div>
