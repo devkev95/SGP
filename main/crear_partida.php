@@ -103,7 +103,7 @@ error_reporting(0);
          <span class="caret"></span>
         </a>
        </div>
-       <div id="c-forms" class="accordion-body collapse in"><div class="accordion-inner">
+       <div id="c-forms" class="accordion-body collapse"><div class="accordion-inner">
         <a href="tabla_recursos.php" class="sbtn sbtn-default">Ver Recursos</a>
         <a href="ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
        </div></div>
