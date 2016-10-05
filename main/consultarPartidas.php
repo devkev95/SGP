@@ -55,7 +55,7 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
       <?php if ($userData->getPerfil() == "Administrador"){ ?>
       <div class="accordion-group">
        <div class="accordion-heading">
-        <a class="sbtn btn-default active" href="#">
+        <a class="sbtn btn-default active" href="admin/users.php">
          <span class="fa fa-users"></span>
          &nbsp;&nbsp;Usuarios
         </a>
@@ -86,8 +86,8 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
         </a>
        </div>
        <div id="c-forms" class="accordion-body collapse in"><div class="accordion-inner">
-        <a href="../tabla_recursos.php" class="sbtn sbtn-default active">Ver Recursos</a>
-        <a href="../ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
+        <a href="../main/tabla_recursos.php" class="sbtn sbtn-default active">Ver Recursos</a>
+        <a href="../main/ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
        </div></div>
       </div>
 

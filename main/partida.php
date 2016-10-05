@@ -80,7 +80,7 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
       <?php if ($userData->getPerfil() == "Administrador"){ ?>
       <div class="accordion-group">
        <div class="accordion-heading">
-        <a class="sbtn btn-default active" href="#">
+        <a class="sbtn btn-default active" href="admin/users.php">
          <span class="fa fa-users"></span>
          &nbsp;&nbsp;Usuarios
         </a>
@@ -111,8 +111,8 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
         </a>
        </div>
        <div id="c-forms" class="accordion-body collapse in"><div class="accordion-inner">
-        <a href="../tabla_recursos.php" class="sbtn sbtn-default active">Ver Recursos</a>
-        <a href="../ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
+        <a href="../main/tabla_recursos.php" class="sbtn sbtn-default active">Ver Recursos</a>
+        <a href="../main/ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
        </div></div>
       </div>
 

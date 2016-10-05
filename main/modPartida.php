@@ -77,7 +77,7 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
       <?php if ($userData->getPerfil() == "Administrador"){ ?>
       <div class="accordion-group">
        <div class="accordion-heading">
-        <a class="sbtn btn-default active" href="#">
+        <a class="sbtn btn-default active" href="admin/users.php">
          <span class="fa fa-users"></span>
          &nbsp;&nbsp;Usuarios
         </a>
