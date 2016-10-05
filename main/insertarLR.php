@@ -28,7 +28,7 @@ $sql = mysql_query("select * from recurso where codigo='$cod' ");
 
 
 
-        $sql3=mysql_query("INSERT INTO linearecurso (id, numero, codigo, cantidad, subTotal) VALUES (null, 1,'$cod',$cant, $sub)");
+        $sql3=mysql_query("INSERT INTO linearecurso (id, numero, codigo, cantidad, subTotal) VALUES (null, 0,'$cod',$cant, $sub)");
 
 }
 

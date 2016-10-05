@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Default Styles (DO NOT TOUCH) -->
+    <link rel="stylesheet" href="../lib/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../lib/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../lib/css/fonts.css">
+    <link type="text/css" rel="stylesheet" href="../lib/css/soft-admin.css"/>
+  
+    <!-- Adjustable Styles -->
+    <link rel="stylesheet" href="../lib/css/bootstrapValidator.css"/>
+</head>
+
+<body>
+
+
+    <div class="center"><button data-toggle="modal" data-target="#squarespaceModal" class="btn btn-primary center-block">Click Me</button></div>
+
+
+    <!-- line modal -->
+    <div class="modal fade" id="squarespaceModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h3 class="modal-title" id="lineModalLabel">My Modal</h3>
+                </div>
+                <div class="modal-body">
+
+                    <!-- content goes here -->
+                    <form id="defaultForm" method="post" action="" class="form-horizontal">
+
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Numero Partida</label>
+                            <div class="col-lg-7">
+                                <input type="number" class="form-control" name="numero" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Descripcion</label>
+                            <div class="col-lg-7">
+                                <input type="text" class="form-control" name="descripcion" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Jornada</label>
+                            <div class="col-lg-7">
+                                <input type="number" class="form-control" name="jornada" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">FP</label>
+                            <div class="col-lg-7">
+                                <input type="number" class="form-control" name="FP" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Jornada Total</label>
+                            <div class="col-lg-7">
+                                <input type="number" step="0.1" class="form-control" name="jornadaTotal" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Rendimiento</label>
+                            <div class="col-lg-7">
+                                <input type="number" step="0.01" class="form-control" name="rendimiento" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Sub-Total</label>
+                            <div class="col-lg-7">
+                                <input type="number" step="0.01" class="form-control" name="subTotal" />
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-lg-9 col-lg-offset-3">
+                                <button type="submit" class="btn btn-primary" name="agregar" value="Agregar">Ingresar Datos</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <!-- footer content goes here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<!-- Default JS (DO NOT TOUCH) -->
+  <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+  <script src="../lib/js/bootstrap.min.js"></script>
+  <script src="../lib/js/hogan.min.js"></script>
+  <script src="../lib/js/typeahead.min.js"></script>
+  <script src="../lib/js/typeahead-example.js"></script>
+  
+<!-- Adjustable JS -->
+  <script src="../lib/js/bootstrapValidator.js"></script>
+
+</body>
+
+</html>
