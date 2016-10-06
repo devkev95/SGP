@@ -466,7 +466,7 @@ if(isset($_REQUEST['agregar'])) {
                     <div class="modal-body">
 
                       <!-- content goes here -->
-                      <form id="defaultForm" method="post" action="crear_partida.php" class="form-horizontal">
+                      <form onsubmit="setFormSubmitting()" id="defaultForm" method="post" action="crear_partida.php" class="form-horizontal">
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Descripcion</label>
@@ -616,7 +616,7 @@ if(isset($_REQUEST['agregar2'])) {
                     <div class="modal-body">
 
                       <!-- content goes here -->
-                      <form id="defaultForm" method="post" action="crear_partida.php" class="form-horizontal">
+                      <form onsubmit="setFormSubmitting()" id="defaultForm" method="post" action="crear_partida.php" class="form-horizontal">
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Descripcion</label>
@@ -763,7 +763,7 @@ if(isset($_REQUEST['agregar3'])) {
                     <div class="modal-body">
 
                       <!-- content goes here -->
-                      <form id="defaultForm" method="post" action="crear_partida.php" class="form-horizontal">
+                      <form onsubmit="setFormSubmitting()" id="defaultForm" method="post" action="crear_partida.php" class="form-horizontal">
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Descripcion</label>
@@ -817,9 +817,24 @@ if(isset($_REQUEST['agregar3'])) {
                 </div>
               </div>
 
+<?php
+            if(isset($_REQUEST['guardar'])) {
+
+              $name = $_REQUEST['nombre'];  
+
+              $sentencia1 = $mysqli->prepare("call llenar_partida('".$name."')");
+              $sentencia2 = $mysqli->prepare("call actualizar_lineas()");
+              
+              $sentencia2->execute();
+              $sentencia1->execute();
+              
+            }
+
+?>
+
             <div class="col-md-12">
               <div class="wdgt">
-                <form method="post" action="crear_partida.php">
+                <form onsubmit="setFormSubmitting(); notifyMe();" method="post" action="crear_partida.php">
                   <div class="form-group">
                     <label>Nombre</label>
                     <input type="text" name="nombre" class="form-control" placeholder="Nombre Partida" required>
@@ -828,6 +843,7 @@ if(isset($_REQUEST['agregar3'])) {
                 </form>
               </div>
             </div>
+
 
           </div>
         </div>
@@ -851,6 +867,55 @@ if(isset($_REQUEST['agregar3'])) {
     <script src="../lib/JS/DT_bootstrap.js"></script>
     <script src="../lib/JS/soft-widgets.js"></script>
     <script src="../lib/js/bootstrapValidator.js"></script>
+
+    <script>
+              // request permission on page load
+        document.addEventListener('DOMContentLoaded', function () {
+          if (!Notification) {
+            alert('Notificaciones de Escritorio no disponibles. Intentalo en Chrome'); 
+            return;
+          }
+
+          if (Notification.permission !== "granted")
+            Notification.requestPermission();
+        });
+
+        function notifyMe() {
+          if (Notification.permission !== "granted")
+            Notification.requestPermission();
+          else {
+            var notification = new Notification('Crear Partida', {
+              icon: '../Imagenes/logo.png',
+              body: "Has creado una nueva partida!",
+            });
+
+            notification.onclick = function () {
+              window.open("consultarPartidas.php");      
+            };
+
+          }
+
+        }
+    </script>
+
+    <script>
+      var formSubmitting = false;
+      var setFormSubmitting = function() { formSubmitting = true; };
+
+      window.onload = function() {
+          window.addEventListener("beforeunload", function (e) {
+              if (formSubmitting) {
+                  return undefined;
+              }
+
+              var confirmationMessage = 'parece que has hecho algunos cambios. '
+                                      + 'si te sales perderas todo!.';
+
+              (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+              return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+          });
+      };
+    </script>
 
     <script>
       $(document).ready(function() {
