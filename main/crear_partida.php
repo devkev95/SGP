@@ -966,7 +966,7 @@ if(isset($_REQUEST['agregar3'])) {
 
         if (cant != null) {
 
-          window.location.replace("../sgp/insertarLR.php?cod=" + codigo + "&cantidad=" + cant + "");
+          window.location.replace("insertarLR.php?cod=" + codigo + "&cantidad=" + cant + "");
 
 
         }

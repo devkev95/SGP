@@ -1,4 +1,20 @@
 <?php
+	
+	require '../model/Usuario.php';
+
+	session_start();
+
+	if (!isset($_SESSION["userData"])){
+		session_destroy();
+		header("Location: ../index.php");
+		exit();
+	}
+	$userData = $_SESSION["userData"];
+	session_write_close();
+?>
+
+
+<?php
 
 
 $cod=$_GET["cod"];

@@ -1,17 +1,26 @@
 <?php 
 require'../services/conn.php';
-require_once '../model/Usuario.php';
 //$objCon = new Connection();
 //$objCon->get_connected();
 $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 
+?>
+
+<?php
+  
+  require '../model/Usuario.php';
+
   session_start();
 
-  if(isset($_SESSION["userData"]) and $_SESSION["userData"]->getPerfil() == "Administrador"){
-    $userData = $_SESSION["userData"];
+  if (!isset($_SESSION["userData"])){
+    session_destroy();
+    header("Location: ../index.php");
+    exit();
+  }
+  $userData = $_SESSION["userData"];
   session_write_close();
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
  <head>
@@ -25,7 +34,7 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
   <link type="text/css" rel="stylesheet" href="../lib/CSS/soft-admin.css"/>
   
   <!-- Adjustable Styles -->
-  <link type="text/css" rel="stylesheet" href="../lib/css/DT_bootstrap.css"/>
+  <link type="text/css" rel="stylesheet" href="lib/css/DT_bootstrap.css"/>
   
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
@@ -39,14 +48,17 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
   <div class="cntnr">
    
    <!-- RESPONSIVE LEFT SIDEBAR & LOGO -->
-    <div class="left hidden-xs">
-     <div class="logo"> <img id="logo" src="../Imagenes/logo.png" style="width:159px !important; height:52px; !important"> </div>
-     
+   <div class="left hidden-xs">
+    <div class="logo"> <img id="logo" src="../Imagenes/logo.png" style="width:159px !important; height:52px; !important"> </div>
     <div class="sidebar">
+     <div>
+      <input class="typeahead" type="text" placeholder="Search">
+      <span id="search-icon" class="glyphicon glyphicon-search"></span>
+     </div>
      <div class="accordion">
       <div class="accordion-group">
        <div class="accordion-heading">
-        <a class="sbtn btn-default" href="../main/home.php">
+        <a class="sbtn btn-default active" href="home.php">
          <span class="fa fa-home"></span>
          &nbsp;&nbsp;Home
         </a>
@@ -55,14 +67,13 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
       <?php if ($userData->getPerfil() == "Administrador"){ ?>
       <div class="accordion-group">
        <div class="accordion-heading">
-        <a class="sbtn btn-default active" href="admin/users.php">
+        <a class="sbtn btn-default" href="admin/users.php">
          <span class="fa fa-users"></span>
          &nbsp;&nbsp;Usuarios
         </a>
        </div>
       </div>
       <?php } ?>
-
       <div class="accordion-group">
        <div class="accordion-heading">
         <a class="sbtn btn-default" data-toggle="collapse" href="#c-tables">
@@ -72,8 +83,8 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
         </a>
        </div>
        <div id="c-tables" class="accordion-body collapse"><div class="accordion-inner">
-        <a href="../main/consultarPartidas.php" class="sbtn sbtn-default">Ver Partidas</a>
-        <a href="../main/crear_partida.php" class="sbtn sbtn-default">Crear Partida</a> 
+        <a href="table_static.html" class="sbtn sbtn-default">Ver Partidas<span class="label label-soft">2</span></a>
+        <a href="crear_partida.php" class="sbtn sbtn-default">Crear Partida</a> 
        </div></div>
       </div>
 
@@ -86,32 +97,30 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
         </a>
        </div>
        <div id="c-forms" class="accordion-body collapse in"><div class="accordion-inner">
-        <a href="../main/tabla_recursos.php" class="sbtn sbtn-default active">Ver Recursos</a>
-        <a href="../main/ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
+        <a href="tabla_recursos.php" class="sbtn sbtn-default active">Ver Recursos</a>
+        <a href="ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
        </div></div>
       </div>
-
-      </div>
-      </div>
-      </div>
+     </div>
+    </div>
+   </div>
    <!-- END LEFT SIDEBAR & LOGO -->
    
    <!-- RESPONSIVE NAVIGATION -->
    <div id="secondary" class="btn-group visible-xs">
     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"><span class="icon icon-th-large"></span>&nbsp;&nbsp;Menu&nbsp;&nbsp;<span class="caret"></span></button>
     <ul class="dropdown-menu dropdown-info pull-right" role="menu">
-      <li><a href="../home.php">Home</a></li>
+      <li><a href="home.php">Home</a></li>
       <li class="dropdown-header">Recursos</li>
       <li><a href="tabla_recursos.php">Ver Recursos</a></li>
       <li><a href="ingresar.php">Agregar Recurso</a></li>
       <li class="divider" style="border-bottom:1px solid #ddd; margin:0px; margin-top:5px;"></li>
       <li class="dropdown-header">Partidas</li>
-      <li><a href="main/consultarPartidas.php">Ver Partidas</a></li>
+      <li><a href="consultarPartidas.php">Ver Partidas</a></li>
       <li><a href="crear_partida.php">Crear Partida</a></li>
       <li class="divider" style="border-bottom:1px solid #ddd; margin:0px; margin-top:5px;"></li>
     </ul>
    </div>
-   
    
    <div id="secondary-search" class="input-icon visible-xs">
     <i class="icon icon-search"></i>
@@ -240,11 +249,3 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
   
  </body>
 </html>
-<?php
-}
-else{
- header("Location: ../home.php");
-    session_destroy();
-    exit(); 
-}
-?>
