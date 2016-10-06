@@ -196,6 +196,7 @@ if ($link) {
                         <th>Valor</th>
                         <th>Sub-Total</th>
                         <th> </th>
+                         
                       </tr>
                     </thead>
                     <tbody>
@@ -214,7 +215,7 @@ while ($row = mysql_fetch_array($sql)) {
     echo '<td>'. $row['cantidad'] . '</td>';
     echo '<td>'. $row['costoDirecto'] .'</td>';
     echo '<td>'. $row['subTotal'] .'</td>';
-    echo '<td></td>';
+    echo "<td><input style='max-width: 5%;' onClick=\"if(confirm('Se eliminará este registro')) window.location.href='eliminarLR.php?cod=$row[codigo]';\" type='image' src='../Imagenes/eliminar.png'> </td>";
     
     echo '</tr>';
     
@@ -356,14 +357,9 @@ while ($row = mysql_fetch_array($sql)) {
                   <div class="modal-footer">
                     <div class="btn-group btn-group-justified" role="group" aria-label="group button">
                       <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" role="button">Close</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" role="button">Salir</button>
                       </div>
-                      <div class="btn-group btn-delete hidden" role="group">
-                        <button type="button" id="delImage" class="btn btn-default btn-hover-red" data-dismiss="modal" role="button">Delete</button>
-                      </div>
-                      <div class="btn-group" role="group">
-                        <button type="button" id="saveImage" class="btn btn-default btn-hover-green" data-action="save" role="button">Save</button>
-                      </div>
+                    
                     </div>
                   </div>
                 </div>
@@ -965,13 +961,25 @@ if(isset($_REQUEST['agregar3'])) {
         cant = prompt("Indique la cantidad a agregar de " + nombre + ":", "");
 
         if (cant != null) {
+        
 
-          window.location.replace("insertarLR.php?cod=" + codigo + "&cantidad=" + cant + "");
+         if (/^([0-9])*$/.test(cant))
+         
+        window.location.replace("insertarLR.php?cod=" + codigo + "&cantidad=" + cant + "");
 
+
+        else {
+
+         alert("El valor " + cant + " no es un número");
+  }
+
+
+        
+       }
 
         }
 
-      }
+      
     </script>
 
 
