@@ -33,10 +33,6 @@ $sC3= $_POST['cantidadSC'];
 $sC4= $_POST['valorSC'];
 $sC5= $_POST['subTotalSC'];
 
-//nuevo Costo Indecto
-
-$CI= $_POST['nuevoTotalCI'];
-
 
 
 //CONSULTA MATERIALES
@@ -58,7 +54,6 @@ $resultadoSC=mysqli_query($db,$querySC);
 //matteriales
   $num_rows = mysqli_num_rows($resultado1);
           $numero=0;
-          $totalMateriales;
           if($num_rows > 0){
 
         
@@ -73,7 +68,7 @@ $resultadoSC=mysqli_query($db,$querySC);
         	$totalM="$fila1[total]";
         	$nuevoSubTotal=( $totalM*$cantidadM[$numero]);
         	$codigoMaterial="$fila1[codigo]";
-          $totalMateriales=$totalMateriales+$nuevoSubTotal;
+       
 
         	
         	$queryUpdate="UPDATE linearecurso SET cantidad=".$cantidadM[$numero].", subTotal=".$nuevoSubTotal." WHERE codigo='".$codigoMaterial."'";
@@ -85,13 +80,10 @@ $resultadoSC=mysqli_query($db,$querySC);
 
 
     }
-    $queryTotalM="UPDATE partida SET totalMateriales=".$totalMateriales." WHERE numero=".$numeroPartida;
-    $updateTOM=mysqli_query($db,$queryTotalM);
 
     //mano de obra
     $num_rowsM = mysqli_num_rows($resultadoMO);
           $numeroM=0;
-          $totalMO=0;
 
           if($num_rowsM > 0){
 
@@ -104,7 +96,6 @@ $resultadoSC=mysqli_query($db,$querySC);
           $jornadaTotal=0;
           $rendimiento=0;
           $STMO=0;
-          
 
           $identificador="$filaMO[id]";
           $descripcion=$manoObraDes[$numeroM];
@@ -113,30 +104,29 @@ $resultadoSC=mysqli_query($db,$querySC);
           $jornadaTotal=$manoObraJorT[$numeroM];
           $rendimiento=$manoObraRen[$numeroM];
           $STMO=$manoObraSubT[$numeroM];
-          $totalMO=$totalMO+$STMO;
-
 
           $queryMO1="UPDATE lineamanoobra SET descripcion='".$descripcion."', jornada=".$jor.", FP=".$FP.", jornadaTotal=".$jornadaTotal.", rendimiento=".$rendimiento.", subTotal=".$STMO." WHERE id=".$identificador;
           
 
             $update=mysqli_query($db,$queryMO1);
 
+            
+
           
          
             $numeroM=$numeroM+1;
+          
+
+       
 
         }
 
 
     }
 
-    $queryTotalMo="UPDATE partida SET totalManoObra=".$totalMO." WHERE numero=".$numeroPartida;
-    $updateTOMO=mysqli_query($db,$queryTotalMo);
-
     //equipo y herramientas
         $num_rowsEH = mysqli_num_rows($resultadoEH);
           $numeroEH=0;
-          $totalEH=0;
 
           if($num_rowsEH > 0){
 
@@ -158,8 +148,6 @@ $resultadoSC=mysqli_query($db,$querySC);
           $costoHoraNEH=$hE5[$numeroEH];
           $subTotalNEH=$hE6[$numeroEH];
 
-          $totalEH=$totalEH+$subTotalNEH;
-
           $queryEH1="UPDATE lineaequipoherramienta SET descripcion='".$descripcionNEH."', tipo='".$tipoNEH."', capacidad='".$capacidadNEH."',rendimiento=".$rendimientoNEH.", costoHora=".$costoHoraNEH.", subTotal=".$subTotalNEH." WHERE id=".$identificadorEH;
 
           
@@ -172,13 +160,10 @@ $resultadoSC=mysqli_query($db,$querySC);
 
 
     }
-    $queryTotalEH="UPDATE partida SET totalEquipoHerramientas=".$totalEH." WHERE numero=".$numeroPartida;
-    $updateTEH=mysqli_query($db,$queryTotalEH);
 
     //subcontratos
     $num_rowsSC = mysqli_num_rows($resultadoSC);
           $numeroSC=0;
-          $totalSC=0;
 
           if($num_rowsSC> 0){
 
@@ -198,8 +183,6 @@ $resultadoSC=mysqli_query($db,$querySC);
           $valorNSC=$sC4[$numeroSC];
           $subTotalNSC=$sC5[$numeroSC];
 
-          $totalSC=$totalSC+$subTotalNSC;
-
           
           $querySC1="UPDATE lineasubcontrato SET unidad='".$unidadNSC."', cantidad=".$cantidadNSC.",valor=". $valorNSC.",descripcion='".$descripcionNSC."', subTotal=".$subTotalNSC." WHERE id=".$identificadorSC;
 
@@ -214,26 +197,8 @@ $resultadoSC=mysqli_query($db,$querySC);
 
 
     }
-
-
-$queryTotalSC="UPDATE partida SET totalSubContratos=".$totalSC." WHERE numero=".$numeroPartida;
-    $updateTEH=mysqli_query($db,$queryTotalSC);
-
-    //actualizar costos
-
-    $tCD=$totalMateriales+$totalEH+$totalEH+$totalSC;
-
-     $queryTotalCI="UPDATE partida SET totalCF=".$CI." WHERE numero=".$numeroPartida;
-    $updateCD=mysqli_query($db,$queryTotalCI);
-
-    $precioU=$tCD+$CI;
-
-    $queryPrecioU="UPDATE partida SET precioUnitario=".$precioU." WHERE numero=".$numeroPartida;
-    $updateCD=mysqli_query($db,$queryPrecioU);
-
-
-
   
+
   
 
 
