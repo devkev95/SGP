@@ -822,12 +822,19 @@ if(isset($_REQUEST['agregar3'])) {
 
               $name = $_REQUEST['nombre'];  
 
-              $sentencia1 = $mysqli->prepare("call llenar_partida('".$name."')");
-              $sentencia2 = $mysqli->prepare("call actualizar_lineas()");
+              $db = mysqli_connect('localhost','sgp_user', '56p_2016', 'sgp_system');   
+  
+              $r = mysqli_query($db, " call llenar_partida('".$name."'); ");    
+                
+              mysqli_free_result($r);   
+              mysqli_next_result($db);   
+                
+              $r = mysqli_query($db, " call actualizar_lineas(); ");    
 
-
-              $sentencia1->execute();
-              $sentencia2->execute();
+              mysqli_free_result($r); 
+              mysqli_next_result($db);  
+              
+              mysqli_close($db);
               
             }
 
