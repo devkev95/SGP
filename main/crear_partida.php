@@ -820,23 +820,18 @@ if(isset($_REQUEST['agregar3'])) {
 <?php
             if(isset($_REQUEST['guardar'])) {
 
-              $name = $_REQUEST['nombre'];  
+              $nam = $_REQUEST['nombre'];  
 
               $db = mysqli_connect('localhost','sgp_user', '56p_2016', 'sgp_system');   
-  
-              $r = mysqli_query($db, " call llenar_partida('".$name."'); ");    
-                
-              mysqli_free_result($r);   
-              mysqli_next_result($db);   
-                
-              $r = mysqli_query($db, " call actualizar_lineas(); ");    
 
-              mysqli_free_result($r); 
-              mysqli_next_result($db);  
+              $query = "CALL llenar_partida('".$nam."');";
+              $query .= "CALL actualizar_lineas();";
+  
+              mysqli_multi_query($db, $query);  
+              
+            }  
               
               mysqli_close($db);
-              
-            }
 
 ?>
 
@@ -847,7 +842,7 @@ if(isset($_REQUEST['agregar3'])) {
                     <label>Nombre</label>
                     <input type="text" name="nombre" class="form-control" placeholder="Nombre Partida" required>
                   </div>
-                  <button class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" >Guardar</button>
+                  <button onClick="window.location.href='crear_partida.php'" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" >Guardar</button>
                 </form>
               </div>
             </div>
@@ -892,7 +887,7 @@ if(isset($_REQUEST['agregar3'])) {
           if (Notification.permission !== "granted")
             Notification.requestPermission();
           else {
-            var notification = new Notification('Crear Partida', {
+            var notification = new Notification('Nueva Partida Creada!', {
               icon: '../Imagenes/logo.png',
               body: "Se ha creado una nueva partida!",
             });
