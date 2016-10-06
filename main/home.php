@@ -33,7 +33,7 @@
   <![endif]-->
 
  </head>
- <body>
+ <body onLoad="borrar_registros()">
  
   <div class="cntnr">
    
@@ -176,6 +176,18 @@
   
   <!-- Adjustable JS -->
   <script src="../lib/JS/soft-widgets.js"></script>
+
+  <script>
+     function borrar_registros(){
+        <?php
+            // Conectar con el servidor y base de datos
+            $mysqli = new mysqli('localhost','sgp_user','56p_2016','sgp_system');
+            
+            $sentencia3 = $mysqli->prepare("call eliminar_lineas()");
+            $sentencia3->execute();
+        ?>
+      }
+    </script>
   
  </body>
 </html>

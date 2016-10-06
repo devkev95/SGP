@@ -164,7 +164,7 @@ if ($link) {
           <div class="crumbs">
             <ol class="breadcrumb hidden-xs">
               <li><i class="fa fa-home"></i> <a href="home.php">Home</a></li>
-              <li class="active">Creación de Partidas</li>
+              <li class="active">Crear Partida</li>
             </ol>
           </div>
         </div>
@@ -824,9 +824,10 @@ if(isset($_REQUEST['agregar3'])) {
 
               $sentencia1 = $mysqli->prepare("call llenar_partida('".$name."')");
               $sentencia2 = $mysqli->prepare("call actualizar_lineas()");
-              
-              $sentencia2->execute();
+
+
               $sentencia1->execute();
+              $sentencia2->execute();
               
             }
 
@@ -886,7 +887,7 @@ if(isset($_REQUEST['agregar3'])) {
           else {
             var notification = new Notification('Crear Partida', {
               icon: '../Imagenes/logo.png',
-              body: "Has creado una nueva partida!",
+              body: "Se ha creado una nueva partida!",
             });
 
             notification.onclick = function () {
