@@ -271,7 +271,7 @@ error_reporting(0);
           <!-- COSTO DIRECTO -->
            <div class="form-group <?php echo !empty($costoDirectoError)?'has-error':'';?>">
            <label>Costo Directo del Recurso</label>
-           <input type="text"  class="form-control" required="required" id="inputFName" placeholder="costoDirecto" name="costoDirecto" value="<?php echo $costoDirecto?$costoDirecto:'';?>" >
+           <input type="number" step="0.01" min="0.00" class="form-control" required="required" id="inputFName" placeholder="costoDirecto" name="costoDirecto" value="<?php echo $costoDirecto?$costoDirecto:'';?>" >
            <span class="help-block"><?php echo $costoDirectoError?$costoDirectoError:'';?></span>
           </div>
           <!-- FECHA 
