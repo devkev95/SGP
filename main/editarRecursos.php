@@ -14,20 +14,13 @@
 
 error_reporting(0);
     require("connect_db.php");
-     // $codigo = null;
-
         $codigoError= null;
         $nombreError=null;
         $unidadError=null;
         $costoDirectoError=null;
-      // $ivaError=null;
-      //  $fechaError=null;
         $empresaError=null;
         $tipoError= null;
 
-
-       
-        
     
     if(!empty($_GET['codigo']))
     {
@@ -40,8 +33,6 @@ error_reporting(0);
     } 
     if ( !empty($_POST))
     {
-        //require("connect_db.php");
-        // validation errors
        
         $codigoError= null;
         $nombreError=null;
@@ -90,8 +81,16 @@ error_reporting(0);
        
             $sql = mysql_query("CALL sp_updateRecurso('".$codigo."','".$nombre."','".$unidad."','".$costoDirecto."','".$empresa."','".$tipo."')");
             $stmt = mysql_fetch_array($sql);
-            header("Location: tabla_recursos.php");
-            echo "datos ingresados correctamente";
+            if(!$sql){ 
+              $str = "error";
+            }else{          
+                $str = "success";
+              
+                 
+             }
+         
+          header("Location: tabla_recursos.php?".$str);
+
         }
     }
     else{
@@ -270,9 +269,10 @@ error_reporting(0);
       <div class="col-md-11">
        <div class="wdgt">
         <div class="wdgt-header">Recurso</div>
-        <div class="wdgt-body" style="padding-bottom:10px;">
+        <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
+      
 
-          <form method="POST" action="">
+          <form id="recurso-form" method="POST" action="">
           <!-- CODIGO 
           <div class="form-group <?php// echo !empty($codigoError)?'has-error':'';?>">
            <label>Codigo de Recurso</label>
@@ -364,6 +364,55 @@ error_reporting(0);
   <script src="../lib/JS/typeahead-example.js"></script>
   <!-- Adjustable JS -->
   <script src="../lib/JS/soft-widgets.js"></script>
+   <script type="text/javascript" src="../lib/JS/bootstrapValidator.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+        $("#recurso-form").bootstrapValidator({
+          fields : {
+            nombre : {
+              validators: {
+                notEmpty : {
+                  message : "Este campo no puede estar vacio"
+                }
+              }
+            },
+            unidad : {
+              validators : {
+                notEmpty : {
+                  message : "Este campo no puede estar vacio"
+                }
+                
+              }
+            },
+            costoDirecto: {
+              validators : {
+                notEmpty: {
+                  message: 'Este campo no puede estar vacio'
+                  },
+                numeric:{
+                  message: 'Este campo debe ser numerico'
+                }
+              }
+            },
+            empresa: {
+              validators : {
+                notEmpty: {
+                  message: 'Este campo no puede estar vacio'
+                  },
+              }
+            },
+            tipo: {
+              validators : {
+                notEmpty: {
+                  message: 'Este campo no puede estar vacio'
+                  },
+              }
+            }
+          }
+        });
+      });
+  </script> 
+  
   
  </body>
 </html>

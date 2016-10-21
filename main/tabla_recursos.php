@@ -184,6 +184,32 @@
        <div class="wdgt" hide-btn="true">
         <div class="wdgt-header">Tabla de recursos</div>
         <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
+        <?php
+          if (isset($_GET["error"])) {
+            
+         ?>
+
+          <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+             <span class="icon icon-remove-sign"></span> 
+             Se ha producido un error en la conexión a la base de datos, por favor intente realizar esta operación. 
+              
+                
+          </div>
+           <?php
+          // header("Location: tabla_recursos.php");
+          } else if (isset($_GET["success"])){
+        ?>
+          <div class="alertDiv alert alert-success alert-round alert-border alert-soft">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+              <span class="icon icon-ok-sign" ></span>
+             Su actualizacion se ha guardado exitosamente
+            </div>
+        <?php
+         //  header("Location: tabla_recursos.php");
+          } 
+         
+        ?>
          <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
 
 
