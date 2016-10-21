@@ -17,7 +17,7 @@
 <?php 
 error_reporting(0);
      require("connect_db.php");
-        $codigoError= null;
+       // $codigoError= null;
         $nombreError=null;
         $unidadError=null;
         $costoDirectoError=null;
@@ -28,7 +28,7 @@ error_reporting(0);
 
 
         // post values
-        $codigo =$_POST['codigo'];
+        //$codigo =$_POST['codigo'];
         $nombre = $_POST['nombre'];
         $unidad = $_POST['unidad'];
         $costoDirecto =$_POST['costoDirecto'];
@@ -41,11 +41,11 @@ error_reporting(0);
         // validate input
     if ( !empty($_POST)) {
 
-       /* $valid = true;
-        if(empty($codigo)) {
-            $codigoError = 'Por favor ingrese el codigo del recurso.';
-            $valid = false;
-        }*/
+        $valid = true;
+      //  if(empty($codigo)) {
+     //       $codigoError = 'Por favor ingrese el codigo del recurso.';
+      //      $valid = false;
+     //   }
 
         if(empty($nombre)) {
             $nombreError = 'Por favor ingrese el nombre.';
@@ -79,6 +79,12 @@ error_reporting(0);
         
          if ($valid) { 
             require("connect_db.php");
+
+            //$sql =  mysql_query("INSERT INTO recurso(nombre, unidad, costoDirecto, iva, total, fecha, empresaProveedora, tipoRecurso) VALUES ('".$nombre."','".$unidad."','".$costoDirecto."', '".$costoDirecto*0.13."', '".$costoDirecto*0.13."', CURRENT_DATE,'".$empresa."','".$tipo."')");
+           // $stmt = mysql_fetch_array($sql);
+
+            //$sql =  mysql_query("CALL sp_createRecurso('bloque','m3','15.6','epa','Materiales')");
+
             $sql =  mysql_query("CALL sp_createRecurso('".$nombre."','".$unidad."','".$costoDirecto."','".$empresa."','".$tipo."')");
             $stmt = mysql_fetch_array($sql);
             header("Location: ingresar.php");
@@ -250,13 +256,7 @@ error_reporting(0);
         <div class="wdgt-body" style="padding-bottom:10px;">
 
           <form method="POST" action="">
-          <!-- CODIGO 
-          <div class="form-group <?php // !empty($codigoError)?'has-error':'';?>">
-           <label>Codigo de Recurso</label>
-           <input type="text" class="form-control" required="required" id="inputFName" placeholder="codigo" name="codigo" value="<?php echo $codigo?$codigo:'';?>" >
-           <span class="help-block"><?php //echo $codigoError?$codigoError:'';?></span>
-          </div>-->
-          <!-- NOMBRE -->
+          
           <div class="form-group <?php echo !empty($nombreError)?'has-error':'';?>">
            <label>Nombre de Recurso</label>
            <input type="text" class="form-control" required="required" id="inputFName" placeholder="nombre" name="nombre" value="<?php echo $nombre?$nombre:'';?>" >
