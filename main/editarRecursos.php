@@ -111,6 +111,7 @@ error_reporting(0);
 ?>
 
 
+
 <!DOCTYPE html>
 <html lang="en">
  <head>
@@ -271,12 +272,13 @@ error_reporting(0);
         <div class="wdgt-body" style="padding-bottom:10px;">
 
           <form method="POST" action="">
-          <!-- CODIGO -->
-          <div class="form-group <?php echo !empty($codigoError)?'has-error':'';?>">
+          <!-- CODIGO 
+          <div class="form-group <?php// echo !empty($codigoError)?'has-error':'';?>">
            <label>Codigo de Recurso</label>
            <input type="text" class="form-control" required="required" id="inputFName" placeholder="codigo" name="codigo" value="<?php echo $codigo?$codigo:'';?>" >
-           <span class="help-block"><?php echo $codigoError?$codigoError:'';?></span>
-          </div>
+           <span class="help-block"><?php// echo $codigoError?$codigoError:'';?></span>
+
+          </div>-->
           <!-- NOMBRE -->
           <div class="form-group <?php echo !empty($nombreError)?'has-error':'';?>">
            <label>Nombre de Recurso</label>
