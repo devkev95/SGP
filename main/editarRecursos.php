@@ -77,7 +77,7 @@ error_reporting(0);
         }
 
         if(empty($empresa)) {
-            $empresaError = 'Por favor ingrese el nombre de la empresa consultada ';
+            $empresaError = 'Por favor ingrese el nombre de la empresa consultada';
             $valid = false;
         }
 
@@ -91,6 +91,7 @@ error_reporting(0);
             $sql = mysql_query("CALL sp_updateRecurso('".$codigo."','".$nombre."','".$unidad."','".$costoDirecto."','".$empresa."','".$tipo."')");
             $stmt = mysql_fetch_array($sql);
             header("Location: tabla_recursos.php");
+            echo "datos ingresados correctamente";
         }
     }
     else{
@@ -294,7 +295,7 @@ error_reporting(0);
           <!-- COSTO DIRECTO -->
            <div class="form-group <?php echo !empty($costoDirectoError)?'has-error':'';?>">
            <label>Costo Directo del Recurso</label>
-           <input type="number" class="form-control" required="required" id="inputFName" placeholder="costoDirecto" name="costoDirecto" value="<?php echo $costoDirecto?$costoDirecto:'';?>" >
+           <input type="number" step="0.01" min="0.00" class="form-control" required="required" id="inputFName" placeholder="costoDirecto" name="costoDirecto" value="<?php echo $costoDirecto?$costoDirecto:'';?>" >
            <span class="help-block"><?php echo $costoDirectoError?$costoDirectoError:'';?></span>
           </div>
           <!-- FECHA 

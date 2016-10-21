@@ -25,6 +25,7 @@ error_reporting(0);
       //  $fechaError=null;
         $empresaError=null;
         $tipoError= null;
+        $check1=(is_int($costoDirecto));
 
 
         // post values
@@ -57,10 +58,16 @@ error_reporting(0);
             $valid = false;
         }
 
-        if(empty($costoDirecto)) {
+        if ($check1==true) {
+           if(empty($costoDirecto)) {
             $costoDirectoError = 'Por favor ingrese el costo directo';
             $valid = false;
         }
+      }else{
+        $costoDirectoError = 'Por favor ingrese un valor numero';
+      }
+
+       
 
       // if(empty($fecha)) {
         //    $fechaError = 'Por favor ingrese la fecha de ingreso ';
@@ -87,8 +94,17 @@ error_reporting(0);
 
             $sql =  mysql_query("CALL sp_createRecurso('".$nombre."','".$unidad."','".$costoDirecto."','".$empresa."','".$tipo."')");
             $stmt = mysql_fetch_array($sql);
-            header("Location: ingresar.php");
+            if(!$sql){ 
+              $str = "error";
+            }else{          
+                $str = "success";
+                 
+             }
+            header("Location: ingresar.php?".$str);
+
+        //header("Location: ingresar.php");
         }
+
     }
   
 
@@ -125,10 +141,7 @@ error_reporting(0);
    <div class="left hidden-xs">
     <div class="logo"> <img id="logo" src="../Imagenes/logo.png" style="width:159px !important; height:52px; !important"> </div>
     <div class="sidebar">
-     <div>
-      <input class="typeahead" type="text" placeholder="Search">
-      <span id="search-icon" class="glyphicon glyphicon-search"></span>
-     </div>
+    
      <div class="accordion">
       
        <div class="accordion-group">
@@ -253,13 +266,40 @@ error_reporting(0);
       <div class="col-md-11">
        <div class="wdgt">
         <div class="wdgt-header">Recurso</div>
-        <div class="wdgt-body" style="padding-bottom:10px;">
+      
+         <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
+          <?php
+          if (isset($_GET["error"])) {
+            
+         ?>
 
-          <form method="POST" action="">
+          <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+             <span class="icon icon-remove-sign"></span> 
+             Se ha producido un error en la conexión a la base de datos, por favor intente realizar esta operación. 
+              
+                
+          </div>
+           <?php
+           header("Location: ingresar.php");
+          } else if (isset($_GET["success"])){
+        ?>
+          <div class="alertDiv alert alert-success alert-round alert-border alert-soft">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+              <span class="icon icon-ok-sign" ></span>
+             Se ha ingresado correctamente el nuevo Recurso
+            </div>
+        <?php
+           header("Location: ingresar.php");
+          } 
+         
+        ?>
+
+          <form id="recurso-form" method="POST" action="">
           
           <div class="form-group <?php echo !empty($nombreError)?'has-error':'';?>">
            <label>Nombre de Recurso</label>
-           <input type="text" class="form-control" required="required" id="inputFName" placeholder="nombre" name="nombre" value="<?php echo $nombre?$nombre:'';?>" >
+           <input type="text" class="form-control" required id="inputFName" placeholder="nombre" name="nombre" value="<?php echo $nombre?$nombre:'';?>" >
            <span class="help-block"><?php echo $nombreError?$nombreError:'';?></span>
           </div>
           <!-- UNIDAD -->
@@ -271,10 +311,10 @@ error_reporting(0);
           <!-- COSTO DIRECTO -->
            <div class="form-group <?php echo !empty($costoDirectoError)?'has-error':'';?>">
            <label>Costo Directo del Recurso</label>
-           <input type="number" step="0.01" min="0.00" class="form-control" required="required" id="inputFName" placeholder="costoDirecto" name="costoDirecto" value="<?php echo $costoDirecto?$costoDirecto:'';?>" >
+           <input type="numeric" step="0.01" min="0.00" class="form-control" required="required" id="inputFName" placeholder="costoDirecto" name="costoDirecto" value="<?php echo $costoDirecto?$costoDirecto:'';?>" >
            <span class="help-block"><?php echo $costoDirectoError?$costoDirectoError:'';?></span>
           </div>
-          <!-- FECHA 
+          <!-- FECHA type="number" step="0.01" min="0.00"
            <div class="form-group <?php //echo !empty($fechaError)?'has-error':'';?>">
            <label>Fecha de modificación</label>
            <input type="text" class="form-control" required="required" id="inputFName" placeholder="fecha" name="fecha" value="<?php echo $fecha?$fecha:'';?>" >
@@ -312,8 +352,9 @@ error_reporting(0);
            <span class="help-block"><?php echo $tipoError?$tipoError:'';?></span>
           </div>
 
+
           <div class="form-actions">
-        <button type="submit" class="btn btn-success">Guardar</button>
+        <button class="btn btn-primary" type="submit">Guardar</button>
        </div>
          </form>
         </div>
@@ -349,6 +390,54 @@ error_reporting(0);
   
   <!-- Adjustable JS -->
   <script src="../lib/JS/soft-widgets.js"></script>
+   <script type="text/javascript" src="../lib/JS/bootstrapValidator.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+        $("#recurso-form").bootstrapValidator({
+          fields : {
+            nombre : {
+              validators: {
+                notEmpty : {
+                  message : "Este campo no puede estar vacio"
+                }
+              }
+            },
+            unidad : {
+              validators : {
+                notEmpty : {
+                  message : "Este campo no puede estar vacio"
+                }
+                
+              }
+            },
+            costoDirecto: {
+              validators : {
+                notEmpty: {
+                  message: 'Este campo no puede estar vacio'
+                  },
+                numeric:{
+                  message: 'Este campo debe ser numerico'
+                }
+              }
+            },
+            empresa: {
+              validators : {
+                notEmpty: {
+                  message: 'Este campo no puede estar vacio'
+                  },
+              }
+            },
+            tipo: {
+              validators : {
+                notEmpty: {
+                  message: 'Este campo no puede estar vacio'
+                  },
+              }
+            }
+          }
+        });
+      });
+  </script> 
   
  </body>
 </html>

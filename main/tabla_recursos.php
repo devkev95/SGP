@@ -58,10 +58,7 @@
    <div class="left hidden-xs">
     <div class="logo"> <img id="logo" src="../Imagenes/logo.png" style="width:159px !important; height:52px; !important"> </div>
     <div class="sidebar">
-     <div>
-      <input class="typeahead" type="text" placeholder="Search">
-      <span id="search-icon" class="glyphicon glyphicon-search"></span>
-     </div>
+     
       <div class="accordion">
       
         <div class="accordion-group">
