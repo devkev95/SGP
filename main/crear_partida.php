@@ -203,7 +203,7 @@ if ($link) {
                     </tbody>
                   </table>
                   <div>
-                    <button id="new-row-recursos" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
+                    <button type="button" id="new-row-recursos" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
                     <strong>Sub-total:<span id="sub-total-recursos">0.00</span></strong>
                   </div>
                   <br>
@@ -232,7 +232,7 @@ if ($link) {
                   </tbody>
                     </table>
                     <div>
-                    <button id="new-row-mano-obra" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
+                    <button type="button" id="new-row-mano-obra" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
                     <strong>Sub-total:<span id="sub-total-MO">0.00</span></strong>
                     </div>
                   </div>
@@ -260,7 +260,7 @@ if ($link) {
                       </tbody>
                     </table>
                     <div>
-                    <button id="new-row-herramientas" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
+                    <button type="button" id="new-row-herramientas" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
                     <strong>Sub-total:<span id="sub-total-herramientas">0.00</span></strong>
                     </div>
                   </div>
@@ -286,7 +286,7 @@ if ($link) {
                       <tbody>
                       </tbody>
                     </table>
-                    <button id="new-row-subcontratos" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
+                    <button type="button" id="new-row-subcontratos" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
                     <strong>Sub-total:<span id="sub-total-subcontratos">0.00</span></strong>
 
                   </div>
