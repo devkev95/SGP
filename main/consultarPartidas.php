@@ -7,7 +7,7 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
 
   session_start();
 
-  if(isset($_SESSION["userData"]) and $_SESSION["userData"]->getPerfil() == "Administrador"){
+  if(isset($_SESSION["userData"])){
     $userData = $_SESSION["userData"];
   session_write_close();
 
@@ -243,7 +243,7 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
 <?php
 }
 else{
- header("Location: ../home.php");
+ header("Location: home.php");
     session_destroy();
     exit(); 
 }

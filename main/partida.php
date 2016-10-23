@@ -4,7 +4,7 @@
 
   session_start();
 
-  if(isset($_SESSION["userData"]) and $_SESSION["userData"]->getPerfil() == "Administrador"){
+  if(isset($_SESSION["userData"]) and $_SESSION["userData"]->getPerfil() != "Secretario"){
     $userData = $_SESSION["userData"];
   session_write_close();
   

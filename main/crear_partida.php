@@ -6,7 +6,7 @@ session_start();
 
 if (!isset($_SESSION["userData"])){
     session_destroy();
-    header("Location: ../home.php");
+    header("Location: home.php");
     exit();
 }
 $userData = $_SESSION["userData"];
@@ -182,12 +182,12 @@ if ($link) {
           </div>
           <div class="tb1">
             
-
+          <form method="POST" action="../services/partida/guardarPartida.php">
             <div class="col-md-12">
               <div class="wdgt wdgt-primary" hide-btn="true">
                 <div class="wdgt-header">Materiales</div>
                 <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
-                  <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped">
+                  <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped" id="recursos">
                     <thead>
                       <tr>
                         <th>Descripcion</th>
@@ -200,33 +200,11 @@ if ($link) {
                       </tr>
                     </thead>
                     <tbody>
-
-
-
-                      <?php
-$sql = mysql_query("select * from linearecurso lr inner join recurso r where lr.codigo=r.codigo and lr.numero=0");
-while ($row = mysql_fetch_array($sql)) {
-    
-    
-    echo '<tr>';
-    
-    echo '<td>'. $row['nombre'] .'</td>';
-    echo '<td>'. $row['unidad'] .'</td>';
-    echo '<td>'. $row['cantidad'] . '</td>';
-    echo '<td>'. $row['costoDirecto'] .'</td>';
-    echo '<td>'. $row['subTotal'] .'</td>';
-    echo "<td><input style='max-width: 5%;' onClick=\"if(confirm('Se eliminará este registro')) window.location.href='eliminarLR.php?cod=$row[codigo]';\" type='image' src='../Imagenes/eliminar.png'> </td>";
-    
-    echo '</tr>';
-    
-    
-}
-?>
-
                     </tbody>
                   </table>
                   <div>
-                    <button data-toggle="modal" data-target="#squarespaceModal" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
+                    <button id="new-row-recursos" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
+                    <strong>Sub-total:<span id="sub-total-recursos">0.00</span></strong>
                   </div>
                   <br>
                 </div>
@@ -234,11 +212,106 @@ while ($row = mysql_fetch_array($sql)) {
 
             </div>
 
+              <div class="col-md-12">
+                <div class="wdgt wdgt-primary" hide-btn="true">
+                  <div id="divMano" class="wdgt-header">Mano de Obra</div>
+                  <div class="wdgt-body" style="padding-bottom:10px; padding-top:10px;">
+                    <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped" id="manoObra">
+                      <thead>
+                        <tr>
+                          <th>Descripcion</th>
+                          <th>Jorn</th>
+                          <th>F.P</th>
+                          <th>Jorn. Total</th>
+                          <th>Rendimiento</th>
+                          <th>Sub-Total</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                  </tbody>
+                    </table>
+                    <div>
+                    <button id="new-row-mano-obra" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
+                    <strong>Sub-total:<span id="sub-total-MO">0.00</span></strong>
+                    </div>
+                  </div>
+                </div>
 
+              </div>
 
+              <div class="col-md-12">
+                <div class="wdgt wdgt-primary" hide-btn="true">
+                  <div class="wdgt-header">Equipo y Herramientas</div>
+                  <div class="wdgt-body" style="padding-bottom:10px; padding-top:10px;" id="herramientas">
+                    <table id="herramientas" cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped">
+                      <thead>
+                        <tr>
+                          <th>Descripcion</th>
+                          <th>Tipo</th>
+                          <th>Capacidad</th>
+                          <th>Rendimiento</th>
+                          <th>Costo por Hora</th>
+                          <th>Sub-Total</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                    <div>
+                    <button id="new-row-herramientas" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
+                    <strong>Sub-total:<span id="sub-total-herramientas">0.00</span></strong>
+                    </div>
+                  </div>
+                </div>
 
-            <!-- line modal -->
-            <div class="modal fade" id="squarespaceModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+              </div>
+
+            <div class="col-md-12">
+                <div class="wdgt wdgt-primary" hide-btn="true">
+                  <div class="wdgt-header">SubContratos</div>
+                  <div class="wdgt-body" style="padding-bottom:10px; padding-top:10px;" id="subcontratos">
+                    <table id="subcontratos" cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped">
+                      <thead>
+                        <tr>
+                          <th>Descripcion</th>
+                          <th>Unidad</th>
+                          <th>Cantidad</th>
+                          <th>Valor</th>
+                          <th>Sub-Total</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                    <button id="new-row-subcontratos" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
+                    <strong>Sub-total:<span id="sub-total-subcontratos">0.00</span></strong>
+
+                  </div>
+                  
+                </div>
+
+              </div>
+
+              <div class="col-md-12">
+              <div class="wdgt">
+                  <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" name="nombre" class="form-control" placeholder="Nombre Partida" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Costo Indirecto</label>
+                    <br/>
+                    <input type="number" min="0" class="col-md-1" name="CI" class="form-control" placeholder="%" required><span class="col-md-1">%</span>
+                  </div>
+                  <button id="principal" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" disabled>Guardar</button>
+              </div>
+            </div>
+                </form>
+
+                <div class="modal fade" id="squarespaceModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
               <div class="modal-dialog" style="width:75%">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -256,7 +329,7 @@ while ($row = mysql_fetch_array($sql)) {
                           <div class="wdgt" hide-btn="true">
                             <div class="wdgt-header">Tabla de recursos</div>
                             <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
-                              <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
+                              <table id="recursos-seleccion" cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
 
 
                                 <!--ENCABEZADO DE LA TABLA RECURSOS -->
@@ -306,10 +379,12 @@ while ($row = mysql_fetch_array($sql)) {
     
     $nombre=$row['nombre'];
     $codigo=$row['codigo'];
+    $unidad = $row['unidad'];
+    $valor = $row['total'];
     
     
     
-    echo '<td><button onclick="cantidad(\''.$nombre.'\', \''.$codigo.'\' );">Agregar</button></td>';
+    echo '<td><button onclick="cantidad(\''.$codigo.'\', \''.$nombre.'\', \''.$unidad.'\', \''.$valor.'\')">Agregar</button></td>';
     
     
     
@@ -319,12 +394,7 @@ while ($row = mysql_fetch_array($sql)) {
     echo '</tr>';
 }
 
-?>
-
-
-
-
-                                </tbody>
+?>                            </tbody>
                               </table>
 
 
@@ -336,120 +406,10 @@ while ($row = mysql_fetch_array($sql)) {
                       </div>
 
                     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                  </div>
-                  <div class="modal-footer">
-                    <div class="btn-group btn-group-justified" role="group" aria-label="group button">
-                      <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" role="button">Salir</button>
-                      </div>
-                    
                     </div>
-                  </div>
                 </div>
               </div>
             </div>
-
-<?php
-
-// Conectar con el servidor y base de datos
-$mysqli = new mysqli('localhost','sgp_user','56p_2016','sgp_system');
-
-if ($mysqli->connect_error) {
-    die('Error : ('. $mysqli->connect_errno .') '. $mysqli->connect_error);
-}
-
-
-if(isset($_REQUEST['agregar'])) {
-    
-    $desc = $_REQUEST['descripcion'];
-    $jorn = $_REQUEST['jornada'];
-    $fp = $_REQUEST['FP'];
-    $jornT = $_REQUEST['jornadaTotal'];
-    $rend = $_REQUEST['rendimiento'];
-    $subT = $_REQUEST['subTotal'];
-    
-    $sql = "INSERT INTO lineamanoobra (numero, descripcion, jornada, FP, jornadaTotal, rendimiento, subTotal)
-    VALUES (0,'".$desc."', '".$jorn."', '".$fp."', '".$jornT."', '".$rend."', '".$subT."')";
-    
-    $mysqli->query($sql);
-}
-
-
-?>
-
-              <div class="col-md-12">
-                <div class="wdgt wdgt-primary" hide-btn="true">
-                  <div id="divMano" class="wdgt-header">Mano de Obra</div>
-                  <div class="wdgt-body" style="padding-bottom:10px; padding-top:10px;" id="manoObra">
-                    <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped">
-                      <thead>
-                        <tr>
-                          <th>Descripcion</th>
-                          <th>Jorn</th>
-                          <th>F.P</th>
-                          <th>Jorn. Total</th>
-                          <th>Rendimiento</th>
-                          <th>Sub-Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-
-<?php
-
-  if(isset($_REQUEST['guardar'])) {
-        print '<tr>';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td></td>';
-        print '</tr>';
-    
-  } else{
-
-    $results = $mysqli->query("SELECT * FROM lineamanoobra WHERE numero=0");
-
-    while($row = $results->fetch_array()) {
-        print '<tr>';
-        print '<td>'.$row["descripcion"].'</td>';
-        print '<td>'.$row["jornada"].'</td>';
-        print '<td>'.$row["FP"].'</td>';
-        print '<td>'.$row['jornadaTotal'].'</td>';
-        print '<td>'.$row['rendimiento'].'</td>';
-        print '<td>'.$row['subTotal'].'</td>';
-        print '</tr>';
-    }
-  }
-
-?>
-
-                  </tbody>
-                    </table>
-                    <button data-toggle="modal" data-target="#modal2" class="btn btn-info"><i class="icon icon-plus"></i></button>
-
-                  </div>
-                </div>
-
-              </div>
-
 
               <!-- line modal -->
               <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
@@ -462,7 +422,7 @@ if(isset($_REQUEST['agregar'])) {
                     <div class="modal-body">
 
                       <!-- content goes here -->
-                      <form onsubmit="setFormSubmitting()" id="defaultForm" method="post" action="crear_partida.php" class="form-horizontal">
+                      <form class="form-horizontal">
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Descripcion</label>
@@ -486,29 +446,15 @@ if(isset($_REQUEST['agregar'])) {
                         </div>
 
                         <div class="form-group">
-                          <label class="col-lg-3 control-label">Jornada Total</label>
-                          <div class="col-lg-7">
-                            <input type="number" step="0.1" class="form-control" name="jornadaTotal" required/>
-                          </div>
-                        </div>
-
-                        <div class="form-group">
                           <label class="col-lg-3 control-label">Rendimiento</label>
                           <div class="col-lg-7">
                             <input type="number" step="0.01" class="form-control" name="rendimiento" required/>
                           </div>
                         </div>
 
-                        <div class="form-group">
-                          <label class="col-lg-3 control-label">Sub-Total</label>
-                          <div class="col-lg-7">
-                            <input type="number" step="0.01" class="form-control" name="subTotal" required/>
-                          </div>
-                        </div>
-
                         <div class="btn-group btn-group-justified" role="group" aria-label="group button">
                           <div class="btn-group" role="group">
-                            <button type="submit" class="btn btn-success" name="agregar" value="Agregar">Ingresar</button>
+                            <button type="button" class="btn btn-success" name="agregar" value="Agregar">Ingresar</button>
                           </div>
                           <div class="btn-group" role="group">
                             <button type="reset" class="btn btn-info">Limpiar</button>
@@ -522,85 +468,6 @@ if(isset($_REQUEST['agregar'])) {
                   </div>
                 </div>
               </div>
-
-
-<?php
-
-if(isset($_REQUEST['agregar2'])) {
-    
-    $desc = $_REQUEST['descripcion'];
-    $tipo = $_REQUEST['tipo'];
-    $cap = $_REQUEST['capacidad'];
-    $rend = $_REQUEST['rendimiento'];
-    $cost = $_REQUEST['costoHora'];
-    $subT = $_REQUEST['subTotal'];
-    
-    $sql = "INSERT INTO lineaequipoherramienta (numero,descripcion, tipo, capacidad, rendimiento, costoHora, subTotal)
-    VALUES (0,'".$desc."', '".$tipo."', '".$cap."', '".$rend."', '".$cost."', '".$subT."')";
-    
-    $mysqli->query($sql);
-}
-
-
-?>
-
-
-              <div class="col-md-12">
-                <div class="wdgt wdgt-primary" hide-btn="true">
-                  <div class="wdgt-header">Equipo y Herramientas</div>
-                  <div class="wdgt-body" style="padding-bottom:10px; padding-top:10px;" id="manoObra">
-                    <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped">
-                      <thead>
-                        <tr>
-                          <th>Descripcion</th>
-                          <th>Tipo</th>
-                          <th>Capacidad</th>
-                          <th>Rendimiento</th>
-                          <th>Costo por Hora</th>
-                          <th>Sub-Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-
-<?php
-
-   if(isset($_REQUEST['guardar'])) {
-        print '<tr>';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td></td>';
-        print '</tr>';
-    
-  } else{
-
-    $results = $mysqli->query("SELECT * FROM lineaequipoherramienta WHERE numero=0");
-
-    while($row = $results->fetch_array()) {
-        print '<tr>';
-        print '<td>'.$row["descripcion"].'</td>';
-        print '<td>'.$row["tipo"].'</td>';
-        print '<td>'.$row['capacidad'].'</td>';
-        print '<td>'.$row['rendimiento'].'</td>';
-        print '<td>'.$row['costoHora'].'</td>';
-        print '<td>'.$row['subTotal'].'</td>';
-        print '</tr>';
-    }
-  }
-
-?>
-
-                      </tbody>
-                    </table>
-                    <button data-toggle="modal" data-target="#modal3" class="btn btn-info"><i class="icon icon-plus"></i></button>
-
-                  </div>
-                </div>
-
-              </div>
-
               <!-- line modal -->
               <div class="modal fade" id="modal3" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -612,7 +479,7 @@ if(isset($_REQUEST['agregar2'])) {
                     <div class="modal-body">
 
                       <!-- content goes here -->
-                      <form onsubmit="setFormSubmitting()" id="defaultForm" method="post" action="crear_partida.php" class="form-horizontal">
+                      <form class="form-horizontal">
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Descripcion</label>
@@ -624,28 +491,28 @@ if(isset($_REQUEST['agregar2'])) {
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Tipo</label>
                           <div class="col-lg-7">
-                            <input type="text" class="form-control" name="tipo" required/>
+                            <input type="text" class="form-control" name="tipo"/>
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Capacidad</label>
                           <div class="col-lg-7">
-                            <input type="number" class="form-control" name="capacidad" required/>
+                            <input type="number" class="form-control" name="capacidad"/>
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Rendimiento</label>
                           <div class="col-lg-7">
-                            <input type="number" step="0.01" class="form-control" name="rendimiento" required/>
+                            <input type="number" step="0.01" class="form-control" name="rendimiento"/>
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Costo Hora</label>
                           <div class="col-lg-7">
-                            <input type="number" step="0.01" class="form-control" name="costoHora" required/>
+                            <input type="number" step="0.01" class="form-control" name="costoHora"/>
                           </div>
                         </div>
 
@@ -658,7 +525,7 @@ if(isset($_REQUEST['agregar2'])) {
 
                         <div class="btn-group btn-group-justified" role="group" aria-label="group button">
                           <div class="btn-group" role="group">
-                            <button type="submit" class="btn btn-success" name="agregar2" value="Agregar">Ingresar</button>
+                            <button type="button" class="btn btn-success" name="agregar2" value="Agregar">Ingresar</button>
                           </div>
                           <div class="btn-group" role="group">
                             <button type="reset" class="btn btn-info">Limpiar</button>
@@ -672,82 +539,6 @@ if(isset($_REQUEST['agregar2'])) {
                   </div>
                 </div>
               </div>
-
-
-<?php
-
-if(isset($_REQUEST['agregar3'])) {
-    
-    $part = $_REQUEST['numero'];
-    $desc = $_REQUEST['descripcion'];
-    $uni = $_REQUEST['unidad'];
-    $cant = $_REQUEST['cantidad'];
-    $val = $_REQUEST['valor'];
-    $subT = $_REQUEST['subTotal'];
-    
-    $sql = "INSERT INTO lineasubcontrato (numero, descripcion, unidad, cantidad, valor, subTotal)
-    VALUES (0,'".$desc."','".$uni."', '".$cant."', '".$val."', '".$subT."')";
-    
-    $mysqli->query($sql);
-}
-
-
-?>
-
-
-              <div class="col-md-12">
-                <div class="wdgt wdgt-primary" hide-btn="true">
-                  <div class="wdgt-header">SubContratos</div>
-                  <div class="wdgt-body" style="padding-bottom:10px; padding-top:10px;" id="subcontratos">
-                    <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped">
-                      <thead>
-                        <tr>
-                          <th>Descripcion</th>
-                          <th>Unidad</th>
-                          <th>Cantidad</th>
-                          <th>Valor</th>
-                          <th>Sub-Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-
-<?php
-
-  if(isset($_REQUEST['guardar'])) {
-        print '<tr>';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td></td>';
-        print '<td></td>';
-        print '</tr>';
-    
-  } else{
-    $results = $mysqli->query("SELECT * FROM lineasubcontrato WHERE numero=0");
-
-    while($row = $results->fetch_array()) {
-        print '<tr>';
-        print '<td>'.$row["descripcion"].'</td>';
-        print '<td>'.$row["unidad"].'</td>';
-        print '<td>'.$row['cantidad'].'</td>';
-        print '<td>'.$row['valor'].'</td>';
-        print '<td>'.$row['subTotal'].'</td>';
-        print '</tr>';
-    }
-  }
-
-?>
-
-                      </tbody>
-                    </table>
-                    <button data-toggle="modal" data-target="#modal4" class="btn btn-info"><i class="icon icon-plus"></i></button>
-
-                  </div>
-                  
-                </div>
-
-              </div>
-
               <!-- line modal -->
               <div class="modal fade" id="modal4" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -759,7 +550,7 @@ if(isset($_REQUEST['agregar3'])) {
                     <div class="modal-body">
 
                       <!-- content goes here -->
-                      <form onsubmit="setFormSubmitting()" id="defaultForm" method="post" action="crear_partida.php" class="form-horizontal">
+                      <form class="form-horizontal">
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Descripcion</label>
@@ -789,16 +580,9 @@ if(isset($_REQUEST['agregar3'])) {
                           </div>
                         </div>
 
-                        <div class="form-group">
-                          <label class="col-lg-3 control-label">Sub-Total</label>
-                          <div class="col-lg-7">
-                            <input type="number" step="0.01" class="form-control" name="subTotal" required/>
-                          </div>
-                        </div>
-
                         <div class="btn-group btn-group-justified" role="group" aria-label="group button">
                           <div class="btn-group" role="group">
-                            <button type="submit" class="btn btn-success" name="agregar3" value="Agregar">Ingresar</button>
+                            <button type="button" class="btn btn-success" name="agregar3" value="Agregar">Ingresar</button>
                           </div>
                           <div class="btn-group" role="group">
                             <button type="reset" class="btn btn-info">Limpiar</button>
@@ -813,38 +597,10 @@ if(isset($_REQUEST['agregar3'])) {
                 </div>
               </div>
 
-<?php
-            if(isset($_REQUEST['guardar'])) {
-
-              $nam = $_REQUEST['nombre'];  
-
-              $db = mysqli_connect('localhost','sgp_user', '56p_2016', 'sgp_system');   
-
-              $query = "CALL llenar_partida('".$nam."');";
-              $query .= "CALL actualizar_lineas();";
-  
-              mysqli_multi_query($db, $query);  
-              
-            }  
-              
-              mysqli_close($db);
-
-?>
-
-            <div class="col-md-12">
-              <div class="wdgt">
-                <form onsubmit="setFormSubmitting(); notifyMe();" method="post" action="crear_partida.php">
-                  <div class="form-group">
-                    <label>Nombre</label>
-                    <input type="text" name="nombre" class="form-control" placeholder="Nombre Partida" required>
-                  </div>
-                  <button onClick="window.location.href='crear_partida.php'" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" >Guardar</button>
-                </form>
-              </div>
-            </div>
-
 
           </div>
+                      
+
         </div>
 
         <!-- END PAGE CONTENT -->
@@ -866,58 +622,50 @@ if(isset($_REQUEST['agregar3'])) {
     <script src="../lib/JS/DT_bootstrap.js"></script>
     <script src="../lib/JS/soft-widgets.js"></script>
     <script src="../lib/js/bootstrapValidator.js"></script>
-
-    <script>
-              // request permission on page load
-        document.addEventListener('DOMContentLoaded', function () {
-          if (!Notification) {
-            alert('Notificaciones de Escritorio no disponibles. Intentalo en Chrome'); 
-            return;
-          }
-
-          if (Notification.permission !== "granted")
-            Notification.requestPermission();
-        });
-
-        function notifyMe() {
-          if (Notification.permission !== "granted")
-            Notification.requestPermission();
-          else {
-            var notification = new Notification('Nueva Partida Creada!', {
-              icon: '../Imagenes/logo.png',
-              body: "Se ha creado una nueva partida!",
-            });
-
-            notification.onclick = function () {
-              window.open("consultarPartidas.php");      
-            };
-
-          }
-
-        }
-    </script>
-
-    <script>
-      var formSubmitting = false;
-      var setFormSubmitting = function() { formSubmitting = true; };
-
-      window.onload = function() {
-          window.addEventListener("beforeunload", function (e) {
-              if (formSubmitting) {
-                  return undefined;
-              }
-
-              var confirmationMessage = 'parece que has hecho algunos cambios. '
-                                      + 'si te sales perderas todo!.';
-
-              (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-              return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-          });
-      };
-    </script>
-
     <script>
       $(document).ready(function() {
+       window.cantidad= function (codigo, nombre, unidad, valor) {
+        var cant = "";
+        valor = +valor;
+        cant = +prompt("Indique la cantidad a agregar de " + nombre + ":", "");
+        $('#squarespaceModal').modal('hide');
+        if (cant != null) {
+          var subtotal = valor * cant;
+         if (/^([0-9])*$/.test(cant)){
+          $("#recursos tr:last td").each(function(index){
+            if (index == 0){
+              $("input[type='hidden']", this).val(codigo);
+              $("span", this).text(nombre);
+            }else if(index == 1){
+              $("input[type='hidden']", this).val(cant.toFixed(2));
+              $("span", this).text(unidad);
+            }else if(index == 2){
+              $("span", this).text(cant.toFixed(2));
+            }
+            else if(index == 3){
+              $("span", this).text(valor.toFixed(2));
+            }
+            else if(index == 4){
+              $("input[type='hidden']", this).val(subtotal.toFixed(2));
+              $("span", this).text(subtotal.toFixed(2));
+            }
+          });
+          var total_recursos = +$("#sub-total-recursos").text() + subtotal;
+          $("#sub-total-recursos").text(total_recursos.toFixed(2));
+        }
+         
+        else {
+         alert("El valor " + cant + " no es un número");
+        }
+        
+       }
+        }
+
+
+        $('#squarespaceModal').modal({ show: false});
+        $("#modal2").modal({show: false});
+        $("#modal3").modal({show: false});
+        $("#modal4").modal({show: false});
         $('.datatable').dataTable({
           "sPaginationType": "bs_full"
         });
@@ -932,60 +680,167 @@ if(isset($_REQUEST['agregar3'])) {
           length_sel.addClass('form-control input-sm');
         });
 
-        $(".new-row").click(function() {
-          var table = $(this).parent().children("table");
+        $("#new-row-recursos").click(function() {
+          $('#squarespaceModal').modal('show');
+          var table = $(this).parents(".wdgt-body").children("table");
           var count = table.children("tbody").children("tr").length;
 
-          html = "<tr><td><input type='text' class='" + (count + 1) + " form-control input-sm'/></td><td><input type='text' class='" + (count + 1) + " form-control input-sm'/></td><td><input type='text' class='" + (count + 1) + " form-control input-sm'/></td><td><input type='text' class='" + (count + 1) + " form-control input-sm'/></td><td><input type='text' class='" + (count + 1) + " form-control input-sm'/></td>";
-          table.children("tbody").children("tr").filter(":last").children("td").each(function(index) {
-            var val = $(this).children("input[type='text']").val();
-            $(this).children("input[type='text']").hide();
-            $(this).text(val);
-          });
-          if (table.attr('id') != 'subcontratos') {
-            html += "<td><input type='text' class='" + (count + 1) + " form-control input-sm'/></td>";
-          }
-          html += "</tr>";
+          html = "<tr><td><span></span><input type='hidden' name='codigo[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_recursos[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
           table.append(html);
+           $("#principal").prop("disabled", false);
+        });
+
+        $("#new-row-mano-obra").click(function() {
+          $('#modal2').modal('show');
+          var table = $(this).parents(".wdgt-body").children("table");
+          var count = table.children("tbody").children("tr").length;
+
+          html = "<tr><td><span></span><input type='hidden' name='descripcion_mano_obra[]'/></td><td><span></span><input type='hidden' name='jornada[]'/></td><td><span></span><input type='hidden' name='FP[]'/></td><td><span></span></td><td><span></span><input type='hidden' name='rendimiento_MO[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_MO[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          table.append(html);
+          $("#principal").prop("disabled", false);
+        });
+
+        $("#modal2 form button[name='agregar']").click(function(){
+          var descripcion = $(this).parents("form").find("input[name='descripcion']").val();
+          var jornada = + $(this).parents("form").find("input[name='jornada']").val();
+          var FP = + $(this).parents("form").find("input[name='FP']").val();
+          var rendimiento = + $(this).parents("form").find("input[name='rendimiento']").val();
+          var jornada_total = jornada * FP;
+          var subtotal = jornada_total / rendimiento;
+          $("#manoObra tr:last td").each(function(index){
+            if (index == 0) {
+              $("span", this).text(descripcion);
+              $("input[type='hidden']", this).val(descripcion);
+            }else if (index == 1) {
+              $("span", this).text(jornada.toFixed(2));
+              $("input[type='hidden']", this).val(jornada.toFixed(2));
+            }else if (index == 2) {
+              $("span", this).text(FP.toFixed(2));
+              $("input[type='hidden']", this).val(FP.toFixed(2));
+            }else if (index == 3) {
+              $("span", this).text(jornada_total.toFixed(2));
+            }else if (index == 4) {
+              $("span", this).text(rendimiento.toFixed(2));
+              $("input[type='hidden']", this).val(rendimiento.toFixed(2));
+            }else if(index == 5){
+              $("span", this).text(subtotal.toFixed(2));
+              $("input[type='hidden']", this).val(subtotal.toFixed(2));
+            }
+          });
+          $("#modal2").modal("hide");
+          var total_MO = +$("#sub-total-MO").text() + subtotal;
+          $("#sub-total-MO").text(total_MO.toFixed(2));
+          $(this).parents("form").find(":input").val("");
+        });
+
+         $("#new-row-herramientas").click(function() {
+          $('#modal3').modal('show');
+          var table = $(this).parents(".wdgt-body").children("table");
+          var count = table.children("tbody").children("tr").length;
+
+          html = "<tr><td><span></span><input type='hidden' name='descripcion_herramienta[]'/></td><td><span></span><input type='hidden' name='tipo[]'/></td><td><span></span><input type='hidden' name='capacidad[]'/></td><td><span></span><input type='hidden' name='rendimiento_herramienta[]'/></td><td><span></span><input type='hidden' name='costo_hora[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_herramienta[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          table.append(html);
+           $("#principal").prop("disabled", false);
+        });
+
+         $("#modal3 form button[name='agregar2']").click(function(){
+          var descripcion = $(this).parents("form").find("input[name='descripcion']").val();
+          var tipo = $(this).parents("form").find("input[name='tipo']").val();
+          var capacidad =  $(this).parents("form").find("input[name='capacidad']").val();
+          var rendimiento = + $(this).parents("form").find("input[name='rendimiento']").val();
+          var costo_hora = + $(this).parents("form").find("input[name='costoHora']").val();
+          var subtotal = + $(this).parents("form").find("input[name='subTotal']").val();
+          $("#herramientas tr:last td").each(function(index){
+            if (index == 0) {
+              $("span", this).text(descripcion);
+              $("input[type='hidden']", this).val(descripcion);
+            }else if (index == 1) {
+              if (tipo.length == 0) {
+              $("span", this).text("N/E");
+              $("input[type='hidden']", this).val(0);
+              }else{
+              $("span", this).text(tipo);
+              $("input[type='hidden']", this).val(tipo)
+              }
+            }
+            else if (index == 2) {
+              if (tipo.length == 0) {
+              $("span", this).text("N/E");
+              $("input[type='hidden']", this).val(0);
+              }else{
+              $("span", this).text(capacidad);
+              $("input[type='hidden']", this).val(capacidad);
+              }
+             
+            }else if (index == 3) {
+              $("span", this).text(rendimiento.toFixed(2));
+              $("input[type='hidden']", this).val(rendimiento.toFixed(2));
+            }else if (index == 4) {
+              $("span", this).text(costo_hora.toFixed(2));
+              $("input[type='hidden']", this).val(costo_hora.toFixed(2));
+            }else if(index == 5){
+              $("span", this).text(subtotal.toFixed(2));
+              $("input[type='hidden']", this).val(subtotal.toFixed(2));
+            }
+          });
+          $("#modal3").modal("hide");
+          var total_herramienta = +$("#sub-total-herramientas").text() + subtotal;
+          $("#sub-total-herramientas").text(total_herramienta.toFixed(2));
+          $(this).parents("form").find(":input").val("");
+        });
+
+         $("#new-row-subcontratos").click(function() {
+          $('#modal4').modal('show');
+          var table = $(this).parents(".wdgt-body").children("table");
+          var count = table.children("tbody").children("tr").length;
+
+          html = "<tr><td><span></span><input type='hidden' name='descripcion_subcontrato[]'/></td><td><span></span><input type='hidden' name='unidad[]'/></td><td><span></span><input type='hidden' name='cantidad_subcontrato[]'/></td><td><span></span><input type='hidden' name='valor[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_subcontrato[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          table.append(html);
+           $("#principal").prop("disabled", false);
+        });
+
+         $("#modal4 form button[name='agregar3']").click(function(){
+          var descripcion = $(this).parents("form").find("input[name='descripcion']").val();
+          var unidad =  $(this).parents("form").find("input[name='unidad']").val();
+          var cantidad = + $(this).parents("form").find("input[name='cantidad']").val();
+          var valor = + $(this).parents("form").find("input[name='valor']").val();
+          var subtotal = cantidad * valor;
+          $("#subcontratos tr:last td").each(function(index){
+            if (index == 0) {
+              $("span", this).text(descripcion);
+              $("input[type='hidden']", this).val(descripcion);
+            }else if (index == 1) {
+              $("span", this).text(unidad);
+              $("input[type='hidden']", this).val(unidad);
+            }else if (index == 2) {
+              $("span", this).text(cantidad.toFixed(2));
+              $("input[type='hidden']", this).val(cantidad.toFixed(2));
+            }else if (index == 3) {
+              $("span", this).text(valor.toFixed(2));
+              $("input[type='hidden']", this).val(valor.toFixed(2));
+            }else if(index == 4){
+              $("span", this).text(subtotal.toFixed(2));
+              $("input[type='hidden']", this).val(subtotal.toFixed(2));
+            }
+          });
+          $("#modal4").modal("hide");
+          var total_subcontrato = +$("#sub-total-subcontratos").text() + subtotal;
+          $("#sub-total-subcontratos").text(total_subcontrato.toFixed(2));
+          $(this).parents("form").find(":input").val("");
+        });
+
+        $(document).on("click", ".eliminar", function(){
+          var total = +$(this).closest("div").find("div span").text();
+          var subtotal = +$(this).closest("tr").find("td span.subtotal").text();
+          total = total - subtotal;
+          $(this).closest("div").find("div span").text(total.toFixed(2));
+          $(this).parents("tr").remove();
+          countRows = $("#recursos>tr").length + $("#manoObra>tr").length + $("#herramientas>tr").length + $("#subcontratos>tr").length;
+          if (countRows <= 0) {
+             $("#principal").prop("disabled", true);
+          }
         });
       });
     </script>
-
-    <script>
-      function cantidad(nombre, codigo) {
-
-        var cant = "";
-
-
-
-        cant = prompt("Indique la cantidad a agregar de " + nombre + ":", "");
-
-        if (cant != null) {
-        
-
-         if (/^([0-9])*$/.test(cant))
-         
-        window.location.replace("insertarLR.php?cod=" + codigo + "&cantidad=" + cant + "");
-
-
-        else {
-
-         alert("El valor " + cant + " no es un número");
-  }
-
-
-        
-       }
-
-        }
-
-      
-    </script>
-
-
-
-
-
   </body>
-
   </html>
