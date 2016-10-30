@@ -789,6 +789,7 @@ while ($row = mysql_fetch_array($sql)) {
           $(this).parents("form").find(":input").val("");
         });
 
+         
          $("#new-row-subcontratos").click(function() {
           $('#modal4').modal('show');
           var table = $(this).parents(".wdgt-body").children("table");
