@@ -87,7 +87,7 @@ if ($link) {
                       <span class="caret"></span>
                     </a>
                   </div>
-                  <div id="c-tables" class="accordion-body collapse">
+                  <div id="c-tables" class="accordion-body collapse in">
                     <div class="accordion-inner">
                       <a href="consultarPartidas.php" class="sbtn sbtn-default">Ver Partidas</a>
                       <a href="crear_partida.php" class="sbtn sbtn-default active">Crear Partida</a>

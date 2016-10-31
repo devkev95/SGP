@@ -83,10 +83,19 @@
          <span class="caret"></span>
         </a>
        </div>
-       <div id="c-forms" class="accordion-body collapse in"><div class="accordion-inner">
+       <div id="c-forms" class="accordion-body collapse"><div class="accordion-inner">
         <a href="tabla_recursos.php" class="sbtn sbtn-default">Ver Recursos</a>
         <a href="ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
        </div></div>
+      </div>
+
+      <div class="accordion-group">
+       <div class="accordion-heading">
+        <a class="sbtn btn-default" href="proyectos.php">
+         <span class="fa fa-list-alt"></span>
+         &nbsp;&nbsp;Proyectos
+        </a>
+       </div>
       </div>
 
       

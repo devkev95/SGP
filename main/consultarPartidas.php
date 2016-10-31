@@ -55,7 +55,7 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
       <?php if ($userData->getPerfil() == "Administrador"){ ?>
       <div class="accordion-group">
        <div class="accordion-heading">
-        <a class="sbtn btn-default active" href="admin/users.php">
+        <a class="sbtn btn-default" href="admin/users.php">
          <span class="fa fa-users"></span>
          &nbsp;&nbsp;Usuarios
         </a>
@@ -71,8 +71,8 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
          <span class="caret"></span>
         </a>
        </div>
-       <div id="c-tables" class="accordion-body collapse"><div class="accordion-inner">
-        <a href="../main/consultarPartidas.php" class="sbtn sbtn-default">Ver Partidas</a>
+       <div id="c-tables" class="accordion-body collapse in"><div class="accordion-inner">
+        <a href="../main/consultarPartidas.php" class="sbtn sbtn-default active">Ver Partidas</a>
         <a href="../main/crear_partida.php" class="sbtn sbtn-default">Crear Partida</a> 
        </div></div>
       </div>
@@ -85,8 +85,8 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
          <span class="caret"></span>
         </a>
        </div>
-       <div id="c-forms" class="accordion-body collapse in"><div class="accordion-inner">
-        <a href="../main/tabla_recursos.php" class="sbtn sbtn-default active">Ver Recursos</a>
+       <div id="c-forms" class="accordion-body collapse"><div class="accordion-inner">
+        <a href="../main/tabla_recursos.php" class="sbtn sbtn-default">Ver Recursos</a>
         <a href="../main/ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
        </div></div>
       </div>

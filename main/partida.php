@@ -110,7 +110,7 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
          <span class="caret"></span>
         </a>
        </div>
-       <div id="c-forms" class="accordion-body collapse in"><div class="accordion-inner">
+       <div id="c-forms" class="accordion-body collapse"><div class="accordion-inner">
         <a href="../main/tabla_recursos.php" class="sbtn sbtn-default active">Ver Recursos</a>
         <a href="../main/ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
        </div></div>
