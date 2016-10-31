@@ -27,11 +27,11 @@ $hE6= $_POST['subTotalEH'];
 //$queruSHE="SELECT id FROM lineaequipoherramienta WHERE id"
 
 //VARIABLES SUB CONTRATO
-$sC1= $_POST['descripcionSC'];
-$sC2= $_POST['unidadSC'];
-$sC3= $_POST['cantidadSC'];
-$sC4= $_POST['valorSC'];
-$sC5= $_POST['subTotalSC'];
+$sC1= $_POST['descripcionsc'];
+$sC2= $_POST['unidadsc'];
+$sC3= $_POST['cantidadsc'];
+$sC4= $_POST['valorsc'];
+$sC5= $_POST['subTotalsc'];
 
 //nuevo Costo Indecto
 
@@ -58,7 +58,7 @@ $resultadoSC=mysqli_query($db,$querySC);
 //matteriales
   $num_rows = mysqli_num_rows($resultado1);
           $numero=0;
-          $totalMateriales;
+          $totalMateriales=0;
           if($num_rows > 0){
 
         
@@ -172,8 +172,11 @@ $resultadoSC=mysqli_query($db,$querySC);
 
 
     }
+
     $queryTotalEH="UPDATE partida SET totalEquipoHerramientas=".$totalEH." WHERE numero=".$numeroPartida;
     $updateTEH=mysqli_query($db,$queryTotalEH);
+
+    
 
     //subcontratos
     $num_rowsSC = mysqli_num_rows($resultadoSC);
@@ -183,8 +186,9 @@ $resultadoSC=mysqli_query($db,$querySC);
           if($num_rowsSC> 0){
 
         
-        while ($filaSC = mysqli_fetch_array($resultadoSC)){
+        while ($filaSC=mysqli_fetch_array($resultadoSC)){
           
+         
           $descripcionNSC=null;
           $unidadNSC=null;
           $cantidadNSC=0;
@@ -192,6 +196,7 @@ $resultadoSC=mysqli_query($db,$querySC);
           $subTotalNSC=0;
 
           $identificadorSC="$filaSC[id]";
+          echo "$identificadorSC";
           $descripcionNSC=$sC1[$numeroSC];
           $unidadNSC=$sC2[$numeroSC];
           $cantidadNSC=$sC3[$numeroSC];
@@ -200,7 +205,7 @@ $resultadoSC=mysqli_query($db,$querySC);
 
           $totalSC=$totalSC+$subTotalNSC;
 
-          
+         
           $querySC1="UPDATE lineasubcontrato SET unidad='".$unidadNSC."', cantidad=".$cantidadNSC.",valor=". $valorNSC.",descripcion='".$descripcionNSC."', subTotal=".$subTotalNSC." WHERE id=".$identificadorSC;
 
           
@@ -231,13 +236,7 @@ $queryTotalSC="UPDATE partida SET totalSubContratos=".$totalSC." WHERE numero=".
     $queryPrecioU="UPDATE partida SET precioUnitario=".$precioU." WHERE numero=".$numeroPartida;
     $updateCD=mysqli_query($db,$queryPrecioU);
 
-
-
-  
-  
-
-
-
+echo "Prueba";
 
 header("Location: modPartida.php?numero=$numeroPartida");
 
