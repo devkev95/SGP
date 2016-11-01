@@ -1,4 +1,5 @@
 <?php
+ error_reporting(0);
  require'../services/conn.php';
  $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 
