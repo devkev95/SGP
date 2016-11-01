@@ -18,31 +18,62 @@
  //}
 
  //ELIMINAR MONO DE OBRA
- $desMO=$_POST['dMO'];
+ if(isset($_POST['dMO'])){
+ 	 $desMO=$_POST['dMO'];
+ }
+
  $queryDeleteMO="DELETE FROM lineamanoobra WHERE descripcion='".$desMO."'";
  $deleteMO=mysqli_query($db,$queryDeleteMO);
 //ELIMINAR EQUIPO y HERRAMIENTAS
- $desH=$_POST['dH'];
+ if(isset($_POST['dH'])){
+ 	$desH=$_POST['dH'];
+ }
+ 
 $queryDeleteH="DELETE FROM lineaequipoherramienta WHERE descripcion='".$desH."'";
 $deleteH=mysqli_query($db,$queryDeleteH);
 //ELIMINAR SUBCONTRATO
-$des=$_POST['d'];
+if(isset($_POST['d'])){
+	$des=$_POST['d'];
+}
+
 
  $queryDelete="DELETE FROM lineasubcontrato WHERE descripcion='".$des."'";
  $delete=mysqli_query($db,$queryDelete);
 //VARIABLE PARA INGRESAR MANO DE OBRA
- $MO1=$_POST['descripcion-manoObra'];
- $MO2=$_POST['jornada-manoObra'];
- $MO3=$_POST['FP'];
- $MO4=$_POST['rendimiento'];
+ if(isset($_POST['descripcion-manoObra'])){
+ 	 $MO1=$_POST['descripcion-manoObra'];
+ }
+if(isset($_POST['jornada-manoObra'])){
+ 	$MO2=$_POST['jornada-manoObra'];
+ }
+ if(isset($_POST['FP'])){
+ 	 $MO3=$_POST['FP'];
+ }	
+if (isset($_POST['rendimiento'])) {
+	 $MO4=$_POST['rendimiento'];
+}
+
 
 //VARIABLES PARA INGRESAR EQUIPO Y HERRAMIENTAS
-$hE1= $_POST['descripcion-herramienta'];
-$hE2= $_POST['tipo-herramienta'];
-$hE3= $_POST['capacidad-herramienta'];
-$hE4= $_POST['rendimiento-herramienta'];
-$hE5= $_POST['costoHora'];
-$hE6= $_POST['subTotal-herramienta'];
+if(isset($_POST['descripcion-herramienta'])){
+	$hE1= $_POST['descripcion-herramienta'];	
+}
+if(isset($_POST['tipo-herramienta'])){
+	$hE2= $_POST['tipo-herramienta'];
+}
+if (isset($_POST['capacidad-herramienta'])) {
+$hE3= $_POST['capacidad-herramienta'];	
+}
+if (isset($_POST['rendimiento-herramienta'])){
+	$hE4= $_POST['rendimiento-herramienta'];
+}
+if (isset($_POST['costoHora'])) {
+	$hE5= $_POST['costoHora'];
+}
+if (isset($_POST['subTotal-herramienta'])) {
+	$hE6= $_POST['subTotal-herramienta'];
+}
+
 
 if($hE3==null){
 	$hE3='null';
@@ -56,11 +87,25 @@ if($hE5==null){
 }
 
  //VARIABLES PARA INGRESAR SUBCONTRATO
- $sC1= $_POST['descripcion'];
-$sC2= $_POST['unidad'];
+if (isset($_POST['descripcion'])) {
+	 $sC1= $_POST['descripcion'];
+}
+if (isset($_POST['unidad'])) {
+	$sC2= $_POST['unidad'];
+}
+if (isset($_POST['cantidad'])) {
 $sC3= $_POST['cantidad'];
-$sC4= $_POST['valor'];
-$sC5= $_POST['subtotal'];
+}
+if (isset($_POST['valor'])) {
+	$sC4= $_POST['valor'];
+}
+if (isset($_POST['subtotal'])) {
+	$sC5= $_POST['subtotal'];
+}
+
+
+
+
 //CONSULTA Y PROCEDIMIENTO PARA INGRESAR MANO DE OBRA
 $jornadaTotalMO=0;
 $subTotalMO=0;
