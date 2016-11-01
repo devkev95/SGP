@@ -91,6 +91,15 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
        </div></div>
       </div>
 
+       <div class="accordion-group">
+       <div class="accordion-heading">
+        <a class="sbtn btn-default" href="proyectos.php">
+         <span class="fa fa-list-alt"></span>
+         &nbsp;&nbsp;Proyectos
+        </a>
+       </div>
+      </div>
+      
       </div>
       </div>
       </div>

@@ -135,6 +135,15 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
        </div></div>
       </div>
 
+      <div class="accordion-group">
+       <div class="accordion-heading">
+        <a class="sbtn btn-default" href="proyectos.php">
+         <span class="fa fa-list-alt"></span>
+         &nbsp;&nbsp;Proyectos
+        </a>
+       </div>
+      </div>
+      
       </div>
       </div>
       </div>
