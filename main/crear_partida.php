@@ -363,7 +363,7 @@ if ($link) {
 
                                   <?php
 #include 'connect_db.php';
-//require("connect_db.php");
+require("connect_db.php");
 $sql = mysql_query("CALL sp_select('2','')");
 while ($row = mysql_fetch_array($sql)) {
     echo '<tr>';
