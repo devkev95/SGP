@@ -1,6 +1,7 @@
 <?php
 
-require '../model/Usuario.php';
+require_once '../model/Usuario.php';
+require_once '../services/conn.php';
 
 session_start();
 
@@ -9,18 +10,9 @@ if (!isset($_SESSION["userData"])){
     header("Location: home.php");
     exit();
 }
+$db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 $userData = $_SESSION["userData"];
 session_write_close();
-
-error_reporting(0);
-
-$link=mysqli_connect("localhost","sgp_user","56p_2016");
-
-if ($link) {
-    mysqli_select_db("sgp_system", $link);
-    # code...
-}
-
 
 ?>
 
@@ -374,9 +366,9 @@ if ($link) {
 
                                   <?php
 #include 'connect_db.php';
-require("connect_db.php");
-$sql = mysql_query("CALL sp_select('2','')");
-while ($row = mysql_fetch_array($sql)) {
+//require("connect_db.php");
+$sql = $db->query("SELECT codigo, nombre, unidad, costoDirecto, iva, total, fecha, empresaProveedora, tipoRecurso FROM recurso");
+while ($row = $sql->fetch_array()) {
     echo '<tr>';
     echo '<td>'. $row['codigo'] . '</td>';
     echo '<td>'. $row['nombre'] .'</td>';

@@ -5,33 +5,29 @@
 
   session_start();
 
-  if(isset($_SESSION["userData"]) and $_SESSION["userData"]->getPerfil() == "Administrador"){
+ if (!isset($_SESSION["userData"])){
+    session_destroy();
+    header("Location: home.php");
+    exit();
+  }
     $userData = $_SESSION["userData"];
-  session_write_close();
+    session_write_close();
   $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 
-  $numeroMO=0;
 $numeroPartida = $_GET['numero'];
 
-$query= "SELECT numero,nombre FROM partida WHERE numero=".$numeroPartida;
-                $resultado= mysqli_query($db,$query);
+$query= "SELECT numero, nombre, totalCD, totalCF, precioUnitario, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos FROM partida WHERE numero=".$numeroPartida;
+$resultado= $db->query($query);
             
-$query1="SELECT a.nombre, a.unidad, b.cantidad, a.total, b.subTotal FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo WHERE numero =".$numeroPartida;
-          $resultado1=mysqli_query($db,$query1);
-$query2="SELECT descripcion, jornada, FP, jornadaTotal, rendimiento, subTotal FROM lineamanoobra WHERE numero =".$numeroPartida;
-          $resultado2=mysqli_query($db,$query2);
-$query3="SELECT descripcion, tipo, capacidad, rendimiento, costoHora, subTotal FROM  `lineaequipoherramienta` WHERE numero =".$numeroPartida;
-           $resultado3=mysqli_query($db,$query3);
-$query4="SELECT descripcion, unidad, cantidad, valor, subTotal FROM lineasubcontrato WHERE numero =".$numeroPartida;
-$resultado4=mysqli_query($db,$query4);
+$query1="SELECT b.id ,a.nombre, a.unidad, b.cantidad, a.total, b.subTotal FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo WHERE numero =".$numeroPartida;
+$resultado1=$db->query($query1);
 
-$queryC="SELECT totalCD, totalCF,precioUnitario from partida WHERE numero=".$numeroPartida;
-$resultadoC=mysqli_query($db,$queryC);
-
-$queryTotales="SELECT totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos from partida WHERE numero=".$numeroPartida;
-$resultadoTotales=mysqli_query($db,$queryTotales);
-$filaTotales = mysqli_fetch_array($resultadoTotales);
-
+$query2="SELECT id, descripcion, jornada, FP, jornadaTotal, rendimiento, subTotal FROM lineamanoobra WHERE numero =".$numeroPartida;
+  $resultado2=$db->query($query2);
+$query3="SELECT id, descripcion, tipo, capacidad, rendimiento, costoHora, subTotal FROM  `lineaequipoherramienta` WHERE numero =".$numeroPartida;
+  $resultado3=$db->query($query3);
+$query4="SELECT id, descripcion, unidad, cantidad, valor, subTotal FROM lineasubcontrato WHERE numero =".$numeroPartida;
+$resultado4=$db->query($query4);
 
 ?>
 <!DOCTYPE html>
@@ -46,28 +42,6 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
   <link rel="stylesheet" href="../lib/CSS/fonts.css">
   <link type="text/css" rel="stylesheet" href="../lib/CSS/soft-admin.css"/>
 
-  <style> 
-  .selected{
-    cursor: pointer;
-  }
-
-  .selected:hover{
-    background-color: #BDBDBD;
-    input {
-      background-color:  #BDBDBD;
-    }
-   
-  }
-
-
-
-  .seleccionada{
-    background-color: #BDBDBD;
- 
-
-  }
-  </style>
-  
   <!-- Adjustable Styles -->
   <link type="text/css" rel="stylesheet" href="../lib/css/icheck.css?v=1.0.1">
   
@@ -158,8 +132,8 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
       <li><a href="ingresar.php">Agregar Recurso</a></li>
       <li class="divider" style="border-bottom:1px solid #ddd; margin:0px; margin-top:5px;"></li>
       <li class="dropdown-header">Partidas</li>
-      <li><a href="../main/consultarPartidas.php">Ver Partidas</a></li>
-      <li><a href="../main/crear_partida.php">Crear Partida</a></li>
+      <li><a href="consultarPartidas.php">Ver Partidas</a></li>
+      <li><a href="crear_partida.php">Crear Partida</a></li>
       <li class="divider" style="border-bottom:1px solid #ddd; margin:0px; margin-top:5px;"></li>
     </ul>
    </div>
@@ -212,9 +186,11 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
      </div>
 
      <div class="tbl">
-
+      
       <div class="col-md-12">
+      <form action="modPartida_exe.php" method="POST">
       <!-- ENCABEZADO-->
+      <input type="hidden" value="<?php echo $numeroPartida; ?>" name="idPartida" />
        <div class="wdgt wdgt-primary" hide-btn="true">
        <div class="wdgt-body wdgt-table"></div>
         <div class="wdgt-body wdgt-table" align="center">
@@ -227,12 +203,10 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
           <div class="wdgt-body wdgt-table" align="center">
         
         <?php  
-        while ($fila = mysqli_fetch_array($resultado)) {?>
-          Partida N°  <?php echo "$fila[numero] ";?>  UNIDAD: <br>
+       $fila = $resultado->fetch_object() ?>
+          Partida N°  <?php echo $fila->numero; ?>  UNIDAD: <br>
           <?php
-          echo "$fila[nombre]<br>";
-        }
-
+          echo $fila->nombre."<br>";
         ?><br></div>
        
        </div>
@@ -243,8 +217,7 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
        </div>
          
         <div class="wdgt-body wdgt-table">
-        <form  action="modPartida_exe.php?numero= <?php echo "$numeroPartida";?>" method="POST">
-         <table class="table">
+         <table class="table" id="table-mat-prima">
           <thead >
             <tr >
           
@@ -253,32 +226,33 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
            <th>Cantidad</th>
            <th>Valor</th>
            <th>Subtotal</th>
+           <th>Acciones</th>
             </tr>
           </thead>
            <tbody>
            <?php  
-          $num_rows = mysqli_num_rows($resultado);
-          $numeroM=0;
+          $num_rows = $resultado1->num_rows;
           if($num_rows > 0){
 
         
-        while ($fila1 = mysqli_fetch_array($resultado1)) {?>
+        while ($fila_m = $resultado1->fetch_object()) { ?>
          
          
-            <tr id="material<?php echo "$numeroM"; ?>" class="selected" onclick="seleccionarMaterial(this.id)">
+            <tr class="materiaPrima">
+           <input type="hidden" class="id" name="idLineaMatPrima[]" value="<?php echo $fila_m->id; ?>"/>
+           <td><span><?php echo $fila_m->nombre; ?></span></td>
+           <td><span><?php echo $fila_m->unidad; ?></span></td>
            
-           <td><?php echo "$fila1[nombre]";?></td>
-           <td><?php echo "$fila1[unidad]";?></td>
-           
-           <td><input type="number" name="cantidadMaterial[<?php echo "$numeroM"; ?>]" style="border:none" value="<?php echo "$fila1[cantidad]";?>"></td>
-           <td><?php echo "$fila1[total]";?></td>
-           <?php $subT="$fila1[subTotal]";?>
+           <td><input type="hidden" name="cantidadMateria[]" value="<?php echo $fila_m->cantidad; ?>"/><span><?php echo $fila_m->cantidad; ?></span></td>
+           <td><input type="hidden" name="subTotal_recursos[]" value="<?php echo $fila_m->subTotal; ?>"/><span><?php echo $fila_m->total; ?></span></td>
            
 
-           <td><?php echo "$subT";?></td>
+           <td><span><?php echo $fila_m->subTotal; ?></span></td>
+           <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>
+           <button type="button" class="editar btn btn-info btn-sm"><i class="icon icon-edit" ></i></button></td>
 
             </tr>
-            <?php $numeroM=$numeroM+1;} }?>
+            <?php } } ?>
              </tbody>
 
 
@@ -286,25 +260,24 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
           </div>
       
        
-<table>
+          <table>
               <tr>
             <td></td>
               <td></td>
                 <td></td>
-            <td> SUBTOTAL</td>
-            <td><input type="text" value="<?php echo "$filaTotales[totalMateriales]"; ?>" name="totalM" style="border:none" disabled>  </td>
+            <td> <strong>SUBTOTAL:</strong></td>
+            <td class="subtotal" id="subtotalMatPrima">&nbsp;<?php echo $fila->totalMateriales; ?></td>
             </tr>
-</table>
+          </table>
 
- <table>
+          <table>
           <tr>
-            <td><button type="button" id="new-row-material" class="btn btn-primary btn-tooltip" data-placement="bottom" title="" data-original-title="Agregar nueva mano de obra"  data-target="#"  data-toggle="modal"><i class="icon icon-plus"></i></button></td>
-            <td> <button type="button"  id="deleteMaterial"  class="btn btn-danger btn-tooltip" data-placement="bottom" data-original-title="Eliminar mano de obra" data-target="#modalMaterial"  data-toggle="modal" disabled=true><i class="icon icon-remove" ></i></button></td>
+            <td><button type="button" id="new-row-material" class="btn btn-primary btn-tooltip"><i class="icon icon-plus"></i></button></td>
           </tr>
 
         </table>
          
- </div>
+      </div>
          
         
        
@@ -317,7 +290,7 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
          
         <div class="wdgt-body wdgt-table">
 
-         <table class="table" id="table_mano-obra">
+         <table class="table" id="table-mano-obra">
           <thead >
             <tr >
            
@@ -327,29 +300,31 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
            <th>Jorn. Total</th>
            <th>Rendimiento</th>
            <th>Subtotal</th>
+           <th>Acciones</th>
             </tr>
           </thead>
            <tbody>
          <?php  
           
-           $num_rowsMO = mysqli_num_rows($resultado2);
+           $num_rowsMO = $resultado2->num_rows;
            
           if($num_rowsMO > 0){
          
-        while ($fila2 = mysqli_fetch_array($resultado2)) { ?>
+        while ($fila_mo = $resultado2->fetch_object()) { ?>
           
          
-            <tr id="mano-obra<?php echo "$numeroMO"; ?>" class="selected" onclick="seleccionarMO(this.id)">
-           
-           <td><input type="text"   style="border:none"   name="descripcionMO[<?php echo "$numeroMO"; ?>]"      value="<?php echo "$fila2[descripcion]";?>"  ></td>
-           <td><input type="number" style="border:none"   name="jornadaMO[<?php echo "$numeroMO"; ?>]"      value="<?php echo "$fila2[jornada]";?>"      ></td>
-           <td><input type="number" style="border:none"   name="FPMO[<?php echo "$numeroMO"; ?>]"      value="<?php echo "$fila2[FP]";?>"           ></td>
-           <td><input type="number" style="border:none"   name="jornadaTotalMO[<?php echo "$numeroMO"; ?>]"      value="<?php echo "$fila2[jornadaTotal]";?>" ></td>
-           <td><input type="number" style="border:none"   name="rendimientoMO[<?php echo "$numeroMO"; ?>]"      value="<?php echo "$fila2[rendimiento]";?>"  ></td>
-           <td><input type="number" style="border:none"   name="subTotalMO[<?php echo "$numeroMO"; ?>]"      value="<?php echo "$fila2[subTotal]";?>"     ></td>
+            <tr class="manoObra">
+           <input type="hidden" class="id" name="idLineaMO[]" value="<?php echo $fila_mo->id; ?>"/>
+           <td><input type="hidden" name="descripcionMO[]" value="<?php echo $fila_mo->descripcion; ?>"/><span><?php echo $fila_mo->descripcion; ?></span></td>
+           <td><input type="hidden" name="jornadaMO[]" value="<?php echo $fila_mo->jornada; ?>"/><span><?php echo $fila_mo->jornada; ?></span></td>
+           <td><input type="hidden" name="FPMO[]" value="<?php echo $fila_mo->FP; ?>"/><span><?php echo $fila_mo->FP; ?></span></td>
+           <td><span><?php echo $fila_mo->jornadaTotal; ?></span></td>
+           <td><input type="hidden" name="rendimientoMO[]" value="<?php echo $fila_mo->rendimiento; ?>"/><span><?php echo $fila_mo->rendimiento; ?></span></td> 
+           <td><input type="hidden" value="<?php echo $fila_mo->subTotal; ?>" name="subTotalMO[]"/><span><?php echo $fila_mo->subTotal; ?></span></td>
+           <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>
+           <button type="button" class="editar btn btn-info btn-sm"><i class="icon icon-edit"></i></button></td>
             </tr>
-          
-            <?php $numeroMO=$numeroMO+1;}  } ?>
+          <?php }  } ?>
 
              </tbody>
           
@@ -364,15 +339,14 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
               <td></td>
                 <td></td>
                 <td></td>
-            <td> SUBTOTAL</td>
-            <td><input type="text" value="<?php echo "$filaTotales[totalManoObra]"; ?>" name="totalMO" style="border:none" disabled ></td>
+            <td><strong>SUBTOTAL:</strong></td>
+            <td class="subtotal" id="subTotalMO">&nbsp;<?php echo $fila->totalManoObra; ?></td>
             </tr></table>
 
          
         <table>
           <tr>
-            <td><button type="button" id="new-row-manoObra" class="btn btn-primary btn-tooltip" data-placement="bottom" title="" data-original-title="Agregar nueva mano de obra"  data-target="#modal-manoObra"  data-toggle="modal"><i class="icon icon-plus"></i></button></td>
-            <td> <button type="button"  id="deleteMO"  class="btn btn-danger btn-tooltip" data-placement="bottom" data-original-title="Eliminar mano de obra" data-target="#modalManoObra"  data-toggle="modal" disabled=true><i class="icon icon-remove" ></i></button></td>
+            <td><button type="button" id="new-row-mano-obra" class="btn btn-primary btn-tooltip"><i class="icon icon-plus"></i></button></td>
           </tr>
 
         </table>
@@ -399,28 +373,29 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
            <th>Rendimiento</th>
            <th>Costo por hora</th>
            <th>Subtotal</th>
+           <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
              <?php  
 
-          $num_rowsEH = mysqli_num_rows($resultado3);
+          $num_rowsEH = $resultado3->num_rows;
           
-          $numEH=0;
-
           if( $num_rowsEH > 0){
-                while ($fila3 = mysqli_fetch_array($resultado3)) {?>
+                while ($fila_EH = $resultado3->fetch_object()) { ?>
           
-            <tr id="herramienta<?php echo "$numEH"; ?>" class="selected" onclick="seleccionarH(this.id)">
-           
-           <td><input type="text"  style="border:none"  value="<?php echo "$fila3[descripcion]";?>" name="descripcionEH[<?php echo "$numEH"; ?>]"></td>
-           <td><input type="text"  style="border:none"  value="<?php echo "$fila3[tipo]";?>"        name="tipoEH[<?php echo "$numEH"; ?>]"></td>
-           <td><input type="text"  style="border:none"  value="<?php echo "$fila3[capacidad]";?>"   name="capacidadEH[<?php echo "$numEH"; ?>]"></td>
-           <td><input type="number"  style="border:none"  value="<?php echo "$fila3[rendimiento]";?>" name="rendimientoEH[<?php echo "$numEH"; ?>]"></td>
-           <td><input type="number"  style="border:none"  value="<?php echo "$fila3[costoHora]";?>"   name="costoHoraEH[<?php echo "$numEH"; ?>]"></td>
-           <td><input type="number"  style="border:none"  value="<?php echo "$fila3[subTotal]";?>"    name="subTotalEH[<?php echo "$numEH"; ?>]"></td>
+            <tr class="EH">
+           <input type="hidden" class="id" name="idLineaEH[]" value="<?php echo $fila_EH->id; ?>"/>
+           <td><input type="hidden" name="descripcionEH[]" value="<?php echo $fila_EH->descripcion; ?>" /><span><?php echo $fila_EH->descripcion; ?></span></td>
+           <td><input type="hidden" name="tipoEH[]" value="<?php echo $fila_EH->tipo; ?>"/><span><?php echo $fila_EH->tipo; ?></span></td>
+           <td><input type="hidden" name="capacidadEH[]" value="<?php echo $fila_EH->capacidad; ?>"/><span><?php echo $fila_EH->capacidad; ?></span></td>
+           <td><input type="hidden" name="rendimientoEH[]" value="<?php echo $fila_EH->rendimiento; ?>"/><span><?php echo $fila_EH->rendimiento; ?></span></td>
+           <td><input type="hidden" name="costo_hora[]" value="<?php echo $fila_EH->costoHora; ?>"/><span><?php echo $fila_EH->costoHora; ?></span></td>
+           <td><input type="hidden" name="subTotalEH[]" value="<?php echo $fila_EH->subTotal; ?>"/><span><?php echo $fila_EH->subTotal; ?></span></td>
+           <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>
+           <button type="button" class="editar btn btn-info btn-sm"><i class="icon icon-edit" ></i></button></td>
             </tr> 
-            <?php $numEH=$numEH+1; } } ?>
+            <?php } } ?>
                </tbody>
          </table>
            </div>
@@ -430,17 +405,17 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
                 <td></td>
                 <td></td>
                 <td></td>
-            <td> SUBTOTAL</td>
-            <td><input type="text" style="border:none" value="<?php echo "$filaTotales[totalEquipoHerramientas]"; ?>" name="totalEH" style="border:none" disabled>  </td>
+            <td> <strong>SUBTOTAL:</strong></td>
+            <td class="subtotal" id="subtotal_EH">&nbsp;<?php echo $fila->totalEquipoHerramientas; ?></td>
             </tr></table>
 
        
       
         <table>
         <tr>        
-         <td><button type="button" id="new-row-equipoHerramienta" class="btn btn-primary btn-tooltip" data-placement="bottom"  data-original-title="Agregar nuevo equipo o herramienta" data-target="#modalIngresarEH" data-toggle="modal"><i class="icon icon-plus"></i></button></td>
-         <td><button type="button"  id="deleteHerramienta"  class="btn btn-danger btn-tooltip" data-placement="bottom"  data-original-title="Eliminar equipo o herramienta" data-target="#modalHerramienta"  data-toggle="modal" disabled="true"><i class="icon icon-remove"></i></button></td></tr>
-         </table> 
+         <td><button type="button" id="new-row-equipoHerramienta" class="btn btn-primary btn-tooltip"><i class="icon icon-plus"></i></button></td>
+         </tr>
+         </table>
        </div>
        <!--CUARTA TABLA-->
               <div class="wdgt wdgt-primary" hide-btn="true">
@@ -459,25 +434,28 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
            <th>Cantidad</th>
            <th>Valor</th>
            <th>Subtotal</th>
+           <th>Acciones</th>
             </tr>
           </thead>
            <tbody>
          <?php  
-          $num_rowsSC = mysqli_num_rows($resultado4);
-          $numSC=0;
+          $num_rowsSC = $resultado4->num_rows;
           if( $num_rowsSC > 0){
-          while ($fila4 = mysqli_fetch_array($resultado4)) {?>
+          while ($fila_sub = $resultado4->fetch_object()) { ?>
          
-            <tr id="subcontrato<?php echo "$numSC"; ?>"  class="selected" onclick="seleccionar(this.id) " value=" " >
+            <tr class="subcontrato">
+            <input type="hidden" class="id" name="idLineaSC[]" value="<?php echo $fila_sub->id; ?>/"/>
            
-           <td><input type="text" style="border:none"    value="<?php echo "$fila4[descripcion]";?>" name="descripcionsc[<?php echo "$numSC"; ?>]"   ></td>
-           <td><input type="text" style="border:none"    value="<?php echo "$fila4[unidad]";?>"      name="unidadsc[<?php echo "$numSC"; ?>]"   ></td>
-           <td><input type="number" style="border:none"    value="<?php echo "$fila4[cantidad]";?>"    name="cantidadsc[<?php echo "$numSC"; ?>]"   ></td>
-           <td><input type="number" style="border:none"    value="<?php echo "$fila4[valor]";?>"       name="valorsc[<?php echo "$numSC"; ?>]"   ></td>
-           <td><input type="number" style="border:none"    value="<?php echo "$fila4[subTotal]";?>"    name="subTotalsc[<?php echo "$numSC"; ?>]"   ></td>
+           <td><input type="hidden" name="descripcionsc[]" value="<?php echo $fila_sub->descripcion; ?>"/><span><?php echo $fila_sub->descripcion; ?></span></td>
+           <td><input type="hidden" name="unidadsc[]" value="<?php echo $fila_sub->unidad; ?>"/><span><?php echo $fila_sub->unidad; ?></span></td>
+           <td><input type="hidden" name="cantidadsc[]" value="<?php echo $fila_sub->cantidad; ?>"/><span><?php echo $fila_sub->cantidad; ?></span></td>
+           <td><input type="hidden" name="valorsc[]" value="<?php echo $fila_sub->valor; ?>"/><span><?php echo $fila_sub->valor; ?></span></td>
+           <td><input type="hidden" name="subtotalsc[]" value="<?php echo $fila_sub->subTotal; ?>"/><span><?php echo $fila_sub->subTotal; ?></span></td>
+           <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>
+           <button type="button" class="editar btn btn-info btn-sm"><i class="icon icon-edit" ></i></button></td>
             </tr>
 
-            <?php $numSC=$numSC+1; } }?>
+            <?php } } ?>
                </tbody>
 
          </table>
@@ -490,148 +468,165 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
             <td></td>
             <td></td>
             <td></td>
-            <td> <strong>SUBTOTAL</strong> </td>
-            <td><input type="text" value="<?php echo "$filaTotales[totalSubContratos]"; ?>" name="totalSC" style="border:none" disabled> </td>
+            <td> <strong>SUBTOTAL:</strong> </td>
+            <td class="subtotal" id="subtotal-subcontrato">&nbsp;<?php echo $fila->totalSubContratos; ?></td>
             </tr></tbody></table>
          <table>
          <tr>  <td>
-         <button type="button"  id="new-row-subcontratos" class="btn btn-primary btn-tooltip" data-placement="bottom" data-original-title="Agregar nuevo Sub-Contrato" data-target="#modalAgregarSubcontrato"  data-toggle="modal"><i class="icon icon-plus"></i></button></td>
-         
-         <td><button id="detele" type="button"  class="btn btn-danger btn-tooltip" data-placement="bottom" title="" data-original-title="Eliminar Sub-Contrato" data-target="#modalSubContrato"  data-toggle="modal" disabled=true><i class="icon icon-remove" ></i></button></td></tr>
+         <button type="button"  id="new-row-subcontratos" class="btn btn-primary btn-tooltip"><i class="icon icon-plus"></i></button></td>
+         </tr>
          <!--LISTA DE MODAL-->
-         <!--MODAL ELIMINAR MATERIAL-->
-            <div class="modal fade" id="modalMaterial" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-          <div class="modal-dialog">
-           <div class="modal-content">
-            
-            <div class="modal-body">
-
-      <div class="alert alert-warning"><span class="icon icon-warning-sign"></span> 
-      <strong>Cuidado!</strong>  Esta seguro que desea eliminar este material</div>
-             
-            </div>
-            <div class="modal-footer">
-             <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
-             <button type="button" class="btn btn-warning"  id="delete-row-material" data-dismiss="modal">Aceptar</button>
-            </div>
-           </div>
-          </div>
-         </div> 
-         <!--MODAL MANO OBRA-->
-         <div class="modal fade" id="modalManoObra" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-          <div class="modal-dialog">
-           <div class="modal-content">
-            
-            <div class="modal-body">
-
-      <div class="alert alert-warning"><span class="icon icon-warning-sign"></span> 
-      <strong>Cuidado!</strong>  Esta seguro que desea eliminar Mano de Obra</div>
-             
-            </div>
-            <div class="modal-footer">
-             <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
-             <button type="button" class="btn btn-warning"  id="delete-row-manoObra" data-dismiss="modal">Aceptar</button>
-            </div>
-           </div>
-          </div>
-         </div>
-
-         <!--MODAL HERRAMIENTA-->
-
-         <div class="modal fade" id="modalHerramienta" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-          <div class="modal-dialog">
-           <div class="modal-content">
-            
-            <div class="modal-body">
-
-      <div class="alert alert-warning"><span class="icon icon-warning-sign"></span> 
-      <strong>Cuidado!</strong>  Esta seguro que desea este Equipo o Herramienta</div>
-             
-            </div>
-            <div class="modal-footer">
-             <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
-             <button type="button" class="btn btn-warning"  id="delete-row-herramienta" data-dismiss="modal">Aceptar</button>
-            </div>
-           </div>
-          </div>
-         </div>
-
-         <!-- MODAL PARA AGREGAR SUBCONTRATO-->
-        
-         
-
-
         </table>
        </div>
        <!-- QUINTA TABLA -->
        <table class="table" align="center">
          
           <tbody>
-             <?php  
-
-        while($filaC= mysqli_fetch_array($resultadoC)) { ?>
             <tr>
            
            <td>COSTO DIRECTO</td>
-           <td><?php  echo "$filaC[totalCD]";?></td>
+           <td id="cd"><?php  echo $fila->totalCD;?></td>
             </tr>
             <tr>
               
               <td>COSTO INDIRECTO</td>
-              <td><input type="number" value="<?php  echo "$filaC[totalCF]";?>" name="nuevoTotalCI" style="border:none"> </td>
+              <td><input type="number" value="<?php  echo $fila->totalCF; ?>" name="CI" step="any"/> </td>
             </tr>
             <tr>
               <td>COSTO UNITARIO</td>
-              <td><?php  echo "$filaC[precioUnitario]";?></td>
-            </tr>
-
-            <?php }?>
-
-            
+              <td id="cu"><?php echo $fila->precioUnitario; ?></td>
+            </tr>            
           </tbody>
 
 
          </table>
-        
-        </div>
-       </div>
+         <div>  
 
-       <!-- FIN DE TABLAS-->
-
-      </div>
-        <div class="modal fade" id="confirmacion" tabindex="-1" role=dialog aria-labelledby="MyModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-           <div class="alert alert-success"><span class="icon icon-ok-sign"></span> <strong>GUARDADO</strong> Partida modificada correctamente </div>
-            
-            </div>
-          </div>
-        </div>
-      </div>
-
-     <div align="right">  
-
-          <button  type="submit" class="btn btn-primary btn-round" name="enviarCambios"data-toggle="modal" data-target="#confirmacion">Relizar cambios</button>
+          <button  type="submit" class="btn btn-primary btn-round" name="enviarCambios" disabled>Relizar cambios</button>
           <br>    <br>   <br>              
           
                
         </div>
-     </form>
+        </form>
+       <!-- FIN DE TABLAS-->
 
-      </div>
-     </div>
+     
+      <!--MODAL ELIMINAR-->
+            <div class="modal fade" id="modalEliminar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+          <div class="modal-dialog">
+           <div class="modal-content">
+            
+            <div class="modal-body">
 
-    </div>
-    <!-- END PAGE CONTENT -->
+      <div class="alert alert-warning"><span class="icon icon-warning-sign"></span> 
+      <strong>Cuidado</strong> <span id="confirmMessage"></span></div>
+             
+            </div>
+            <div class="modal-footer">
+             <button type="button" class="btn btn-dark" id="cancel">Cancelar</button>
+             <button type="button" class="btn btn-warning"  id="accept">Aceptar</button>
+            </div>
+           </div>
+          </div>
+         </div> 
 
-   </div>
-   <!-- END NAV, CRUMBS, & CONTENT -->
- 
+       <div class="modal fade" id="squarespaceModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+              <div class="modal-dialog" style="width:75%">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h3 class="modal-title" id="lineModalLabel">Recursos</h3>
+                  </div>
+                  <div class="modal-body">
+
+                    <!-- content goes here -->
+
+                    <div class="content">
+
+                      <div class="tbl">
+                        <div class="col-md-12">
+                          <div class="wdgt" hide-btn="true">
+                            <div class="wdgt-header">Tabla de recursos</div>
+                            <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
+                              <table id="recursos-seleccion" cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
+
+
+                                <!--ENCABEZADO DE LA TABLA RECURSOS -->
+
+                                <thead>
+                                  <tr>
+                                    <th>Código</th>
+                                    <th>Nombre del recurso</th>
+                                    <th>Unidad</th>
+                                    <th>Costo Directo</th>
+                                    <th>Iva</th>
+                                    <th>Total</th>
+                                    <th>Fecha Modificación</th>
+                                    <th>Empresa Proveedora</th>
+                                    <th>Tipo de recurso</th>
+                                    <th></th>
 
 
 
-  </div>
+
+
+                                  </tr>
+                                </thead>
+
+
+                                <!--CUERPO DE LA TABLA RECURSOS -->
+
+
+                                <tbody>
+
+
+                                  <?php
+$sql = $db->query("SELECT codigo, nombre, unidad, costoDirecto, iva, total, fecha, empresaProveedora, tipoRecurso FROM recurso");
+while ($row = $sql->fetch_array()) {
+    echo '<tr>';
+    echo '<td>'. $row['codigo'] . '</td>';
+    echo '<td>'. $row['nombre'] .'</td>';
+    echo '<td>'. $row['unidad'] .'</td>';
+    echo '<td>'. $row['costoDirecto'] . '</td>';
+    echo '<td>'. $row['iva'] .'</td>';
+    echo '<td>'. $row['total'] .'</td>';
+    echo '<td>'. $row['fecha'] . '</td>';
+    echo '<td>'. $row['empresaProveedora'] . '</td>';
+    echo '<td>'. $row['tipoRecurso'] . '</td>';
+    
+    $nombre=$row['nombre'];
+    $codigo=$row['codigo'];
+    $unidad = $row['unidad'];
+    $valor = $row['total'];
+    
+    
+    
+    echo '<td><button onclick="cantidadMatPrima(\''.$codigo.'\', \''.$nombre.'\', \''.$unidad.'\', \''.$valor.'\')">Agregar</button></td>';
+    
+    
+    
+    
+    
+    
+    echo '</tr>';
+}
+
+?>                            </tbody>
+                              </table>
+
+
+
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+                    </div>
+                    </div>
+                </div>
+              </div>
+            </div>
   <!-- MODAL PARA INGRESAR MANO DE OBRA-->
   <div class="modal fade" id="modal-manoObra" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -643,19 +638,19 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
                     <div class="modal-body">
 
                       <!-- content goes here -->
-                      <form class="form-horizontal" action="agregarElementosPartida.php?numero= <?php echo "$numeroPartida";?>" method="POST">
+                      <form class="form-horizontal">
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Descripcion</label>
                           <div class="col-lg-7">
-                            <input type="text" class="form-control" name="descripcion-manoObra" required/>
+                            <input type="text" class="form-control" name="descripcion" required/>
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Jornada</label>
                           <div class="col-lg-7">
-                            <input type="number" class="form-control" name="jornada-manoObra" required/>
+                            <input type="number" class="form-control" name="jornada" required/>
                           </div>
                         </div>
 
@@ -675,7 +670,7 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
 
                         <div class="btn-group btn-group-justified" role="group" aria-label="group button">
                           <div class="btn-group" role="group">
-                            <button type="submit" class="btn btn-success" name="agregar" value="Agregar">Ingresar</button>
+                            <button type="button" class="btn btn-success" name="agregar" value="Agregar">Ingresar</button>
                           </div>
                           <div class="btn-group" role="group">
                             <button type="reset" class="btn btn-info">Limpiar</button>
@@ -700,33 +695,33 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
                     <div class="modal-body">
 
                       <!-- content goes here -->
-                      <form class="form-horizontal" action="agregarElementosPartida.php?numero= <?php echo "$numeroPartida";?>" method="POST">
+                      <form class="form-horizontal">
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Descripcion</label>
                           <div class="col-lg-7">
-                            <input type="text" class="form-control" name="descripcion-herramienta" required/>
+                            <input type="text" class="form-control" name="descripcion" required/>
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Tipo</label>
                           <div class="col-lg-7">
-                            <input type="text" class="form-control" name="tipo-herramienta"/>
+                            <input type="text" class="form-control" name="tipo"/>
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Capacidad</label>
                           <div class="col-lg-7">
-                            <input type="number" class="form-control" name="capacidad-herramienta"/>
+                            <input type="number" class="form-control" name="capacidad"/>
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Rendimiento</label>
                           <div class="col-lg-7">
-                            <input type="number" step="0.01" class="form-control" name="rendimiento-herramienta"/>
+                            <input type="number" step="0.01" class="form-control" name="rendimiento"/>
                           </div>
                         </div>
 
@@ -740,13 +735,13 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Sub-Total</label>
                           <div class="col-lg-7">
-                            <input type="number" step="0.01" class="form-control" name="subTotal-herramienta" required/>
+                            <input type="number" step="0.01" class="form-control" name="subTotal" required/>
                           </div>
                         </div>
 
                         <div class="btn-group btn-group-justified" role="group" aria-label="group button">
                           <div class="btn-group" role="group">
-                            <button type="submit" class="btn btn-success" name="agregar2" value="Agregar">Ingresar</button>
+                            <button type="button" class="btn btn-success" name="agregar2" value="Agregar">Ingresar</button>
                           </div>
                           <div class="btn-group" role="group">
                             <button type="reset" class="btn btn-info">Limpiar</button>
@@ -771,7 +766,7 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
                     <div class="modal-body">
 
                       <!-- content goes here -->
-                      <form  action="agregarElementosPartida.php?numero= <?php echo "$numeroPartida";?>" method="POST" >
+                      <form class="form-horizontal">
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Descripcion</label>
                           <div class="col-lg-7">
@@ -799,17 +794,9 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
                             <input type="number" step="0.01" class="form-control" name="valor" required/>
                           </div>
                         </div>
-
-                         <div class="form-group">
-                          <label class="col-lg-3 control-label">Sub-Total</label>
-                          <div class="col-lg-7">
-                            <input type="number" step="0.01" class="form-control" name="subtotal"  required/>
-                          </div>
-                        </div>
-
                         <div class="btn-group btn-group-justified" role="group" aria-label="group button">
                           <div class="btn-group" role="group">
-                            <button type="submit" class="btn btn-primary" name="agregar3">Ingresar</button>
+                            <button type="button" class="btn btn-primary" name="agregar3">Ingresar</button>
                           </div>
                           <div class="btn-group" role="group">
                             <button type="reset" class="btn btn-info">Limpiar</button>
@@ -823,26 +810,52 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
                   </div>
                 </div>
               </div>
-    <!-- MODAL PARA ELIMINAR SUBCONTRATO-->
-         <div class="modal fade" id="modalSubContrato" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-          <div class="modal-dialog">
-           <div class="modal-content">
-            
-            <div class="modal-body">
-            <formaction="agregarElementosPartida.php?numero= <?php echo "$numeroPartida";?>" method="POST">
-      <div class="alert alert-warning"><span class="icon icon-warning-sign"></span> 
-      <strong>Cuidado!</strong>  Esta seguro que desea eliminar este Sub-Contrato</div>
-             
-            </div>
-            <div class="modal-footer">
-             <button type="button" class="btn btn-dark" data-dismiss="modal">Cancelar</button>
-             <button type="button" class="btn btn-warning"  id="delete-row-subcontrato" data-dismiss="modal">Aceptar</button>
-            </div>
-            </form>
-           </div>
-          </div>
-         </div>
-  
+              <!-- MODAL EDITAR MATERIALES -->
+    <div class="modal fade" id="modalEditarMateriales" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header modal-primary">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myModalLabel">Editar Materia Prima</h4>
+                    </div>
+                    <div class="modal-body">
+
+                      <!-- content goes here -->
+                      <form class="form-horizontal">
+                        <div class="form-group">
+                          <label class="col-lg-3 control-label">Cantidad</label>
+                          <div class="col-lg-7">
+                            <input type="text" class="form-control" name="cantidad" required/>
+                          </div>
+                        </div>
+                        <div class="btn-group btn-group-justified" role="group" aria-label="group button">
+                          <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-primary" name="agregar4">Ingresar</button>
+                          </div>
+                          <div class="btn-group" role="group">
+                            <button type="reset" class="btn btn-info">Limpiar</button>
+                          </div>
+                        </div>
+                      </form>
+
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+
+      </div>
+        
+
+      </div>
+     </div>
+     </div>
+
+    <!-- END PAGE CONTENT -->
+
+   </div>
+   <!-- END NAV, CRUMBS, & CONTENT -->
+ 
    <!-- Default JS (DO NOT TOUCH) -->
   <script src="../lib/JS/jquery-3.1.0.min.js"></script>
   <script src="../lib/JS/bootstrap.min.js"></script>
@@ -851,258 +864,405 @@ $filaTotales = mysqli_fetch_array($resultadoTotales);
   <script src="../lib/JS/typeahead-example.js"></script>
   
   <!-- Adjustable JS -->
+  <script src="../lib/JS/jquery.dataTables.js"></script>
+  <script src="../lib/JS/DT_bootstrap.js"></script>
   <script src="../lib/JS/soft-widgets.js"></script>
   <script src="../lib/JS/icheck.js"></script>
   <script src="../lib/js/jquery.jgrowl.min.js"></script>
   <script>
    $(document).ready(function(){
-    $.jGrowl.defaults.pool = 5;
-    $.jGrowl.defaults.position = 'bottom-right';
-    $('.btn.btn-primary.btn-tooltip').tooltip();
-    $('.btn.btn-danger.btn-tooltip').tooltip();
+    $('#squarespaceModal').modal({ show: false});
+        $("#modal-manoObra").modal({show: false});
+        $("#modalIngresarEH").modal({show: false});
+        $("#modalAgregarSubcontrato").modal({show: false});
+        $("#modalEliminar").modal({show: false});
+        $("#modalEditarMateriales").modal({show: false});
+        $('.datatable').dataTable({
+          "sPaginationType": "bs_full"
+        });
+        $('.datatable').each(function() {
+          var datatable = $(this);
+          // SEARCH - Add the placeholder for Search and Turn this into in-line form control
+          var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
+          search_input.attr('placeholder', 'Search');
+          search_input.addClass('form-control input-sm');
+          // LENGTH - Inline-Form control
+          var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
+          length_sel.addClass('form-control input-sm');
+        });
 
-   
-   });
-  </script>
-  <script>
-   $(document).ready(function() { 
-    $('.flat-checkbox').iCheck({
-     checkboxClass: 'icheckbox_flat-purple',
-     radioClass: 'iradio_flat-purple'
+    window.cantidadMatPrima= function (codigo, nombre, unidad, valor) {
+        var cant = "";
+        valor = +valor;
+        cant = +prompt("Indique la cantidad a agregar de " + nombre + ":", "");
+        $('#squarespaceModal').modal('hide');
+        if (cant != null) {
+          var subtotal = valor * cant;
+         if (/^([0-9])*$/.test(cant)){
+          $("#table-mat-prima tr:last td").each(function(index){
+            if (index == 0){
+              $("input[type='hidden']", this).val(codigo);
+              $("span", this).text(nombre);
+            }else if(index == 1){
+              $("input[type='hidden']", this).val(cant.toFixed(2));
+              $("span", this).text(unidad);
+            }else if(index == 2){
+              $("span", this).text(cant.toFixed(2));
+            }
+            else if(index == 3){
+              $("span", this).text(valor.toFixed(2));
+            }
+            else if(index == 4){
+              $("input[type='hidden']", this).val(subtotal.toFixed(2));
+              $("span", this).text(subtotal.toFixed(2));
+            }
+          });
+          var total_recursos = +$("#subtotalMatPrima").text() + subtotal;
+          $("#subtotalMatPrima").text(total_recursos.toFixed(2));
+        }
+         
+        else {
+         alert("El valor " + cant + " no es un número");
+        }
+        total();
+       }
+        }
+
+    $("#new-row-material").click(function() {
+          $('#squarespaceModal').modal('show');
+          var table = $("#table-mat-prima");
+
+          html = "<tr><td><span></span><input type='hidden' name='codigo[]'/></td><td><span></span><input type='hidden' name='cantidadMateria[]'/></td><td><span></span></td><td><span></span></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_recursos[]'/></td><td><button type='button' class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>&nbsp;<button type='button' class='editar btn btn-info btn-sm'><i class='icon icon-edit' ></i></button></td></tr>";
+          table.append(html);
+           $("button[name='enviarCambios']").prop("disabled", false);
+        });
+
+    $("#modalEditarMateriales form button[name='agregar4']").click(function(){
+      cantidad = + $(this).parents("form").find("input[name='cantidad']").val();
+       var selector = '';
+          if (length > 0) {
+            selector = $("#table-mat-prima tr.selected td");
+          }else{
+            selector = $("#table-mat-prima tr:last td");
+          }
+          var valor = + selector.eq(3).find("span").text();
+          var cantidadAnterior = +selector.eq(2).find("span").text();
+          var subTotalAnterior = valor * cantidadAnterior;
+
+          subTotal = valor * cantidad;
+          selector.each(function(index){
+            if (index == 2) {
+              $("span", this).text(cantidad);
+              $("input[type='hidden']", this).val(cantidad);
+            } else if (index == 3){
+              $("input[type='hidden']", this).val(subTotal);
+            }
+            else if (index == 4) {
+           
+              $("span", this).text(subTotal);
+            }
+          });
+          $("#table-mat-prima tr").removeClass("selected");
+          $("#modalEditarMateriales").modal("hide");
+          var total_MatPrima = +$("#subtotalMatPrima").text() + (subTotal - subTotalAnterior);
+          $("#subtotalMatPrima").text(total_MatPrima.toFixed(2));
+          total();
+          $(this).parents("form").find(":input").val("");
     });
-   });
 
-  
-   
-  </script>
-  <!--Seleccion de filas de MANO DE OBRA-->
-
-   <script>
-
-   //seleccionar material
-   var numeroMaterial=<?php echo "$numeroM";?>;
-  
-
-     function seleccionarMaterial(id_fila){
-
-        if($('#'+id_fila).hasClass('seleccionada')){
-          $('#'+id_fila).removeClass('seleccionada');
-          $('#deleteMaterial').attr('disabled', true);
+    $(document).on("click", ".eliminar", function(){
+      $("button[name='enviarCambios']").prop("disabled", false);
+      var row = $(this).closest("tr");
+       var total1 = +$(this).closest("div.wdgt-primary").find("table tr td.subtotal").text();
+      var subtotal = +$(this).closest("tr").find("td span.subtotal").text();
+        confirmDialog("Esta seguro que desea eliminar el registro", function(){
          
-        }
-        else{
-          for(var i=0;i<=numeroMaterial;i++){
-            $('#material'+i).removeClass('seleccionada');
+          total1 = total1 - subtotal;
+          row.closest("div.wdgt-primary").find("table tr td.subtotal").text(total1.toFixed(2));
+          countRows = $("#table-mat-prima>tr").length + $("#table-mano-obra>tr").length + $("#table_Herramienta>tr").length + $("#table_subcontratos>tr").length;
+          if (countRows <= 0) {
+             $("button[name='enviarCambios']").prop("disabled", true);
           }
-          $('#'+id_fila).addClass('seleccionada');
-         $('#deleteMaterial').attr('disabled', false);
-        }
-
-        id_fila_selected=id_fila;
-
-
-    }
-
-    //Seleccion de filas de Mano de Obra
-    function seleccionarMO(id_fila){
-
-        if($('#'+id_fila).hasClass('seleccionada')){
-          $('#'+id_fila).removeClass('seleccionada');
-          $('#deleteMO').attr('disabled', true);
-         
-        }
-        else{
-          for(var i=0;i<=numeroMaterial;i++){
-            $('#mano-obra'+i).removeClass('seleccionada');
+          if(row.find("input.id").length > 0){
+            var id = row.closest("tr").find("input.id").val();
+            var opt = "";
+            var table = row.closest("table").attr("id");
+            if (table == "table-mat-prima") {
+              opt = 1;
+            } else if (table == "table-mano-obra") {
+              opt = 2;
+            } else if (table == "table_Herramienta") {
+              opt = 3;
+            } else if (table == "table_subcontratos") {
+              opt = 4
+            }
+            $.ajax({
+            url: "eliminarElementosPartida.php",
+            method: "POST",
+            data: { "opt" : opt , "id" : id } 
+          });
           }
-          $('#'+id_fila).addClass('seleccionada');
-         $('#deleteMO').attr('disabled', false);
+          total();
+          row.remove();
+
+        });
+      });
+
+    $(document).on("click", ".editar", function(){
+      var row = $(this).closest("tr");
+      row.addClass("selected");
+      $("button[name='enviarCambios']").prop("disabled", false);
+      var id = $(this).closest("table").attr('id');
+        if (id == "table-mat-prima") {
+          var modalForm = $("#modalEditarMateriales form");
+          var val = row.find("td input[name='cantidadMateria[]']").val();
+          modalForm.find("input[name='cantidad']").val(val);
+          $("#modalEditarMateriales").modal("show");
+        } else if (id == "table-mano-obra") {
+          var modalForm = $("#modal-manoObra form");
+          var descripcion = row.find("input[name='descripcionMO[]']").val();
+          var FP = row.find("input[name='FPMO[]']").val();
+          var jornada = row.find("input[name='jornadaMO[]']").val();
+          var rendimiento = row.find("input[name='rendimientoMO[]']").val();
+          modalForm.find("input[name='rendimiento']").val(rendimiento);
+          modalForm.find("input[name='descripcion']").val(descripcion);
+          modalForm.find("input[name='FP']").val(FP);
+          modalForm.find("input[name='jornada']").val(jornada);
+          $("#modal-manoObra").modal('show');
+        } else if (id == "table_Herramienta") {
+          var modalForm = $("#modalIngresarEH form");
+          var descripcion = row.find("input[name='descripcionEH[]']").val();
+          var tipo = row.find("input[name='tipoEH[]']").val();
+          var capacidad = row.find("input[name='capacidadEH[]']").val();
+          var rendimiento = row.find("input[name='rendimientoEH[]']").val();
+          var costoHora = row.find("input[name='costo_hora[]']").val();
+          var subTotal = row.find("input[name='subTotalEH[]']").val();
+          modalForm.find("input[name='descripcion']").val(descripcion);
+          modalForm.find("input[name='tipo']").val(tipo);
+          modalForm.find("input[name='capacidad']").val(capacidad);
+          modalForm.find("input[name='rendimiento']").val(rendimiento);
+          modalForm.find("input[name='costoHora']").val(costoHora);
+          modalForm.find("input[name='subTotal']").val(subTotal);
+          $("#modalIngresarEH").modal("show");
+        } else if (id == "table_subcontratos") {
+          modalForm = $("#modalAgregarSubcontrato form");
+          var descripcion = row.find("input[name='descripcionsc[]']").val();
+          var unidad = row.find("input[name='unidadsc[]']").val();
+          var cantidad = row.find("input[name='cantidadsc[]']").val();
+          var valor = row.find("input[name='valorsc[]']").val();
+          modalForm.find("input[name='descripcion']").val(descripcion);
+          modalForm.find("input[name='unidad']").val(unidad);
+          modalForm.find("input[name='cantidad']").val(cantidad);
+          modalForm.find("input[name='valor']").val(valor);
+          $("#modalAgregarSubcontrato").modal("show");
         }
-
-        id_fila_selected=id_fila;
-
-
-    }
-
-    
-  </script>
-
-  <!-- Seleccion de filas de EQUIPO Y HERRAMIENTAS -->
-
-  <script>
-  var numeroH=<?php echo "$numEH"?>;
-     function seleccionarH(id_fila){
-
-        if($('#'+id_fila).hasClass('seleccionada')){
-          $('#'+id_fila).removeClass('seleccionada');
-          $('#deleteHerramienta').attr('disabled', true);
-         
-        }
-        else{
-          for(var i=0;i<=numeroH;i++){
-            $('#herramienta'+i).removeClass('seleccionada');
-          }
-          $('#'+id_fila).addClass('seleccionada');
-         $('#deleteHerramienta').attr('disabled', false);
-        }
-
-        id_fila_selected=id_fila;
-    }
-
-
-    
-
-    
-  </script>
-  <!--Seleccion de filas de SUBCONTRATOS-->
-  <script>
-  var numero=<?php echo "$numeroMO"?>;
-     function seleccionar(id_fila){
-
-        if($('#'+id_fila).hasClass('seleccionada')){
-          $('#'+id_fila).removeClass('seleccionada');
-          $('#detele').attr('disabled', true);
-         
-        }
-        else{
-          for(var i=0;i<=numero;i++){
-            $('#subcontrato'+i).removeClass('seleccionada');
-          }
-          $('#'+id_fila).addClass('seleccionada');
-         $('#detele').attr('disabled', false);
-        }
-
-        id_fila_selected=id_fila;
-    }
-   
-  </script>
-  <script>
-    $( function() {
-    var tooltips = $( "[title]" ).tooltip({
-      position: {
-        my: "left top",
-        at: "right+5 top-5",
-        collision: "none"
-      }
     });
-});
-    
+
+    function confirmDialog(message, onConfirm){
+    var fClose = function(){
+        modal.modal("hide");
+    };
+    var modal = $("#modalEliminar");
+    modal.modal("show");
+    $("#confirmMessage").empty().append(message);
+    $("#accept").one('click', onConfirm);
+    $("#accept").one('click', fClose);
+    $("#cancel").one("click", fClose);
+  }
+  function total(){
+          var total_subcontrato = +$("#subtotal-subcontrato").text();
+          var total_herramienta = +$("#subtotal_EH").text();
+          var total_MO = +$("#subTotalMO").text();
+          var total_recursos = +$("#subtotalMatPrima").text();
+          var cd = total_subcontrato + total_herramienta + total_MO + total_recursos;
+          $("#cd").text(cd);
+          var ci = + $("input[name='CI']").val();
+          cu = cd * (1 + ci);
+          $("#cu").text(cu);
+
+        }
+
+   $("#new-row-mano-obra").click(function() {
+          $('#modal-manoObra').modal('show');
+          var table = $("#table-mano-obra");
+
+          html = "<tr><td><span></span><input type='hidden' name='descripcionMO[]'/></td><td><span></span><input type='hidden' name='jornadaMO[]'/></td><td><span></span><input type='hidden' name='FPMO[]'/></td><td><span></span></td><td><span></span><input type='hidden' name='rendimientoMO[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotalMO[]'/></td><td><button type='button' class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>&nbsp;<button type='button' class='editar btn btn-info btn-sm'><i class='icon icon-edit' ></i></button></td></tr>";
+          table.append(html);
+          $("button[name='enviarCambios']").prop("disabled", false);
+        });
+
+   $("#modal-manoObra form button[name='agregar']").click(function(){
+          var descripcion = $(this).parents("form").find("input[name='descripcion']").val();
+          var jornada = + $(this).parents("form").find("input[name='jornada']").val();
+          var FP = + $(this).parents("form").find("input[name='FP']").val();
+          var rendimiento = + $(this).parents("form").find("input[name='rendimiento']").val();
+          var jornada_total = jornada * FP;
+          var subtotal = jornada_total / rendimiento;
+          var seleccionado = $("#table-mano-obra tr.seleccionado").length;
+          var selector = '';
+          if (length > 0) {
+            selector = $("#table-mano-obra tr.selected td");
+          }else{
+            selector = $("#table-mano-obra tr:last td");
+          }
+          var subTotalAnterior = +selector.eq(5).find("span").text();
+          selector.each(function(index){
+            if (index == 0) {
+              $("span", this).text(descripcion);
+              $("input[type='hidden']", this).val(descripcion);
+            }else if (index == 1) {
+              $("span", this).text(jornada.toFixed(2));
+              $("input[type='hidden']", this).val(jornada.toFixed(2));
+            }else if (index == 2) {
+              $("span", this).text(FP.toFixed(2));
+              $("input[type='hidden']", this).val(FP.toFixed(2));
+            }else if (index == 3) {
+              $("span", this).text(jornada_total.toFixed(2));
+            }else if (index == 4) {
+              $("span", this).text(rendimiento.toFixed(2));
+              $("input[type='hidden']", this).val(rendimiento.toFixed(2));
+            }else if(index == 5){
+              $("span", this).text(subtotal.toFixed(2));
+              $("input[type='hidden']", this).val(subtotal.toFixed(2));
+            }
+          });
+          $("#table-mano-obra tr").removeClass("selected");
+          $("#modal-manoObra").modal("hide");
+          var total_MO = +$("#subTotalMO").text() + (subtotal - subTotalAnterior);
+          $("#subTotalMO").text(total_MO.toFixed(2));
+          total();
+          $(this).parents("form").find(":input").val("");
+        });
+
+     $("#new-row-equipoHerramienta").click(function() {
+          $('#modalIngresarEH').modal('show');
+          var table = $("#table_Herramienta");
+          var count = table.children("tbody").children("tr").length;
+
+          html = "<tr><td><span></span><input type='hidden' name='descripcionEH[]'/></td><td><span></span><input type='hidden' name='tipoEH[]'/></td><td><span></span><input type='hidden' name='capacidadEH[]'/></td><td><span></span><input type='hidden' name='rendimientoEH[]'/></td><td><span></span><input type='hidden' name='costo_hora[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotalEH[]'/></td><td><button type='button' class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>&nbsp;<button type='button' class='editar btn btn-info btn-sm'><i class='icon icon-edit' ></i></button></td></tr>";
+          table.append(html);
+           $("button[name='enviarCambios']").prop("disabled", false);
+        });
+
+         $("#modalIngresarEH form button[name='agregar2']").click(function(){
+          var descripcion = $(this).parents("form").find("input[name='descripcion']").val();
+          var tipo = $(this).parents("form").find("input[name='tipo']").val();
+          var capacidad =  $(this).parents("form").find("input[name='capacidad']").val();
+          var rendimiento = + $(this).parents("form").find("input[name='rendimiento']").val();
+          var costo_hora = + $(this).parents("form").find("input[name='costoHora']").val();
+          var subtotal = + $(this).parents("form").find("input[name='subTotal']").val();
+          var selector = '';
+          if (length > 0) {
+            selector = $("#table_Herramienta tr.selected td");
+          }else{
+            selector = $("#table_Herramienta tr:last td");
+          }
+          var subTotalAnterior = +selector.eq(5).find("span").text();
+          selector.each(function(index){
+            if (index == 0) {
+              $("span", this).text(descripcion);
+              $("input[type='hidden']", this).val(descripcion);
+            }else if (index == 1) {
+              if (tipo.length == 0) {
+              $("span", this).text("N/E");
+              $("input[type='hidden']", this).val(0);
+              }else{
+              $("span", this).text(tipo);
+              $("input[type='hidden']", this).val(tipo)
+              }
+            }
+            else if (index == 2) {
+              if (tipo.length == 0) {
+              $("span", this).text("N/E");
+              $("input[type='hidden']", this).val(0);
+              }else{
+              $("span", this).text(capacidad);
+              $("input[type='hidden']", this).val(capacidad);
+              }
+             
+            }else if (index == 3) {
+              $("span", this).text(rendimiento.toFixed(2));
+              $("input[type='hidden']", this).val(rendimiento.toFixed(2));
+            }else if (index == 4) {
+              $("span", this).text(costo_hora.toFixed(2));
+              $("input[type='hidden']", this).val(costo_hora.toFixed(2));
+            }else if(index == 5){
+              $("span", this).text(subtotal.toFixed(2));
+              $("input[type='hidden']", this).val(subtotal.toFixed(2));
+            }
+          });
+          $("#table_Herramienta tr").removeClass("selected");
+          $("#modalIngresarEH").modal("hide");
+          var total_herramienta = +$("#subtotal_EH").text() + (subtotal - subTotalAnterior);
+          $("#subtotal_EH").text(total_herramienta.toFixed(2));
+          total();
+          $(this).parents("form").find(":input").val("");
+        });
+
+         
+         $("#new-row-subcontratos").click(function() {
+          $('#modalAgregarSubcontrato').modal('show');
+          var table = $("#table_subcontratos");
+          var count = table.children("tbody").children("tr").length;
+
+          html = "<tr><td><span></span><input type='hidden' name='descripcionsc[]'/></td><td><span></span><input type='hidden' name='unidadsc[]'/></td><td><span></span><input type='hidden' name='cantidadsc[]'/></td><td><span></span><input type='hidden' name='valorsc[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subtotalsc[]'/></td><td><button type='button' class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>&nbsp;<button type='button' class='editar btn btn-info btn-sm'><i class='icon icon-edit' ></i></button></td></tr>";
+          table.append(html);
+           $("button[name='enviarCambios']").prop("disabled", false);
+        });
+
+         $("#modalAgregarSubcontrato form button[name='agregar3']").click(function(){
+          var descripcion = $(this).parents("form").find("input[name='descripcion']").val();
+          var unidad =  $(this).parents("form").find("input[name='unidad']").val();
+          var cantidad = + $(this).parents("form").find("input[name='cantidad']").val();
+          var valor = + $(this).parents("form").find("input[name='valor']").val();
+          var subtotal = cantidad * valor;
+          var selector = '';
+          if (length > 0) {
+            selector = $("#table_subcontratos tr.selected td");
+          }else{
+            selector = $("#table_subcontratos tr:last td");
+          }
+          var subTotalAnterior = +selector.eq(4).find("span").text();
+          $("#table_subcontratos tr:last td").each(function(index){
+            if (index == 0) {
+              $("span", this).text(descripcion);
+              $("input[type='hidden']", this).val(descripcion);
+            }else if (index == 1) {
+              $("span", this).text(unidad);
+              $("input[type='hidden']", this).val(unidad);
+            }else if (index == 2) {
+              $("span", this).text(cantidad.toFixed(2));
+              $("input[type='hidden']", this).val(cantidad.toFixed(2));
+            }else if (index == 3) {
+              $("span", this).text(valor.toFixed(2));
+              $("input[type='hidden']", this).val(valor.toFixed(2));
+            }else if(index == 4){
+              $("span", this).text(subtotal.toFixed(2));
+              $("input[type='hidden']", this).val(subtotal.toFixed(2));
+            }
+          });
+           $("#table_subcontratos tr").removeClass("selected");
+          $("#modalAgregarSubcontrato").modal("hide");
+          var total_subcontrato = +$("#subtotal-subcontrato").text() + (subtotal - subTotalAnterior);
+          $("#subtotal-subcontrato").text(total_subcontrato.toFixed(2));
+          total();
+          $(this).parents("form").find(":input").val("");
+        });
+        $('.modal').on('hidden.bs.modal', function () {
+          $("#table-mat-prima tr").removeClass("selected");
+          $("#table-mano-obra tr").removeClass("selected");
+          $("#table_Herramienta tr").removeClass("selected");
+          $("#table_subcontratos tr").removeClass("selected");
+          $(this).find("form :input").val("");
+        });
+
+        $("input[name='CI']").blur(function(){
+          cd = + $("#cd").text();
+          var ci = + $("input[name='CI']").val();
+          cu = cd * (1 + ci);
+          $("#cu").text(cu.toFixed(2));
+        });
+      });
   </script>
-
-<!-- SCRIPT DE ELIMINACION-->
-<script type="text/javascript">
-//ELIMINACION DE MATERIAL
-$('#delete-row-material').click(function(){
-        //Recogemos la id del contenedor padre
-        
-
-       var idDescripcion = $('#'+id_fila_selected).children('td:eq(0)');
-
-
-        //Recogemos el valor del servicio
-        $.ajax({
-            url: "agregarElementosPartida.php",
-            method: "POST",
-            data: { dMaterial: idDescripcion } ,
-
-            success: function() {            
-               
-               // $('#delete-ok').append('<div>Se ha eliminado el sub contrato '+idDescripcion+'  correctamente.</div>').fadeIn("slow");
-                 $('#deleteMO').attr('disabled', true);
-                $('#detele').attr('disabled', true);
-                $('#deleteHerramienta').attr('disabled', true);
-                $('#'+id_fila_selected).remove();
-            }
-      
-        }); 
-    }); 
-//ELIMINACION DE MANO DE OBRA
-$('#delete-row-manoObra').click(function(){
-        //Recogemos la id del contenedor padre
-        
-
-       var idDescripcion = $('#'+id_fila_selected).children('td:eq(0)').children('input:eq(0)').attr('value');
-
-
-        //Recogemos el valor del servicio
-        $.ajax({
-            url: "agregarElementosPartida.php",
-            method: "POST",
-            data: { dMO:idDescripcion } ,
-
-            success: function() {            
-               
-               // $('#delete-ok').append('<div>Se ha eliminado el sub contrato '+idDescripcion+'  correctamente.</div>').fadeIn("slow");
-                 $('#deleteMO').attr('disabled', true);
-                $('#detele').attr('disabled', true);
-                $('#deleteHerramienta').attr('disabled', true);
-                $('#'+id_fila_selected).remove();
-            }
-      
-        }); 
-    }); 
-//ELIMINACION DE HERRAMIENTA Y EQUIPO
- $('#delete-row-herramienta').click(function(){
-        //Recogemos la id del contenedor padre
-        
-
-       var idDescripcion = $('#'+id_fila_selected).children('td:eq(0)').children('input:eq(0)').attr('value');
-
-
-        //Recogemos el valor del servicio
-        $.ajax({
-            url: "agregarElementosPartida.php",
-            method: "POST",
-            data: { dH:idDescripcion } ,
-
-            success: function() {            
-               
-               // $('#delete-ok').append('<div>Se ha eliminado el sub contrato '+idDescripcion+'  correctamente.</div>').fadeIn("slow");
-                 $('#deleteMO').attr('disabled', true);
-                $('#detele').attr('disabled', true);
-                $('#deleteHerramienta').attr('disabled', true);
-                $('#'+id_fila_selected).remove();
-            }
-      
-        }); 
-    }); 
-
-    $('#delete-row-subcontrato').click(function(){
-        //Recogemos la id del contenedor padre
-         $('#'+id_fila_selected).attr('value','prueba');
-
-       var idDescripcion = $('#'+id_fila_selected).children('td:eq(0)').children('input:eq(0)').attr('value');
-
-
-        //Recogemos el valor del servicio
-        $.ajax({
-            url: "agregarElementosPartida.php",
-            method: "POST",
-            data: { d:idDescripcion } ,
-
-            success: function() {            
-               
-               // $('#delete-ok').append('<div>Se ha eliminado el sub contrato '+idDescripcion+'  correctamente.</div>').fadeIn("slow");
-                 $('#deleteMO').attr('disabled', true);
-                $('#detele').attr('disabled', true);
-                $('#deleteHerramienta').attr('disabled', true);
-                $('#'+id_fila_selected).remove();
-            }
-      
-        }); 
-    });           
-   
-</script>
-
-  
-  
  </body>
 </html>
-<?php
-}
-else{
- header("Location: ../home.php");
-    session_destroy();
-    exit(); 
-}
-?>
