@@ -99,15 +99,16 @@
        </div>
       </div>
 
-      <div class="accordion-group">
+       <div class="accordion-group">
        <div class="accordion-heading">
-        <a class="sbtn btn-default" href="proyectos.php">
+        <a class="sbtn btn-default active" href="crearEtapa.php">
          <span class="fa fa-list-alt"></span>
-         &nbsp;&nbsp;Proyectos
+         &nbsp;&nbsp;Etapa
         </a>
        </div>
       </div>
-            
+
+  
       </div>
       </div>
       </div>
