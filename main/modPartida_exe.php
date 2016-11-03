@@ -34,7 +34,7 @@
   }
   $costo_indirecto = round($porcentaje_indirecto * $cd, 2);
   $precio_unitario = round($costo_indirecto + $cd, 2);
-  $query = "UPDATE partida SET totalCD =".$cd.", totalCF=".$porcentaje_indirecto.", precioUnitario=".$precio_unitario.", totalMateriales=".$total_materiales.", totalManoObra=".$total_MO.", totalEquipoHerramientas=".$total_herramientas.", totalSubContratos=".$total_subcontratos." WHERE numero=".$numeroPartida;
+  $query = "UPDATE partida SET totalCD =".$cd.", totalCF=".($porcentaje_indirecto * 100).", precioUnitario=".$precio_unitario.", totalMateriales=".$total_materiales.", totalManoObra=".$total_MO.", totalEquipoHerramientas=".$total_herramientas.", totalSubContratos=".$total_subcontratos." WHERE numero=".$numeroPartida;
   if($conn->query($query)){
 
     $n = count($_POST["idLineaMatPrima"]);
