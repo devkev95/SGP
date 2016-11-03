@@ -2,7 +2,7 @@
 <?php 
  require_once '../services/conn.php';
  $conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
- 
+ error_reporting(0);
 
   $numeroPartida = $_POST['idPartida'];
   $porcentaje_indirecto= $_POST["CI"];

@@ -1,8 +1,9 @@
 <?php 
 
+
   require'../services/conn.php';
   require_once '../model/Usuario.php';
-
+  
   session_start();
 
  if (!isset($_SESSION["userData"])){
@@ -43,7 +44,7 @@ $resultado4=$db->query($query4);
   <link type="text/css" rel="stylesheet" href="../lib/CSS/soft-admin.css"/>
 
   <!-- Adjustable Styles -->
-  <link type="text/css" rel="stylesheet" href="../lib/css/icheck.css?v=1.0.1">
+  <link type="text/css" rel="stylesheet" href="../lib/CSS/icheck.css?v=1.0.1"/>
   
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
