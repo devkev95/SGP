@@ -248,7 +248,7 @@ $resultado4=$db->query($query4);
            <td><input type="hidden" name="subTotal_recursos[]" value="<?php echo $fila_m->subTotal; ?>"/><span><?php echo $fila_m->total; ?></span></td>
            
 
-           <td><span><?php echo $fila_m->subTotal; ?></span></td>
+           <td><span class="subtotal"><?php echo $fila_m->subTotal; ?></span></td>
            <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>
            <button type="button" class="editar btn btn-info btn-sm"><i class="icon icon-edit" ></i></button></td>
 
@@ -321,7 +321,7 @@ $resultado4=$db->query($query4);
            <td><input type="hidden" name="FPMO[]" value="<?php echo $fila_mo->FP; ?>"/><span><?php echo $fila_mo->FP; ?></span></td>
            <td><span><?php echo $fila_mo->jornadaTotal; ?></span></td>
            <td><input type="hidden" name="rendimientoMO[]" value="<?php echo $fila_mo->rendimiento; ?>"/><span><?php echo $fila_mo->rendimiento; ?></span></td> 
-           <td><input type="hidden" value="<?php echo $fila_mo->subTotal; ?>" name="subTotalMO[]"/><span><?php echo $fila_mo->subTotal; ?></span></td>
+           <td><input type="hidden" value="<?php echo $fila_mo->subTotal; ?>" name="subTotalMO[]"/><span class="subtotal"><?php echo $fila_mo->subTotal; ?></span></td>
            <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>
            <button type="button" class="editar btn btn-info btn-sm"><i class="icon icon-edit"></i></button></td>
             </tr>
@@ -392,7 +392,7 @@ $resultado4=$db->query($query4);
            <td><input type="hidden" name="capacidadEH[]" value="<?php echo $fila_EH->capacidad; ?>"/><span><?php echo $fila_EH->capacidad; ?></span></td>
            <td><input type="hidden" name="rendimientoEH[]" value="<?php echo $fila_EH->rendimiento; ?>"/><span><?php echo $fila_EH->rendimiento; ?></span></td>
            <td><input type="hidden" name="costo_hora[]" value="<?php echo $fila_EH->costoHora; ?>"/><span><?php echo $fila_EH->costoHora; ?></span></td>
-           <td><input type="hidden" name="subTotalEH[]" value="<?php echo $fila_EH->subTotal; ?>"/><span><?php echo $fila_EH->subTotal; ?></span></td>
+           <td><input type="hidden" name="subTotalEH[]" value="<?php echo $fila_EH->subTotal; ?>"/><span class="subtotal"><?php echo $fila_EH->subTotal; ?></span></td>
            <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>
            <button type="button" class="editar btn btn-info btn-sm"><i class="icon icon-edit" ></i></button></td>
             </tr> 
@@ -451,7 +451,7 @@ $resultado4=$db->query($query4);
            <td><input type="hidden" name="unidadsc[]" value="<?php echo $fila_sub->unidad; ?>"/><span><?php echo $fila_sub->unidad; ?></span></td>
            <td><input type="hidden" name="cantidadsc[]" value="<?php echo $fila_sub->cantidad; ?>"/><span><?php echo $fila_sub->cantidad; ?></span></td>
            <td><input type="hidden" name="valorsc[]" value="<?php echo $fila_sub->valor; ?>"/><span><?php echo $fila_sub->valor; ?></span></td>
-           <td><input type="hidden" name="subtotalsc[]" value="<?php echo $fila_sub->subTotal; ?>"/><span><?php echo $fila_sub->subTotal; ?></span></td>
+           <td><input type="hidden" name="subtotalsc[]" value="<?php echo $fila_sub->subTotal; ?>"/><span class="subtotal"><?php echo $fila_sub->subTotal; ?></span></td>
            <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>
            <button type="button" class="editar btn btn-info btn-sm"><i class="icon icon-edit" ></i></button></td>
             </tr>
@@ -972,15 +972,14 @@ while ($row = $sql->fetch_array()) {
     });
 
     $(document).on("click", ".eliminar", function(){
-      $("button[name='enviarCambios']").prop("disabled", false);
       var row = $(this).closest("tr");
        var total1 = +$(this).parents("div.wdgt-primary").find("table tr td.subtotal").text();
       var subtotal = +$(this).closest("tr").find("td span.subtotal").text();
         confirmDialog("Esta seguro que desea eliminar el registro", function(){
-         
+          $("button[name='enviarCambios']").prop("disabled", false);
           total1 = total1 - subtotal;
           row.parents("div.wdgt-primary").find("table tr td.subtotal").text(total1.toFixed(2));
-          countRows = $("#table-mat-prima>tr").length + $("#table-mano-obra>tr").length + $("#table_Herramienta>tr").length + $("#table_subcontratos>tr").length;
+          countRows = $("#table-mat-prima tbody tr").length + $("#table-mano-obra tbody tr").length + $("#table_Herramienta tbody tr").length + $("#table_subcontratos tbody tr").length;
           if (countRows <= 0) {
              $("button[name='enviarCambios']").prop("disabled", true);
           }
@@ -1076,10 +1075,10 @@ while ($row = $sql->fetch_array()) {
           var total_MO = +$("#subTotalMO").text();
           var total_recursos = +$("#subtotalMatPrima").text();
           var cd = total_subcontrato + total_herramienta + total_MO + total_recursos;
-          $("#cd").text(cd);
+          $("#cd").text(cd.toFixed(2));
           var ci = + $("input[name='CI']").val();
           cu = cd * (1 + (ci / 100));
-          $("#cu").text(cu);
+          $("#cu").text(cu.toFixed(2));
 
         }
 

@@ -9,7 +9,7 @@ if (isset($_POST["id"], $_POST["opt"])) {
 		$table = "lineamanoobra";
 	} elseif ($_POST["opt"] == 3) {
 		$table = "lineaequipoherramienta";
-	} elseif ($_POST["opt"] == 3) {
+	} elseif ($_POST["opt"] == 4) {
 		$table = "lineasubcontrato";
 	}
 	$query = "DELETE FROM ".$table." WHERE id=".$_POST["id"];

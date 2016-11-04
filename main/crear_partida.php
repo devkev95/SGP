@@ -839,7 +839,7 @@ while ($row = $sql->fetch_array()) {
           total = total - subtotal;
           $(this).closest("div").find("div span").text(total.toFixed(2));
           $(this).parents("tr").remove();
-          countRows = $("#recursos>tr").length + $("#manoObra>tr").length + $("#herramientas>tr").length + $("#subcontratos>tr").length;
+          countRows = $("#recursos tbody tr").length + $("#manoObra tbody tr").length + $("#herramientas tbody tr").length + $("#subcontratos tbody tr").length;
           if (countRows <= 0) {
              $("#principal").prop("disabled", true);
           }

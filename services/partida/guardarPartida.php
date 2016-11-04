@@ -24,20 +24,11 @@
 			if (isset($_POST["subTotal_subcontrato"])) {
 				$total_subcontratos = array_sum($_POST["subTotal_subcontrato"]);
 			}
-
 			$cd = $total_materiales + $total_MO + $total_herramientas + $total_subcontratos;
-			if (is_string($porcentaje_indirecto)) {
-				$porcentaje_indirecto = explode("%", $porcentaje_indirecto);
-				$porcentaje_indirecto = (float)$porcentaje_indirecto[0] / 100;
-
-			}
-			if(is_numeric($porcentaje_indirecto) and $porcentaje_indirecto > 0){
-				$porcentaje_indirecto /= 100;
-			}
-			$costo_indirecto = round($porcentaje_indirecto * $cd, 2);
+			$costo_indirecto = round(($porcentaje_indirecto / 100) * $cd, 2);
 			$precio_unitario = round($costo_indirecto + $cd, 2);
 			$nombre = $conn->real_escape_string($nombre);
-			$query = "INSERT INTO partida(nombre, totalCD, totalCF, precioUnitario, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos) VALUES ('".$nombre."', ".$cd.", ".$costo_indirecto.", ".$precio_unitario.", ".$total_materiales.", ".$total_MO.", ".$total_herramientas.", ".$total_subcontratos.")";
+			$query = "INSERT INTO partida(nombre, totalCD, totalCF, precioUnitario, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos) VALUES ('".$nombre."', ".$cd.", ".$porcentaje_indirecto.", ".$precio_unitario.", ".$total_materiales.", ".$total_MO.", ".$total_herramientas.", ".$total_subcontratos.")";
 			if($conn->query($query)){
 				$id = $conn->insert_id;
 
@@ -64,11 +55,13 @@
 				for ($i = 0; $i < $n; $i++){
 					$query = "INSERT INTO lineasubcontrato (numero, descripcion, unidad, cantidad, valor, subtotal) VALUES (".$id.", '".$_POST["descripcion_subcontrato"][$i]."', '".$_POST["unidad"][$i]."', ".$_POST["cantidad_subcontrato"][$i].", ".$_POST["valor"][$i].", ".$_POST["subTotal_subcontrato"][$i].")";
 					$conn->query($query);
+					header("Location: ../../main/consultarPartidas.php");
+					echo $conn->error;
 				}
 			}else{
 				$error = 2;
 			}
-			header("Location: ../../main/consultarPartidas.php");
+			
 
 
 		}
