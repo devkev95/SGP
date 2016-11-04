@@ -24,17 +24,9 @@
   }
 
   $cd = $total_materiales + $total_MO + $total_herramientas + $total_subcontratos;
-  if (is_string($porcentaje_indirecto)) {
-    $porcentaje_indirecto = explode("%", $porcentaje_indirecto);
-    $porcentaje_indirecto = (float)$porcentaje_indirecto[0] / 100;
-
-  }
-  if(is_numeric($porcentaje_indirecto) and $porcentaje_indirecto > 0){
-    $porcentaje_indirecto /= 100;
-  }
-  $costo_indirecto = round($porcentaje_indirecto * $cd, 2);
+  $costo_indirecto = round(($porcentaje_indirecto / 100) * $cd, 2);
   $precio_unitario = round($costo_indirecto + $cd, 2);
-  $query = "UPDATE partida SET totalCD =".$cd.", totalCF=".($porcentaje_indirecto * 100).", precioUnitario=".$precio_unitario.", totalMateriales=".$total_materiales.", totalManoObra=".$total_MO.", totalEquipoHerramientas=".$total_herramientas.", totalSubContratos=".$total_subcontratos." WHERE numero=".$numeroPartida;
+  $query = "UPDATE partida SET totalCD =".$cd.", totalCF=".$porcentaje_indirecto.", precioUnitario=".$precio_unitario.", totalMateriales=".$total_materiales.", totalManoObra=".$total_MO.", totalEquipoHerramientas=".$total_herramientas.", totalSubContratos=".$total_subcontratos." WHERE numero=".$numeroPartida;
   if($conn->query($query)){
 
     $n = count($_POST["idLineaMatPrima"]);

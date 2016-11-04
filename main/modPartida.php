@@ -974,12 +974,12 @@ while ($row = $sql->fetch_array()) {
     $(document).on("click", ".eliminar", function(){
       $("button[name='enviarCambios']").prop("disabled", false);
       var row = $(this).closest("tr");
-       var total1 = +$(this).closest("div.wdgt-primary").find("table tr td.subtotal").text();
+       var total1 = +$(this).parents("div.wdgt-primary").find("table tr td.subtotal").text();
       var subtotal = +$(this).closest("tr").find("td span.subtotal").text();
         confirmDialog("Esta seguro que desea eliminar el registro", function(){
          
           total1 = total1 - subtotal;
-          row.closest("div.wdgt-primary").find("table tr td.subtotal").text(total1.toFixed(2));
+          row.parents("div.wdgt-primary").find("table tr td.subtotal").text(total1.toFixed(2));
           countRows = $("#table-mat-prima>tr").length + $("#table-mano-obra>tr").length + $("#table_Herramienta>tr").length + $("#table_subcontratos>tr").length;
           if (countRows <= 0) {
              $("button[name='enviarCambios']").prop("disabled", true);
@@ -1078,7 +1078,7 @@ while ($row = $sql->fetch_array()) {
           var cd = total_subcontrato + total_herramienta + total_MO + total_recursos;
           $("#cd").text(cd);
           var ci = + $("input[name='CI']").val();
-          cu = cd * (1 + ci);
+          cu = cd * (1 + (ci / 100));
           $("#cu").text(cu);
 
         }
@@ -1260,8 +1260,9 @@ while ($row = $sql->fetch_array()) {
         $("input[name='CI']").blur(function(){
           cd = + $("#cd").text();
           var ci = + $("input[name='CI']").val();
-          cu = cd * (1 + ci);
+          cu = cd * (1 + (ci / 100));
           $("#cu").text(cu.toFixed(2));
+          $("button[name='enviarCambios']").prop("disabled", false);
         });
       });
   </script>
