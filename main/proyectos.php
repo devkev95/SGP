@@ -175,6 +175,7 @@
      <div class="tbl">
       <div class="col-md-12">
        <div class="wdgt" hide-btn="true">
+
         <div class="wdgt-header">Base de Datos de Proyectos</div>
         <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
          <table class="datatable table table-hover table-striped">

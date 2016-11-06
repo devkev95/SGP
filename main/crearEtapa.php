@@ -198,10 +198,62 @@ if ($link) {
           </div>
           <div class="tb1">
             
+             <form method="POST" action="../services/partida/guardarPartida.php">
+            <div class="col-md-12">
+              <div class="wdgt wdgt-primary" hide-btn="true">
+                <div class="wdgt-header">Etapas de Proyecto</div>
+
+
+              <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
+
+
+                  <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped" id="partida">
+                    <thead>
+                      <tr>
+                        <th>Descripcion</th>
+                        <th>Cantidad</th>
+                        <th>Unidad</th>
+                        <th>Material</th>
+                        <th>M.O</th>
+                        <th>Otros</th>
+                        <th>C.D.</th>
+                        <th>C.I.</th>
+                        <th>IVA 13%</th>
+                        <th>P.U.</th>
+                        <th>Sub-Total</th>
+                        <th></th>
+                         
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                  <div>
+                    <button type="button" id="new-row-recurso" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
+                    <strong>Sub-total:<span id="sub-total-etapa">0.00</span></strong>
+                  </div>
+                  <br>
+                </div>
+              </div>
+
+            </div>
+
+
+              <div class="col-md-12">
+              <div class="wdgt">
+                  <button id="principal" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" disabled>Guardar Etapas del Proyecto</button>
+              </div>
+            </div>
+                </form>
+
+
+
+
+
           <form method="POST" action="../services/partida/guardarPartida.php">
             <div class="col-md-12">
               <div class="wdgt wdgt-primary" hide-btn="true">
-                <div class="wdgt-header">Partidas</div>
+                <div class="wdgt-header">Etapas</div>
                 <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
 
               <div class="form-group">
@@ -212,31 +264,18 @@ if ($link) {
               <div class="form-group">
               <label>Fecha Inicio Programada</label>
               <br>
-               <input type="text" class="tcal" required id="inputFName" placeholder="FechaInicioProgramada" name="date"  >
+               <input type="date" class="tcal" required id="inputFName" placeholder="FechaInicioProgramada" name="date"  >
               <span class="help-block"></span>
                </div>
 
               <div class="form-group">
               <label>Fecha Fin programada</label>
               <br>
-               <input type="text" class="tcal" required id="inputFName" placeholder="FechaFinProgramada" name="date"  >
+               <input type="date" class="tcal" required id="inputFName" placeholder="FechaFinProgramada" name="date"  >
               <span class="help-block"></span>
                </div>   
 
-              <div class="form-group">
-              <label>Fecha Inicio</label>
-              <br>
-               <input type="text" class="tcal" required id="inputFName" placeholder="FechaInicio" name="date"  >
-              <span class="help-block"></span>
-               </div>  
-
-              <div class="form-group">
-              <label>Fecha Fin</label>
-              <br>
-               <input type="text"  class="tcal" required id="inputFName" placeholder="FechaFin" name="date"  >
-              <span class="help-block"></span>
-               </div>
-
+          
              <div class="form-group">
                <label class="col-lg-3 control-label">Estado</label>
                 <div class="col-lg-7">
@@ -296,7 +335,7 @@ if ($link) {
                     <br/>
                     <input type="number" min="0" class="col-md-1" name="CI" class="form-control" placeholder="%" required><span class="col-md-1">%</span>
                   </div>
-                  <button id="principal" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" disabled>Guardar</button>
+                  <button id="principal" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" disabled>Agregar Etapa</button>
               </div>
             </div>
                 </form>
