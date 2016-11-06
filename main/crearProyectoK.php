@@ -28,9 +28,20 @@
     
     $conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 
-    $query = "INSERT INTO proyecto(nombre, descripcion, porcentajeCI, fechaInicio, fechaFin) VALUES ('".$nombre."', '".$descripcion."', '".$pci."', '".$fechaInicio."', '".$fechaFin."')";
+
+
+
+      $query = "INSERT INTO proyecto(nombre, descripcion, porcentajeCI, fechaInicio, fechaFin) VALUES ('".$nombre."', '".$descripcion."', '".$pci."', '".$fechaInicio."', '".$fechaFin."')";
+
+      if ($conn->query($query)) {
+          $id = $conn->insert_id;
+          
+        header("Location: crearEtapa.php?id=".$id);
+      }else{
+      
+        
+      }
      
-      $resultado4=$conn->query($query);
 
 ?>
 
@@ -208,7 +219,7 @@
       
          <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
           <?php
-          if (isset($_GET["error"])) {
+          if (isset($_GET["error1"])) {
             
          ?>
 
@@ -220,7 +231,7 @@
                 
           </div>
            <?php
-           header("Location: crearProyecto.php");
+           header("Location: crearProyectoK.php");
           } else if (isset($_GET["success"])){
         ?>
           <div class="alertDiv alert alert-success alert-round alert-border alert-soft">
@@ -229,7 +240,7 @@
              Se ha ingresado correctamente.
             </div>
         <?php
-           header("Location: crearProyecto.php");
+           header("Location: crearProyectoK.php");
           } 
          
         ?>

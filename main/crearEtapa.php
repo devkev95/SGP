@@ -1,5 +1,5 @@
 <?php
-
+    require'../services/conn.php';
 require '../model/Usuario.php';
 
 session_start();
@@ -14,13 +14,43 @@ session_write_close();
 
 error_reporting(0);
 
-$link=mysqli_connect("localhost","sgp_user","56p_2016");
+     $proyecto = $_GET['id'];
+    echo $proyecto;
 
-if ($link) {
-    mysqli_select_db("sgp_system", $link);
-    # code...
-}
+    $nombre = $_POST["nombre"];
+    $detalle = $_POST["detalle"];
+    $fechaInicioProgramada = $_POST["fechaInicioProgramada"];
+    $fechaFinProgramada = $_POST["fechaFinProgramada"];
+    $estado = $_POST["estado"];
+   
+    $conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 
+   
+      $total_etapa = 0;
+
+      if(isset($_POST["subTotal_etapa"])){
+        $total_etapa = array_sum($_POST["subTotal_etapa"]);
+      }
+      $query = "INSERT INTO etapa(nombre, detalle, idProyecto, fechaInicioProgramada, fechaFinProgramada, estado) VALUES ('".$nombre."', '".$detalle."', '".$proyecto."', '".$fechaInicioProgramada."', '".$fechaFinProgramada."', '".$estado."')";
+     // $conn->query($query);
+      if($conn->query($query)){
+        $id = $conn->insert_id;
+        echo $id;
+
+        $n = count($_POST["subTotal_etapa"]);
+        echo $n;
+        for ($i = 0; $i < $n; $i++){
+          $query1 = "INSERT INTO etapapartida(idEtapa, cantidad, CD, CI, IVA, PU, subTotal) VALUES('".$id."', ".$_POST["cantidad"][$i].", ".$_POST["CD"][$i].", ".$_POST["CI"][$i].", '".$_POST["IVA"][$i]."', ".$_POST["PU"][$i].", ".$_POST["subTotal_etapa"][$i].")";
+          $conn->query($query1);
+        }
+        
+      }else{
+       
+      }      
+
+
+    
+  
 
 ?>
 
@@ -198,59 +228,7 @@ if ($link) {
           </div>
           <div class="tb1">
             
-             <form method="POST" action="../services/partida/guardarPartida.php">
-            <div class="col-md-12">
-              <div class="wdgt wdgt-primary" hide-btn="true">
-                <div class="wdgt-header">Etapas de Proyecto</div>
-
-
-              <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
-
-
-                  <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped" id="partida">
-                    <thead>
-                      <tr>
-                        <th>Descripcion</th>
-                        <th>Cantidad</th>
-                        <th>Unidad</th>
-                        <th>Material</th>
-                        <th>M.O</th>
-                        <th>Otros</th>
-                        <th>C.D.</th>
-                        <th>C.I.</th>
-                        <th>IVA 13%</th>
-                        <th>P.U.</th>
-                        <th>Sub-Total</th>
-                        <th></th>
-                         
-                      </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                  </table>
-                  <div>
-                    <button type="button" id="new-row-recurso" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
-                    <strong>Sub-total:<span id="sub-total-etapa">0.00</span></strong>
-                  </div>
-                  <br>
-                </div>
-              </div>
-
-            </div>
-
-
-              <div class="col-md-12">
-              <div class="wdgt">
-                  <button id="principal" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" disabled>Guardar Etapas del Proyecto</button>
-              </div>
-            </div>
-                </form>
-
-
-
-
-
-          <form method="POST" action="../services/partida/guardarPartida.php">
+          <form method="POST" action="">
             <div class="col-md-12">
               <div class="wdgt wdgt-primary" hide-btn="true">
                 <div class="wdgt-header">Etapas</div>
@@ -261,27 +239,37 @@ if ($link) {
                <input type="text" class="form-control" required id="inputFName" placeholder="nombre" name="nombre"  >
               <span class="help-block"></span>
                </div>
+
+               <div class="form-group">
+              <label>Detalle de Etapa</label>
+               <input type="text" class="form-control" required id="inputFName" placeholder="detalle" name="detalle"  >
+              <span class="help-block"></span>
+               </div>
+
               <div class="form-group">
               <label>Fecha Inicio Programada</label>
               <br>
-               <input type="date" class="tcal" required id="inputFName" placeholder="FechaInicioProgramada" name="date"  >
+               <input type="date" class="tcal" required id="inputFName" placeholder="FechaInicioProgramada" name="fechaInicioProgramada"  >
               <span class="help-block"></span>
                </div>
 
               <div class="form-group">
               <label>Fecha Fin programada</label>
               <br>
-               <input type="date" class="tcal" required id="inputFName" placeholder="FechaFinProgramada" name="date"  >
+               <input type="date" class="tcal" required id="inputFName" placeholder="FechaFinProgramada" name="fechaFinProgramada"  >
               <span class="help-block"></span>
                </div>   
 
           
              <div class="form-group">
-               <label class="col-lg-3 control-label">Estado</label>
-                <div class="col-lg-7">
-                 <span class="wdgt-switch"><input id="switch" class="switch4" type="checkbox" name="estado" value="1" >
-                </span>
-                </div>
+               <label for="disabledSelect">Seleccionar el estado</label>
+               <select id="disabledSelect" class="form-control form-primary" name="estado" required="required" id="inputFName">
+                  <option value="Espera" <?php echo $estado == 'Espera'?'selected':'';?>>Espera</option>
+                  <option value="Iniciado" <?php echo $estado == 'Iniciado'?'selected':'';?>>Iniciado</option>
+                  <option value="Terminado" <?php echo $estado == 'Terminado'?'selected':'';?>>Terminado</option>
+
+               </select>
+                <span class="help-block"></span>
              </div>
              <br>
              <br>
@@ -330,11 +318,6 @@ if ($link) {
 
               <div class="col-md-12">
               <div class="wdgt">
-                  <div class="form-group">
-                    <label>Costo Indirecto</label>
-                    <br/>
-                    <input type="number" min="0" class="col-md-1" name="CI" class="form-control" placeholder="%" required><span class="col-md-1">%</span>
-                  </div>
                   <button id="principal" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" disabled>Agregar Etapa</button>
               </div>
             </div>
@@ -555,7 +538,7 @@ while ($row = mysql_fetch_array($sql)) {
           var table = $(this).parents(".wdgt-body").children("table");
           var count = table.children("tbody").children("tr").length;
 
-          html = "<tr><td><span></span><input type='hidden' name='nombre[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          html = "<tr><td><span></span></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CD[]'/></td><td><span></span><input type='hidden' name='CI[]'/></td><td><span></span><input type='hidden' name='IVA[]'/></td><td><span></span><input type='hidden' name='PU[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
           table.append(html);
            $("#principal").prop("disabled", false);
         });
