@@ -10,7 +10,7 @@ if (!isset($_SESSION["userData"])){
     header("Location: home.php");
     exit();
 }
-$db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
+$db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "prueba_sgp_system")->getConnection();
 $userData = $_SESSION["userData"];
 session_write_close();
 
@@ -367,7 +367,7 @@ session_write_close();
                                   <?php
 #include 'connect_db.php';
 //require("connect_db.php");
-$sql = $db->query("SELECT codigo, nombre, unidad, costoDirecto, iva, total, fecha, empresaProveedora, tipoRecurso FROM recurso");
+$sql = $db->query("SELECT codigo, version, nombre, unidad, costoDirecto, iva, total, fecha, empresaProveedora, tipoRecurso FROM recurso GROUP BY codigo HAVING version = MAX(version)");
 while ($row = $sql->fetch_array()) {
     echo '<tr>';
     echo '<td>'. $row['codigo'] . '</td>';
@@ -384,10 +384,11 @@ while ($row = $sql->fetch_array()) {
     $codigo=$row['codigo'];
     $unidad = $row['unidad'];
     $valor = $row['total'];
+    $version = $row["version"];
     
     
     
-    echo '<td><button onclick="cantidad(\''.$codigo.'\', \''.$nombre.'\', \''.$unidad.'\', \''.$valor.'\')">Agregar</button></td>';
+    echo '<td><button onclick="cantidad(\''.$codigo.'\', \''.$nombre.'\', \''.$unidad.'\', \''.$valor.'\', \''.$version.'\')">Agregar</button></td>';
     
     
     
@@ -627,7 +628,7 @@ while ($row = $sql->fetch_array()) {
     <script src="../lib/js/bootstrapValidator.js"></script>
     <script>
       $(document).ready(function() {
-       window.cantidad= function (codigo, nombre, unidad, valor) {
+       window.cantidad= function (codigo, nombre, unidad, valor, version) {
         var cant = "";
         valor = +valor;
         cant = +prompt("Indique la cantidad a agregar de " + nombre + ":", "");
@@ -643,6 +644,7 @@ while ($row = $sql->fetch_array()) {
               $("input[type='hidden']", this).val(cant.toFixed(2));
               $("span", this).text(unidad);
             }else if(index == 2){
+              $("input[type='hidden']", this).val(version);
               $("span", this).text(cant.toFixed(2));
             }
             else if(index == 3){
@@ -688,7 +690,7 @@ while ($row = $sql->fetch_array()) {
           var table = $(this).parents(".wdgt-body").children("table");
           var count = table.children("tbody").children("tr").length;
 
-          html = "<tr><td><span></span><input type='hidden' name='codigo[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_recursos[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          html = "<tr><td><span></span><input type='hidden' name='codigo[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><input type='hidden' name='version[]'/><span></span></td><td><span></span></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_recursos[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
           table.append(html);
            $("#principal").prop("disabled", false);
         });

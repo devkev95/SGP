@@ -85,15 +85,15 @@ error_reporting(0);
         }
         
          if ($valid) { 
-            require("connect_db.php");
+            require_once "../services/conn.php";
+            $iva = $costoDirecto * 0.13;
+            $total = $costoDirecto + $iva;
+            $fecha = new DateTime();
 
-            //$sql =  mysql_query("INSERT INTO recurso(nombre, unidad, costoDirecto, iva, total, fecha, empresaProveedora, tipoRecurso) VALUES ('".$nombre."','".$unidad."','".$costoDirecto."', '".$costoDirecto*0.13."', '".$costoDirecto*0.13."', CURRENT_DATE,'".$empresa."','".$tipo."')");
-           // $stmt = mysql_fetch_array($sql);
 
-            //$sql =  mysql_query("CALL sp_createRecurso('bloque','m3','15.6','epa','Materiales')");
+           $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 
-            $sql =  mysql_query("CALL sp_createRecurso('".$nombre."','".$unidad."','".$costoDirecto."','".$empresa."','".$tipo."')");
-            $stmt = mysql_fetch_array($sql);
+            $sql =  $db->query("INSERT INTO recurso (nombre, unidad, costoDirecto, iva, total, fecha, empresaProveedora, tipoRecurso) VALUES ('".$nombre."', '".$unidad."', ".$costoDirecto.", ".$iva.", ".$total.", '".$fecha->format("Y-m-d")."', '".$empresa."', '".$tipo."')");
             if(!$sql){ 
               $str = "error";
             }else{          

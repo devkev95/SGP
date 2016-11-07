@@ -13,21 +13,21 @@
   }
     $userData = $_SESSION["userData"];
     session_write_close();
-  $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
+  $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "prueba_sgp_system")->getConnection();
 
 $numeroPartida = $_GET['numero'];
 
-$query= "SELECT numero, nombre, totalCD, totalCF, precioUnitario, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos FROM partida WHERE numero=".$numeroPartida;
+$query= "SELECT numero, version, nombre, totalCD, totalCF, precioUnitario, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos FROM partida WHERE numero=".$numeroPartida." HAVING version = MAX(version)";
 $resultado= $db->query($query);
             
-$query1="SELECT b.id ,a.nombre, a.unidad, b.cantidad, a.total, b.subTotal FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo WHERE id =".$numeroPartida;
+$query1="SELECT b.id, a.nombre, a.unidad, b.cantidad, a.total, b.subTotal, d.version partidaVersion FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo AND a.version = b.version INNER JOIN linearecursoPartida c ON b.id = c.idLinea INNER JOIN partida d ON c.numPartida = d.numero AND c.versionPartida = d.version WHERE d.numero=".$numeroPartida." GROUP BY b.id HAVING d.version = MAX(d.version)";
 $resultado1=$db->query($query1);
 
-$query2="SELECT id, descripcion, jornada, FP, jornadaTotal, rendimiento, subTotal FROM lineamanoobra WHERE id =".$numeroPartida;
+$query2="SELECT a.id, a.descripcion, a.jornada, a.FP, a.jornadaTotal, a.rendimiento, a.subTotal, c.version partidaVersion FROM lineamanoobra a INNER JOIN lineamanoobraPartida b ON a.id = b.idLinea INNER JOIN partida c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE numero = ".$numeroPartida." HAVING c.version = MAX(c.version)";
   $resultado2=$db->query($query2);
-$query3="SELECT id, descripcion, tipo, capacidad, rendimiento, costoHora, subTotal FROM  `lineaequipoherramienta` WHERE id =".$numeroPartida;
+$query3="SELECT a.id, a.descripcion, a.tipo, a.capacidad, a.rendimiento, a.costoHora, a.subTotal, c.version partidaVersion FROM lineaequipoherramienta a INNER JOIN lineaequipoherramientaPartida b ON b.idLinea INNER JOIN partida c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE c.numero = ".$numeroPartida." HAVING c.version = MAX(c.version)";
   $resultado3=$db->query($query3);
-$query4="SELECT id, descripcion, unidad, cantidad, valor, subTotal FROM lineasubcontrato WHERE id =".$numeroPartida;
+$query4="SELECT a.id, a.descripcion, a.unidad, a.cantidad, a.valor, a.subTotal, c.version partidaVersion FROM  lineasubcontrato a INNER JOIN lineasubcontratoPartida b ON  b.idLinea = a.id INNER JOIN partida c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE c.numero = ".$numeroPartida." HAVING c.version = MAX(c.version)";
 $resultado4=$db->query($query4);
 
 ?>
@@ -209,7 +209,7 @@ $resultado4=$db->query($query4);
           <?php
           echo $fila->nombre."<br>";
         ?><br></div>
-       
+       <input type="hidden" value="<?php echo $fila->version; ?>" name="version" />
        </div>
        <!--PRIMERA TABLA-->
           <div class="wdgt wdgt-primary" hide-btn="true">
@@ -579,10 +579,8 @@ $resultado4=$db->query($query4);
 
 
                                 <tbody>
-
-
-                                  <?php
-$sql = $db->query("SELECT codigo, nombre, unidad, costoDirecto, iva, total, fecha, empresaProveedora, tipoRecurso FROM recurso");
+<?php
+$sql = $db->query("SELECT codigo, version, nombre, unidad, costoDirecto, iva, total, fecha, empresaProveedora, tipoRecurso FROM recurso GROUP BY codigo HAVING version = MAX(version)");
 while ($row = $sql->fetch_array()) {
     echo '<tr>';
     echo '<td>'. $row['codigo'] . '</td>';
@@ -599,10 +597,11 @@ while ($row = $sql->fetch_array()) {
     $codigo=$row['codigo'];
     $unidad = $row['unidad'];
     $valor = $row['total'];
+    $version = $row["version"];
     
     
     
-    echo '<td><button onclick="cantidadMatPrima(\''.$codigo.'\', \''.$nombre.'\', \''.$unidad.'\', \''.$valor.'\')">Agregar</button></td>';
+    echo '<td><button onclick="cantidad(\''.$codigo.'\', \''.$nombre.'\', \''.$unidad.'\', \''.$valor.'\', \''.$version.'\')">Agregar</button></td>';
     
     
     
@@ -610,9 +609,7 @@ while ($row = $sql->fetch_array()) {
     
     
     echo '</tr>';
-}
-
-?>                            </tbody>
+}?>                            </tbody>
                               </table>
 
 
@@ -892,7 +889,7 @@ while ($row = $sql->fetch_array()) {
           length_sel.addClass('form-control input-sm');
         });
 
-    window.cantidadMatPrima= function (codigo, nombre, unidad, valor) {
+    window.cantidadMatPrima= function (codigo, nombre, unidad, valor, version) {
         var cant = "";
         valor = +valor;
         cant = +prompt("Indique la cantidad a agregar de " + nombre + ":", "");
@@ -900,7 +897,7 @@ while ($row = $sql->fetch_array()) {
         if (cant != null) {
           var subtotal = valor * cant;
          if (/^([0-9])*$/.test(cant)){
-          $("#table-mat-prima tr:last td").each(function(index){
+          $("#recursos tr:last td").each(function(index){
             if (index == 0){
               $("input[type='hidden']", this).val(codigo);
               $("span", this).text(nombre);
@@ -908,6 +905,7 @@ while ($row = $sql->fetch_array()) {
               $("input[type='hidden']", this).val(cant.toFixed(2));
               $("span", this).text(unidad);
             }else if(index == 2){
+              $("input[type='hidden']", this).val(version);
               $("span", this).text(cant.toFixed(2));
             }
             else if(index == 3){
@@ -918,8 +916,8 @@ while ($row = $sql->fetch_array()) {
               $("span", this).text(subtotal.toFixed(2));
             }
           });
-          var total_recursos = +$("#subtotalMatPrima").text() + subtotal;
-          $("#subtotalMatPrima").text(total_recursos.toFixed(2));
+          var total_recursos = +$("#sub-total-recursos").text() + subtotal;
+          $("#sub-total-recursos").text(total_recursos.toFixed(2));
         }
          
         else {
@@ -933,7 +931,7 @@ while ($row = $sql->fetch_array()) {
           $('#squarespaceModal').modal('show');
           var table = $("#table-mat-prima");
 
-          html = "<tr><td><span></span><input type='hidden' name='codigo[]'/></td><td><span></span><input type='hidden' name='cantidadMateria[]'/></td><td><span></span></td><td><span></span></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_recursos[]'/></td><td><button type='button' class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>&nbsp;<button type='button' class='editar btn btn-info btn-sm'><i class='icon icon-edit' ></i></button></td></tr>";
+          html = "<tr><td><span></span><input type='hidden' name='codigo[]'/></td><td><span></span><input type='hidden' name='cantidadMateria[]'/></td><td><input type='hidden' name='version[]'/><span></span></td><td><span></span></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_recursos[]'/></td><td><button type='button' class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>&nbsp;<button type='button' class='editar btn btn-info btn-sm'><i class='icon icon-edit' ></i></button></td></tr>";
           table.append(html);
            $("button[name='enviarCambios']").prop("disabled", false);
         });
@@ -983,6 +981,8 @@ while ($row = $sql->fetch_array()) {
           if (countRows <= 0) {
              $("button[name='enviarCambios']").prop("disabled", true);
           }
+          var version = $("input[name='version']").val();
+          var idPartida = $("input[name='idPartida']").val():
           if(row.find("input.id").length > 0){
             var id = row.closest("tr").find("input.id").val();
             var opt = "";
@@ -999,7 +999,7 @@ while ($row = $sql->fetch_array()) {
             $.ajax({
             url: "eliminarElementosPartida.php",
             method: "POST",
-            data: { "opt" : opt , "id" : id } 
+            data: { "opt" : opt , "id" : id, "version" : version, "idPartida" : idPartida } 
           });
           }
           total();
