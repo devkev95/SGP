@@ -37,11 +37,15 @@ error_reporting(0);
         $id = $conn->insert_id;
         echo $id;
 
+
+
         $n = count($_POST["subTotal_etapa"]);
         echo $n;
         for ($i = 0; $i < $n; $i++){
-          $query1 = "INSERT INTO etapapartida(idEtapa, cantidad, CD, CI, IVA, PU, subTotal) VALUES('".$id."', ".$_POST["cantidad"][$i].", ".$_POST["CD"][$i].", ".$_POST["CI"][$i].", '".$_POST["IVA"][$i]."', ".$_POST["PU"][$i].", ".$_POST["subTotal_etapa"][$i].")";
+          $query1 = "INSERT INTO etapapartida(idEtapa, cantidad, CD, CI, IVA, PU, subTotal) VALUES('".$id."', ".$_POST["cantidad"][$i].", ".$_POST["CDD"][$i].", ".$_POST["CII"][$i].", '".$_POST["IVAA"][$i]."', ".$_POST["PUU"][$i].", ".$_POST["subTotal_etapa"][$i].")";
+          
           $conn->query($query1);
+
         }
         
       }else{
@@ -77,8 +81,7 @@ error_reporting(0);
     <!-- Adjustable Styles -->
     <link type="text/css" rel="stylesheet" href="../lib/CSS/DT_bootstrap.css" />
     <link type="text/css" rel="stylesheet" href="../lib/CSS/icheck.css?v=1.0.1">
-    <link rel="stylesheet" href="../lib/css/bootstrapValidator.css" />
-
+   
 
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -391,7 +394,7 @@ while ($row = mysql_fetch_array($sql)) {
     
     
     
-    echo '<td><button onclick="cantidad(\''.$numero.'\',\''.$nombre.'\', \''.$totalMateriales.'\', \''.$totalManoObra.'\', \''.$totalEquipoHerramientass.'\', \''.$totalSubContratos.'\')">Agregar</button></td>';
+    echo '<td><button onclick="cantidad(\''.$numero.'\',\''.$nombre.'\', \''.$totalMateriales.'\', \''.$totalManoObra.'\', \''.$totalEquipoHerramientas.'\', \''.$totalSubContratos.'\')">Agregar</button></td>';
     
     
     
@@ -468,7 +471,9 @@ while ($row = mysql_fetch_array($sql)) {
               $("input[type='hidden']", this).val(numero);
               $("span", this).text(nombre);
             }else if(index == 1){
+              $("input[type='hidden']", this).val(cant.toFixed(2));
               $("span", this).text(cant.toFixed(2));
+
             }else if(index == 2){
              // $("span", this).text(unidad);
             }
@@ -538,7 +543,7 @@ while ($row = mysql_fetch_array($sql)) {
           var table = $(this).parents(".wdgt-body").children("table");
           var count = table.children("tbody").children("tr").length;
 
-          html = "<tr><td><span></span></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CD[]'/></td><td><span></span><input type='hidden' name='CI[]'/></td><td><span></span><input type='hidden' name='IVA[]'/></td><td><span></span><input type='hidden' name='PU[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          html = "<tr><td><span></span></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
           table.append(html);
            $("#principal").prop("disabled", false);
         });
