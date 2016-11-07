@@ -99,14 +99,7 @@
        </div>
       </div>
 
-       <div class="accordion-group">
-       <div class="accordion-heading">
-        <a class="sbtn btn-default active" href="crearEtapa.php">
-         <span class="fa fa-list-alt"></span>
-         &nbsp;&nbsp;Etapa
-        </a>
-       </div>
-      </div>
+       
 
   
       </div>
@@ -174,8 +167,11 @@
      </div>
      <div class="tbl">
       <div class="col-md-12">
-       <div class="wdgt" hide-btn="true">
+         
+                <a href="crearProyectoK.php" class="btn btn-success btn-lg" >Crear Proyecto</a>
 
+       <div class="wdgt" hide-btn="true">
+         
         <div class="wdgt-header">Base de Datos de Proyectos</div>
         <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
          <table class="datatable table table-hover table-striped">
