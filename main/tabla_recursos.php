@@ -272,9 +272,9 @@
 
           
           
-          <input style='max-width: 5%;' onClick=\"window.location.href='editarRecursos.php?codigo=$row[codigo]';\" type='image' src='../Imagenes/editar.png'>
+          <input style='max-width: 25px;' onClick=\"window.location.href='editarRecursos.php?codigo=$row[codigo]';\" type='image' src='../Imagenes/editar.png'>
           &nbsp;&nbsp;&nbsp;
-          <input style='max-width: 5%;' onClick=\"if(confirm('Se eliminará este registro')) window.location.href='eliminarRecurso.php?cod=$row[codigo]';\" type='image' src='../Imagenes/eliminar.png'> 
+          <input style='max-width: 25px;' onClick=\"if(confirm('Se eliminará este registro')) window.location.href='eliminarRecurso.php?cod=$row[codigo]';\" type='image' src='../Imagenes/eliminar.png'> 
 
            </td>";
 

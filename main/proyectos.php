@@ -1,22 +1,38 @@
 <?php
-	
-	require '../model/Usuario.php';
+  
+  require '../model/Usuario.php';
 
-	session_start();
+  session_start();
 
-	if (!isset($_SESSION["userData"])){
-		session_destroy();
-		header("Location: ../index.php");
-		exit();
-	}
-	$userData = $_SESSION["userData"];
-	session_write_close();
+  if (!isset($_SESSION["userData"])){
+    session_destroy();
+    header("Location: ../index.php");
+    exit();
+  }
+  $userData = $_SESSION["userData"];
+  session_write_close();
 ?>
+
+
+<?php
+ error_reporting(0);
+
+ $link=mysql_connect("localhost","sgp_user","56p_2016");
+ 
+ if ($link) {
+  mysql_select_db("sgp_system", $link);
+  # code...
+ }
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
  <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Datatables // Soft Admin</title>
+  <title>DIAZA, S.A DE C.V</title>
   
   <!-- Default Styles (DO NOT TOUCH) -->
   <link rel="stylesheet" href="../lib/CSS/font-awesome.min.css">
@@ -25,16 +41,16 @@
   <link type="text/css" rel="stylesheet" href="../lib/CSS/soft-admin.css"/>
   
   <!-- Adjustable Styles -->
-  <link type="text/css" rel="stylesheet" href="../lib/CSS/DT_bootstrap.css"/>
+  <link type="text/css" rel="stylesheet" href="lib/css/DT_bootstrap.css"/>
   
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
-   <script src="../lib/JS/html5shiv.js"></script>
-   <script src="../lib/JS/respond.min.js"></script>
+   <script src="lib/js/html5shiv.js"></script>
+   <script src="lib/js/respond.min.js"></script>
   <![endif]-->
 
  </head>
- <body onLoad="borrar_registros()">
+ <body>
  
   <div class="cntnr">
    
@@ -42,10 +58,12 @@
    <div class="left hidden-xs">
     <div class="logo"> <img id="logo" src="../Imagenes/logo.png" style="width:159px !important; height:52px; !important"> </div>
     <div class="sidebar">
-     <div class="accordion">
-      <div class="accordion-group">
+     
+      <div class="accordion">
+      
+        <div class="accordion-group">
        <div class="accordion-heading">
-        <a class="sbtn btn-default" href="home.php">
+        <a class="sbtn btn-default active" href="home.php">
          <span class="fa fa-home"></span>
          &nbsp;&nbsp;Home
         </a>
@@ -61,7 +79,6 @@
        </div>
       </div>
       <?php } ?>
-
       <div class="accordion-group">
        <div class="accordion-heading">
         <a class="sbtn btn-default" data-toggle="collapse" href="#c-tables">
@@ -84,35 +101,29 @@
          <span class="caret"></span>
         </a>
        </div>
-       <div id="c-forms" class="accordion-body collapse"><div class="accordion-inner">
-        <a href="tabla_recursos.php" class="sbtn sbtn-default">Ver Recursos</a>
+       <div id="c-forms" class="accordion-body collapse in"><div class="accordion-inner">
+        <a href="tabla_recursos.php" class="sbtn sbtn-default active">Ver Recursos</a>
         <a href="ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
        </div></div>
       </div>
 
       <div class="accordion-group">
        <div class="accordion-heading">
-        <a class="sbtn btn-default active" href="proyectos.php">
+        <a class="sbtn btn-default" href="proyectos.php">
          <span class="fa fa-list-alt"></span>
          &nbsp;&nbsp;Proyectos
         </a>
        </div>
-      </div>
-
-       
-
-  
-      </div>
-      </div>
-      </div>
-   <!-- END LEFT SIDEBAR & LOGO -->
-
-
-   <!-- RESPONSIVE NAVIGATION -->
+      </div>      
+     </div>
+    </div>
+   </div>
+   
+<!-- RESPONSIVE NAVIGATION -->
    <div id="secondary" class="btn-group visible-xs">
     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"><span class="icon icon-th-large"></span>&nbsp;&nbsp;Menu&nbsp;&nbsp;<span class="caret"></span></button>
     <ul class="dropdown-menu dropdown-info pull-right" role="menu">
-      <li><a href="../home.php">Home</a></li>
+      <li><a href="home.php">Home</a></li>
       <li class="dropdown-header">Recursos</li>
       <li><a href="tabla_recursos.php">Ver Recursos</a></li>
       <li><a href="ingresar.php">Agregar Recurso</a></li>
@@ -128,190 +139,196 @@
     <i class="icon icon-search"></i>
     <input class="form-control form-warning input-sm" type="text">
    </div>
-   <!-- END RESPONSIVE NAVIGATION -->   
+   
+   <div id="secondary-search" class="input-icon visible-xs">
+    <i class="icon icon-search"></i>
+    <input class="form-control form-warning input-sm" type="text">
+   </div>
+   <!-- END RESPONSIVE NAVIGATION -->
    
    <!-- RIGHT NAV, CRUMBS, & CONTENT -->
    <div class="right">
    
     <div class="nav">
-    <div class="bar">
-
+     <div class="bar">
+      
+      <!-- RESPONSIVE SMALL LOGO (HIDDEN BY DEFAULT) -->
       <div class="logo-small visible-xs"><img  style="width:120px; !important; height:32px; !important" src="../Imagenes/logo.png"></div>
       
-    	<div class="hov">
-    		<div class="btn-group">
-    		<a class="con" href="" data-toggle="dropdown"><span class="icon icon-user"></span></a>
-    		 <ul class="dropdown-menu pull-right dropdown-profile" role="menu">
-    		 	<li class="title"><span class="icon icon-user"></span>&nbsp;&nbsp;Bienvenido, <?= $userData->getNombres()?></li>
-             <li><a href="changePassword.php">Cambiar contraseña</a></li>
-         		<li><a href="../services/user/logout.php"><span class="fa fa-power-off"></span>Desconectar</a></li>
-    		 </ul>
-    		</div>
-    	</div>
-    </div>
+  
+       <!-- ICON DROPDOWNS -->
+      <div class="hov">
+     
+       
+       <div class="btn-group">
+        <a class="con" href="" data-toggle="dropdown"><span class="icon icon-user"></span></a>
+         <ul class="dropdown-menu pull-right dropdown-profile" role="menu">
+          <li class="title"><span class="icon icon-user"></span>&nbsp;&nbsp;Bienvenido, <?= $userData->getNombres()?></li>
+            <li><a href="changePassword.php">Cambiar contraseña</a></li>
+            <li><a href="../services/user/logout.php"><span class="fa fa-power-off"></span>Desconectar</a></li>
+         </ul>
+        </div>
+      </div>
+     </div>
+     
      
      <!-- BREADCRUMBS -->
      <div class="crumbs">
       <ol class="breadcrumb hidden-xs">
-       <li><i class="fa fa-home"></i> <a href="../home.php">Home</a></li>
-       <li class="active">Proyectos</li>
+       <li><i class="fa fa-home"></i> <a href="home.php">Home</a></li>
+       <li><a href="tabla_recursos.php">Proyectos</a></li>
+       
       </ol>
      </div>
     </div>
     
     <!-- BEGIN PAGE CONTENT -->
-
     <div class="content">
      <div class="page-h1">
-      <h1>Proyectos <small>// Proyectos en General</small></h1>
+      <h1>Proyectos <small></small></h1>
+
      </div>
+
+
+
      <div class="tbl">
+
+
+
+
       <div class="col-md-12">
-         
-                <a href="crearProyectoK.php" class="btn btn-success btn-lg" >Crear Proyecto</a>
+
+
+        <button id="principal" class="btn btn-success btn-lg" onclick="window.location.href='crearProyectoK.php'">Crear proyecto</button>
+       
 
        <div class="wdgt" hide-btn="true">
-         
-        <div class="wdgt-header">Base de Datos de Proyectos</div>
+        <div class="wdgt-header">Tabla de proyectos</div>
         <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
-         <table class="datatable table table-hover table-striped">
-          <thead>
-            <tr>
-           <th>Nombre</th>
-           <th>Estado</th>
-           <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr> 
+        <?php
+          if (isset($_GET["error"])) {
+            
+         ?>
 
-           <td>Jim Stevens</td>
-           <td>
-            <span class="label label-success">Premium User</span>
-            <span class="label label-warning">CC Out of Date</span>
-           </td>
-           <td>
-            <button type="button" class="btn btn-primary btn-xs"><i class="icon icon-camera"></i></button>
-            <button type="button" class="btn btn-info btn-xs"><i class="icon icon-bookmark"></i></button>
-            <button type="button" class="btn btn-soft btn-xs"><i class="icon icon-edit"></i></button>
-           </td>
-            </tr>
-            <tr>
+          <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+             <span class="icon icon-remove-sign"></span> 
+             Se ha producido un error en la conexión a la base de datos, por favor intente realizar esta operación. 
+              
+                
+          </div>
+           <?php
+          // header("Location: tabla_recursos.php");
+          } else if (isset($_GET["success"])){
+        ?>
+          <div class="alertDiv alert alert-success alert-round alert-border alert-soft">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+              <span class="icon icon-ok-sign" ></span>
+             Su actualizacion se ha guardado exitosamente
+            </div>
+        <?php
+         //  header("Location: tabla_recursos.php");
+          } 
+         
+        ?>
+         <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
+
+
+          <!--ENCABEZADO DE LA TABLA RECURSOS -->
+
+     <thead>
+      <tr>
+       <th>Nombre</th>
+       <th>Descripción</th>
+       <th>Porcentaje CI</th>
+       <th>Fecha de inicio</th>
+       <th>Fecha de fin</th>
+       <th>Monto total</th>
+       <th></th>
  
-           <td>Mark Matthew</td> 
-           <td>
-            <span class="label label-success">Premium User</span>
-           </td>
-           <td>
-            <button type="button" class="btn btn-primary btn-xs"><i class="icon icon-camera"></i></button>
-            <button type="button" class="btn btn-info btn-xs"><i class="icon icon-bookmark"></i></button>
-            <button type="button" class="btn btn-soft btn-xs"><i class="icon icon-edit"></i></button>
-           </td>
-            </tr>
-            <tr>
-            
-           <td>Gus Johanson</td> 
-           <td>
-            <span class="label label-info">Basic User</span>
-           </td>
-           <td>
-            <button type="button" class="btn btn-primary btn-xs"><i class="icon icon-camera"></i></button>
-            <button type="button" class="btn btn-info btn-xs"><i class="icon icon-bookmark"></i></button>
-            <button type="button" class="btn btn-soft btn-xs"><i class="icon icon-edit"></i></button>
-           </td>
-            </tr>
-            <tr>   
-           <td>Greg McGinty</td>
-           
-           <td>
-            <span class="label label-info">Basic User</span>
-           </td>
-           <td>
-            <button type="button" class="btn btn-primary btn-xs"><i class="icon icon-camera"></i></button>
-            <button type="button" class="btn btn-info btn-xs"><i class="icon icon-bookmark"></i></button>
-            <button type="button" class="btn btn-soft btn-xs"><i class="icon icon-edit"></i></button>
-           </td>
-            </tr>
-            <tr>
-            
-           <td>Art Fredericks</td>  
-           <td>
-            <span class="label label-success">Premium User</span>
-           </td>
-           <td>
-            <button type="button" class="btn btn-primary btn-xs"><i class="icon icon-camera"></i></button>
-            <button type="button" class="btn btn-info btn-xs"><i class="icon icon-bookmark"></i></button>
-            <button type="button" class="btn btn-soft btn-xs"><i class="icon icon-edit"></i></button>
-           </td>
-            </tr>
-            <tr>
-            
-           <td>Frank Bellamy</td>
-           <td>
-            <span class="label label-success">Premium User</span>
-            <span class="label label-warning">CC Out of Date</span>
-           </td>
-           <td>
-            <button type="button" class="btn btn-primary btn-xs"><i class="icon icon-camera"></i></button>
-            <button type="button" class="btn btn-info btn-xs"><i class="icon icon-bookmark"></i></button>
-            <button type="button" class="btn btn-soft btn-xs"><i class="icon icon-edit"></i></button>
-           </td>
-            </tr>
-            <tr>
-            
-           <td>Freddy Mason</td>
-           <td>
-            <span class="label label-info">Basic User</span>
-           </td>
-           <td>
-            <button type="button" class="btn btn-primary btn-xs"><i class="icon icon-camera"></i></button>
-            <button type="button" class="btn btn-info btn-xs"><i class="icon icon-bookmark"></i></button>
-            <button type="button" class="btn btn-soft btn-xs"><i class="icon icon-edit"></i></button>
-           </td>
-            </tr>
-          </tbody>
-         </table>
+   
+   
+        
+      </tr>
+     </thead>
+
+
+        <!--CUERPO DE LA TABLA RECURSOS -->
+
+
+     <tbody>
+
+
+  <?php
+    #include 'connect_db.php';
+    //require("connect_db.php");
+     $sql = mysql_query("SELECT * FROM proyecto");
+    while ($row = mysql_fetch_array($sql)) {
+        echo '<tr>';
+        echo '<td>'. $row['nombre'] . '</td>';
+        echo '<td>'. $row['descripcion'] .'</td>';
+        echo '<td>'. $row['porcentajeCI'] .'</td>';
+        echo '<td>'. $row['fechaInicio'] . '</td>';
+        echo '<td>'. $row['fechaFin'] .'</td>';
+        echo '<td>'. $row['montoTotal'] .'</td>'; 
+    
+
+
+        echo "
+
+          <td class='center'>
+
+          
+          
+          <input style='max-width: 25px;' onClick=\"window.location.href='modProyecto.php?id=$row[idProyecto]';\" type='image' src='../Imagenes/editar.png'>
+          &nbsp;&nbsp;&nbsp;
+          <input style='max-width: 25px' onClick=\"if(confirm('Se eliminará este registro')) window.location.href='eliminarRecurso.php?cod=$row[codigo]';\" type='image' src='../Imagenes/eliminar.png'> 
+
+           </td>";
+
+
+      
+
+
+        
+       echo '</tr>';
+    }
+    
+    ?>
+
+
+
+     
+     </tbody>
+    </table>
+
+
 
         </div>
        </div>
 
-      </div>
-     </div>
-
-     <div class="tbl">
-      <div class="col-md-6">
-       <div class="wdgt">
-        <div class="wdgt-header">Avance Proyectos</div>
-        <div class="wdgt-body" style="padding-bottom:10px;">
-         <div id="hero-bar" class="graph"></div>
-        </div>
-       </div>
-      </div>
-      <div class="col-md-6">
-       <div class="wdgt">
-        <div class="wdgt-header">Estado Proyectos</div>
-        <div class="wdgt-body" style="padding-bottom:10px;">
-         <div id="hero-donut" class="graph"></div>
-        </div>
-       </div>
       </div>
      </div>
 
     </div>
     <!-- END PAGE CONTENT -->
 
+
+
    </div>
    <!-- END NAV, CRUMBS, & CONTENT -->
    
   </div>
-  
+
   <!-- Default JS (DO NOT TOUCH) -->
-  <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+  <script src="../lib/JS/jquery-3.1.0.min.js"></script>
   <script src="../lib/JS/bootstrap.min.js"></script>
   <script src="../lib/JS/hogan.min.js"></script>
   <script src="../lib/JS/typeahead.min.js"></script>
   <script src="../lib/JS/typeahead-example.js"></script>
+
   
+
   <!-- Adjustable JS -->
   <script src="../lib/JS/jquery.dataTables.js"></script>
   <script src="../lib/JS/DT_bootstrap.js"></script>
