@@ -243,7 +243,7 @@ error_reporting(0);
               <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
 
 
-                  <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped" id="partidas">
+                  <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped" id="paras">
                     <thead>
                       <tr>
                         <th>Descripcion</th>
@@ -305,7 +305,7 @@ error_reporting(0);
                   </table>
                   <div>
                     <button type="button" id="new-row-etapa" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
-                    <strong>Sub-total:<span id="sub-total-etapa">0.00</span></strong>
+                    <strong>Sub-total:<span id="sub-total-etaa">0.00</span></strong>
                   </div>
                   <br>
                 </div>
@@ -556,7 +556,7 @@ while ($row = mysql_fetch_array($sql)) {
           var CI = CD * 0.29;
           var IVA1 = (CD + CI) * 0.13;
           var precioUnitario = CD + CI + IVA1;
-          var subtotal = precioUnitario*cant;
+          var subtotal = (CD*cant + CI*cant + IVA1*cant);
 
          if (/^([0-9])*$/.test(cant)){
           $("#partidas tr:last td").each(function(index){
