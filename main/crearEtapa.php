@@ -31,6 +31,8 @@ error_reporting(0);
       if(isset($_POST["subTotal_etapa"])){
         $total_etapa = array_sum($_POST["subTotal_etapa"]);
       }
+
+      if($fechaFinProgramada > $fechaInicioProgramada){
       $query = "INSERT INTO etapa(nombre, detalle, idProyecto, fechaInicioProgramada, fechaFinProgramada, estado, totalEtapa) VALUES ('".$nombre."', '".$detalle."', '".$proyecto."', '".$fechaInicioProgramada."', '".$fechaFinProgramada."', '".$estado."', ".$total_etapa.")";
      // $conn->query($query);
       if($conn->query($query)){
@@ -50,7 +52,16 @@ error_reporting(0);
         
       }else{
        
-      }      
+      }   
+
+      }elseif ($fechaFinProgramada < $fechaInicioProgramada){
+       $str = "error2";
+        
+  
+      header("Location: crearEtapa.php?".$str);
+
+      header("Location: crearEtapa.php?id=".$proyecto);
+     }   
 
 
     
@@ -311,6 +322,33 @@ error_reporting(0);
               <div class="wdgt wdgt-primary" hide-btn="true">
                 <div class="wdgt-header">Etapas</div>
                 <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
+
+                          <?php
+          if (isset($_GET["error1"])) {
+            
+         ?>
+
+          <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+             <span class="icon icon-remove-sign"></span> 
+             Se ha producido un error en la conexión a la base de datos, por favor intente realizar esta operación. 
+              
+                
+          </div>
+           <?php
+           header("Location: crearEtapa.php");
+          } else if (isset($_GET["error2"])){
+        ?>
+           <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+             <span class="icon icon-remove-sign"></span> 
+             La fecha de finalizacion debe ser mayor a la fecha de inicio.
+            </div>
+        <?php
+           header("Location: crearEtapa.php?id=".$proyecto);
+          } 
+         
+        ?>
 
               <div class="form-group">
               <label>Nombre de Etapa</label>

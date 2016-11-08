@@ -29,12 +29,7 @@
     $conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 
 
-    if($conn->connect_errno){
-      $error = 1;
-    }
-    else{
-
-    if($fechaFin > $fechaInicio){
+    
     $query = "INSERT INTO proyecto(nombre, descripcion, porcentajeCI, fechaInicio, fechaFin) VALUES ('".$nombre."', '".$descripcion."', '".$pci."', '".$fechaInicio."', '".$fechaFin."')";
 
     // $query = "CALL insertProyecto('".$nombre."', '".$descripcion."', '".$pci."', '".$fechaInicio."', '".$fechaFin."')";
@@ -43,21 +38,11 @@
           
         header("Location: crearEtapa.php?id=".$id);
       } 
-        elseif (!$conn->query($query)) {
-         $str = "error1";
-        
-  
-      header("Location: crearProyectoK.php?".$str);
+        else {
+
         }
         
-     }elseif ($fechaFin < $fechaInicio){
-       $str = "error2";
-        
-  
-      header("Location: crearProyectoK.php?".$str);
-     }
-
-  }
+    
 
 
 ?>
