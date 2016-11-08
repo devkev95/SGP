@@ -229,8 +229,101 @@ error_reporting(0);
               <span class="icon icon-exclamation-sign"></span> <strong>Verifique antes de guardar!</strong>
             </div>
           </div>
+
+
+
+
           <div class="tb1">
+
+         <form method="POST" action="">
+            <div class="col-md-12">
+              <div class="wdgt wdgt-primary" hide-btn="true">
+                <div class="wdgt-header">Etapas Proyecto</div>
+
+              <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
+
+
+                  <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped" id="partidas">
+                    <thead>
+                      <tr>
+                        <th>Descripcion</th>
+                        <th>Material</th>
+                        <th>M.O</th>
+                        <th>Otros</th>
+                        <th>C.D.</th>
+                        <th>C.I.</th>
+                        <th>IVA 13%</th>
+                        <th>P.U.</th>
+                        <th>Sub-Total</th>
+                        <th></th>
+                         
+                      </tr>
+                    </thead>
+                    <tbody>
+ <?php
+    #include 'connect_db.php';
+    //require("connect_db.php");
+     $sql = mysql_query("CALL sp_select('2','')");
+    while ($row = mysql_fetch_array($sql)) {
+        echo '<tr>';
+        echo '<td>'. $row['codigo'] . '</td>';
+        echo '<td>'. $row['nombre'] .'</td>';
+        echo '<td>'. $row['unidad'] .'</td>';
+        echo '<td>'. $row['costoDirecto'] . '</td>';
+        echo '<td>'. $row['iva'] .'</td>';
+        echo '<td>'. $row['total'] .'</td>'; 
+        echo '<td>'. $row['fecha'] . '</td>';
+        echo '<td>'. $row['empresaProveedora'] . '</td>';
+        echo '<td>'. $row['tipoRecurso'] . '</td>';
+
+
+        echo "
+
+          <td class='center'>
+
+          
+          
+          <input style='max-width: 5%;' onClick=\"window.location.href='editarRecursos.php?codigo=$row[codigo]';\" type='image' src='../Imagenes/editar.png'>
+          &nbsp;&nbsp;&nbsp;
+          <input style='max-width: 5%;' onClick=\"if(confirm('Se eliminará este registro')) window.location.href='eliminarRecurso.php?cod=$row[codigo]';\" type='image' src='../Imagenes/eliminar.png'> 
+
+           </td>";
+
+
+      
+
+
+        
+       echo '</tr>';
+    }
+    
+    ?>
+
+
+
+                    </tbody>
+                  </table>
+                  <div>
+                    <button type="button" id="new-row-etapa" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
+                    <strong>Sub-total:<span id="sub-total-etapa">0.00</span></strong>
+                  </div>
+                  <br>
+                </div>
+              </div>
+
+            </div>
+
+   
+              <div class="col-md-12">
+              <div class="wdgt">
+                  <button id="pr" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" disabled>Terminar</button>
+              </div>
+            </div>
+                </form>
             
+<!--*************************************** FORM de la parte CREAR ETAPA  *************************************** -->
+
+
           <form method="POST" action="">
             <div class="col-md-12">
               <div class="wdgt wdgt-primary" hide-btn="true">

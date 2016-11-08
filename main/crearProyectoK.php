@@ -268,14 +268,14 @@
           <div class="form-group">
             <label>Fecha Inicio</label>
             <br>
-             <input type="date" class="tcal" required id="inputFName" placeholder="FechaInicio" name="fechaInicio">
+             <input type="date"  required id="inputFName" placeholder="FechaInicio" name="fechaInicio">
             <span class="help-block" ></span>
           </div>
            <!-- Fecha Fin -->
           <div class="form-group">
             <label>Fecha Fin</label>
             <br>
-            <input type="date" class="tcal" required id="inputFName" placeholder="FechaFin" name="fechaFin"  >
+            <input type="date"  required id="inputFName" placeholder="FechaFin" name="fechaFin"  >
             <span class="help-block"></span>
           </div>   
                 <div class="form-actions">
