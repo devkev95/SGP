@@ -80,6 +80,7 @@ error_reporting(0);
 
     <!-- Adjustable Styles -->
     <link type="text/css" rel="stylesheet" href="../lib/CSS/DT_bootstrap.css" />
+     <link type="text/css" rel="stylesheet" href="lib/css/DT_bootstrap.css"/>
     <link type="text/css" rel="stylesheet" href="../lib/CSS/icheck.css?v=1.0.1">
    
 
@@ -243,59 +244,38 @@ error_reporting(0);
               <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
 
 
-                  <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped" id="paras">
+                  <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered" id="etaps">
                     <thead>
                       <tr>
-                        <th>Descripcion</th>
-                        <th>Material</th>
-                        <th>M.O</th>
-                        <th>Otros</th>
+                        <th>Nombre</th>
                         <th>C.D.</th>
                         <th>C.I.</th>
                         <th>IVA 13%</th>
-                        <th>P.U.</th>
                         <th>Sub-Total</th>
-                        <th></th>
+                        
                          
                       </tr>
                     </thead>
                     <tbody>
  <?php
-    #include 'connect_db.php';
-    //require("connect_db.php");
-     $sql = mysql_query("CALL sp_select('2','')");
-    while ($row = mysql_fetch_array($sql)) {
+    //include 'connect_db.php';
+    require("connect_db.php");
+     $sql1 = mysql_query("CALL sp_select_etapas('1','".$proyecto."')");
+    while ($row = mysql_fetch_array($sql1)) {
         echo '<tr>';
-        echo '<td>'. $row['codigo'] . '</td>';
         echo '<td>'. $row['nombre'] .'</td>';
-        echo '<td>'. $row['unidad'] .'</td>';
-        echo '<td>'. $row['costoDirecto'] . '</td>';
-        echo '<td>'. $row['iva'] .'</td>';
-        echo '<td>'. $row['total'] .'</td>'; 
-        echo '<td>'. $row['fecha'] . '</td>';
-        echo '<td>'. $row['empresaProveedora'] . '</td>';
-        echo '<td>'. $row['tipoRecurso'] . '</td>';
-
-
-        echo "
-
-          <td class='center'>
-
-          
-          
-          <input style='max-width: 5%;' onClick=\"window.location.href='editarRecursos.php?codigo=$row[codigo]';\" type='image' src='../Imagenes/editar.png'>
-          &nbsp;&nbsp;&nbsp;
-          <input style='max-width: 5%;' onClick=\"if(confirm('Se eliminará este registro')) window.location.href='eliminarRecurso.php?cod=$row[codigo]';\" type='image' src='../Imagenes/eliminar.png'> 
-
-           </td>";
-
-
-      
-
-
+        echo '<td>'. $row['CD'] .'</td>';
+        echo '<td>'. $row['CI'] . '</td>';
+        echo '<td>'. $row['IVA'] .'</td>';
+        echo '<td>'. $row['totalEtapa'] .'</td>';
         
-       echo '</tr>';
+        echo '</tr>';
+
+
+    
     }
+
+
     
     ?>
 
@@ -304,8 +284,7 @@ error_reporting(0);
                     </tbody>
                   </table>
                   <div>
-                    <button type="button" id="new-row-etapa" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
-                    <strong>Sub-total:<span id="sub-total-etaa">0.00</span></strong>
+                    <strong>Sub-total:<span id="sub-total-etaa"><?php echo $total_proyecto1; ?></span></strong>
                   </div>
                   <br>
                 </div>
@@ -315,9 +294,12 @@ error_reporting(0);
 
    
               <div class="col-md-12">
+
               <div class="wdgt">
-                  <button id="pr" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" disabled>Terminar</button>
-              </div>
+           <button  class="btn btn-success btn-lg"   onclick="window.location.href='proyectos.php'" >Guardar</button>
+
+                      <a href="proyectos.php" class="btn btn-success btn-lg" >Terminar</a>             
+                      </div>
             </div>
                 </form>
             
@@ -451,11 +433,6 @@ error_reporting(0);
                                     <th>Total Equipo y Herramientas</th>
                                     <th>Total Sub Contratos</th>
                                     <th></th>
-
-
-
-
-
                                   </tr>
                                 </thead>
 
@@ -468,9 +445,9 @@ error_reporting(0);
 
                                   <?php
 #include 'connect_db.php';
-require("connect_db.php");
-$sql = mysql_query("CALL sp_select('3','')");
-while ($row = mysql_fetch_array($sql)) {
+//require("connect_db.php");
+$sql = $conn->query(" SELECT numero, nombre, totalMateriales, ROUND (totalManoObra,2) AS totalManoObra, ROUND (totalEquipoHerramientas,2) AS totalEquipoHerramientas, ROUND (totalSubContratos,2) AS totalSubContratos  FROM partida;");
+while ($row = $sql->fetch_array()) {
     echo '<tr>';
     echo '<td>'. $row['numero'] . '</td>';
     echo '<td>'. $row['nombre'] .'</td>';
@@ -643,6 +620,19 @@ while ($row = mysql_fetch_array($sql)) {
           table.append(html);
            $("#principal").prop("disabled", false);
         });
+
+         $(document).on("click", ".eliminar", function(){
+          var total = +$(this).closest("div").find("div span").text();
+          var subtotal = +$(this).closest("tr").find("td span.subtotal").text();
+          total = total - subtotal;
+          $(this).closest("div").find("div span").text(total.toFixed(2));
+          $(this).parents("tr").remove();
+          countRows = $("#partidas tbody tr").length;
+          if (countRows <= 0) {
+             $("#principal").prop("disabled", true);
+          }
+        });
+
       });
     </script>
   </body>

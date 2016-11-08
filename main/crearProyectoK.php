@@ -29,19 +29,36 @@
     $conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 
 
+    if($conn->connect_errno){
+      $error = 1;
+    }
+    else{
 
+    if($fechaFin > $fechaInicio){
+    $query = "INSERT INTO proyecto(nombre, descripcion, porcentajeCI, fechaInicio, fechaFin) VALUES ('".$nombre."', '".$descripcion."', '".$pci."', '".$fechaInicio."', '".$fechaFin."')";
 
-      $query = "INSERT INTO proyecto(nombre, descripcion, porcentajeCI, fechaInicio, fechaFin) VALUES ('".$nombre."', '".$descripcion."', '".$pci."', '".$fechaInicio."', '".$fechaFin."')";
-
+    // $query = "CALL insertProyecto('".$nombre."', '".$descripcion."', '".$pci."', '".$fechaInicio."', '".$fechaFin."')";
       if ($conn->query($query)) {
           $id = $conn->insert_id;
           
         header("Location: crearEtapa.php?id=".$id);
-      }else{
-      
+      } 
+        elseif (!$conn->query($query)) {
+         $str = "error1";
         
-      }
-     
+  
+      header("Location: crearProyectoK.php?".$str);
+        }
+        
+     }elseif ($fechaFin < $fechaInicio){
+       $str = "error2";
+        
+  
+      header("Location: crearProyectoK.php?".$str);
+     }
+
+  }
+
 
 ?>
 
@@ -232,12 +249,12 @@
           </div>
            <?php
            header("Location: crearProyectoK.php");
-          } else if (isset($_GET["success"])){
+          } else if (isset($_GET["error2"])){
         ?>
-          <div class="alertDiv alert alert-success alert-round alert-border alert-soft">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-              <span class="icon icon-ok-sign" ></span>
-             Se ha ingresado correctamente.
+           <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+             <span class="icon icon-remove-sign"></span> 
+             La fecha de finalizacion debe ser mayor a la fecha de inicio.
             </div>
         <?php
            header("Location: crearProyectoK.php");
