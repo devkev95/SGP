@@ -547,6 +547,8 @@ while ($row = mysql_fetch_array($sql)) {
         totalManoObra = +totalManoObra;
         totalEquipoHerramientas = +totalEquipoHerramientas;
         totalSubContratos = +totalSubContratos;
+         
+         subtotal= +subtotal;
         cant = +prompt("Indique la cantidad a agregar de " + nombre + ":", "");
         $('#squarespaceModal').modal('hide');
         if (cant != null) {
@@ -555,8 +557,9 @@ while ($row = mysql_fetch_array($sql)) {
           var CD = (totalMateriales + totalManoObra + totalEquipoHerramientas + totalSubContratos);
           var CI = CD * 0.29;
           var IVA1 = (CD + CI) * 0.13;
-          var precioUnitario = CD + CI + IVA1;
-          var subtotal = (CD*cant + CI*cant + IVA1*cant);
+          var precioUnitario = (CD + CI + IVA1);
+          precioUnitario = +precioUnitario;
+          var subtotal = precioUnitario * cant;
 
          if (/^([0-9])*$/.test(cant)){
           $("#partidas tr:last td").each(function(index){
@@ -581,24 +584,24 @@ while ($row = mysql_fetch_array($sql)) {
               $("span", this).text(totalOtros.toFixed(2));
             }
             else if(index == 6){
-             $("input[type='hidden']", this).val(CD.toFixed(2));
-              $("span", this).text(CD.toFixed(2));
+             $("input[type='hidden']", this).val(CD.toFixed(4));
+              $("span", this).text(CD.toFixed(4));
             }
             else if(index == 7){
-             $("input[type='hidden']", this).val(CI.toFixed(2));
-              $("span", this).text(CI.toFixed(2));
+             $("input[type='hidden']", this).val(CI.toFixed(4));
+              $("span", this).text(CI.toFixed(4));
             }
             else if(index == 8){
-             $("input[type='hidden']", this).val(IVA1.toFixed(2));
-              $("span", this).text(IVA1.toFixed(2));
+             $("input[type='hidden']", this).val(IVA1.toFixed(4));
+              $("span", this).text(IVA1.toFixed(4));
             }
             else if(index == 9){
-             $("input[type='hidden']", this).val(precioUnitario.toFixed(2));
-              $("span", this).text(precioUnitario.toFixed(2));
+             $("input[type='hidden']", this).val(precioUnitario.toFixed(4));
+              $("span", this).text(precioUnitario.toFixed(4));
             }
             else if(index == 10){
-              $("input[type='hidden']", this).val(subtotal.toFixed(2));
-              $("span", this).text(subtotal.toFixed(2));
+              $("input[type='hidden']", this).val(subtotal.toFixed(4));
+              $("span", this).text(subtotal.toFixed(4));
             }
           });
           var total_etapa = +$("#sub-total-etapa").text() + subtotal;

@@ -688,11 +688,7 @@ while ($row = $sql->fetch_array()) {
           var table = $(this).parents(".wdgt-body").children("table");
           var count = table.children("tbody").children("tr").length;
 
-          html = "<tr><td><span></span><input type='hidden' name='codigo[]'/></td>
-          <td><span></span><input type='hidden' name='cantidad[]'/></td>
-          <td><span></span></td><td><span></span></td>
-          <td><span class='subtotal'></span><input type='hidden' name='subTotal_recursos[]'/></td>
-          <td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          html = "<tr><td><span></span><input type='hidden' name='codigo[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_recursos[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
           table.append(html);
            $("#principal").prop("disabled", false);
         });
