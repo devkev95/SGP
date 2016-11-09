@@ -49,6 +49,9 @@ error_reporting(0);
           $conn->query($query1);
 
         }
+
+        header("Location: crearEtapa.php?id=".$proyecto);
+
         
       }else{
        
@@ -58,9 +61,9 @@ error_reporting(0);
        $str = "error2";
         
   
-      header("Location: crearEtapa.php?".$str);
+     // header("Location: crearEtapa.php?".$str);
 
-      header("Location: crearEtapa.php?id=".$proyecto);
+     header("Location: crearEtapa.php?id=".$proyecto."&".$str);
      }   
 
 
@@ -304,15 +307,17 @@ error_reporting(0);
             </div>
 
    
+                </form>
+
+
               <div class="col-md-12">
 
               <div class="wdgt">
-           <button  class="btn btn-success btn-lg"   onclick="window.location.href='proyectos.php'" >Guardar</button>
+           <button id="principal1" class="btn btn-success btn-lg"   onclick="window.location.href='proyectos.php'" >Terminar</button>
 
-                      <a href="proyectos.php" class="btn btn-success btn-lg" >Terminar</a>             
+                             
                       </div>
             </div>
-                </form>
             
 <!--*************************************** FORM de la parte CREAR ETAPA  *************************************** -->
 

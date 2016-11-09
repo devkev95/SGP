@@ -19,8 +19,8 @@
 
     $nombre = $_POST['nombre'];
     $descripcion = $_POST["descripcion"];
-    $fechaInicio = $_POST["fechaInicio"];
-    $fechaFin = $_POST["fechaFin"];
+  //  $fechaInicio = $_POST["fechaInicio"];
+    //$fechaFin = $_POST["fechaFin"];
     $porcentaje_indirecto= $_POST["porcentajeCI"];
 
     $pci = round(($porcentaje_indirecto / 100), 2);
@@ -28,9 +28,9 @@
     
     $conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 
-
-    
-    $query = "INSERT INTO proyecto(nombre, descripcion, porcentajeCI, fechaInicio, fechaFin) VALUES ('".$nombre."', '".$descripcion."', '".$pci."', '".$fechaInicio."', '".$fechaFin."')";
+ 
+    if(!empty($_POST['nombre'])){
+    $query = "INSERT INTO proyecto(nombre, descripcion, porcentajeCI) VALUES ('".$nombre."', '".$descripcion."', '".$pci."')";
 
     // $query = "CALL insertProyecto('".$nombre."', '".$descripcion."', '".$pci."', '".$fechaInicio."', '".$fechaFin."')";
       if ($conn->query($query)) {
@@ -41,7 +41,7 @@
         else {
 
         }
-        
+      }  
     
 
 
@@ -266,22 +266,9 @@
            <input type="number" step="1" min="0.00" class="form-control" required="required" placeholder="Porcentaje"id="inputFName" name="porcentajeCI" >
            <span class="help-block"></span>
           </div>
-           <!-- Fecha Inicio -->
-          <div class="form-group">
-            <label>Fecha Inicio</label>
-            <br>
-             <input type="date"  required id="inputFName" placeholder="FechaInicio" name="fechaInicio">
-            <span class="help-block" ></span>
-          </div>
-           <!-- Fecha Fin -->
-          <div class="form-group">
-            <label>Fecha Fin</label>
-            <br>
-            <input type="date"  required id="inputFName" placeholder="FechaFin" name="fechaFin"  >
-            <span class="help-block"></span>
-          </div>   
-                <div class="form-actions">
-        <button id="principal" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar">Siguiente >></button>
+
+        <div class="form-actions">
+        <button id="principal" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" disabled>Siguiente >></button>
        </div>
          </form>
         </div>
@@ -340,20 +327,6 @@
                 numeric:{
                   message: 'Este campo debe ser numerico'
                 }
-              }
-            },
-            fechaInicio: {
-              validators : {
-                notEmpty: {
-                  message: 'Este campo no puede estar vacio'
-                  },
-              }
-            },
-            fechaFin: {
-              validators : {
-                notEmpty: {
-                  message: 'Este campo no puede estar vacio'
-                  },
               }
             }
           }
