@@ -23,6 +23,7 @@
   }
   // Obteniedo la ultima versión de la partida
   $version = $_POST["version"];
+  $nuevaVersion = 0;
 
   // Calculos de costos totales
   $cd = $total_materiales + $total_MO + $total_herramientas + $total_subcontratos;
@@ -69,17 +70,6 @@
           $conn->query($query);
       }
       $offsetSC = $i;
-
-      // Revisamos si hay proyectos no iniciados relacionados con está partida, si es asi tenemos que actualizar la 
-      // relación con la nueva versión de la partida
-      $query = "SELECT a.cantidad, a.idEtapa, a.CI FROM etapapartida a INNER JOIN partida b ON a.idPartida = b.numero AND a.versionPartida = b.version INNER JOIN etapa c ON c.idEtapa = a.idEtapa INNER JOIN proyecto d ON c.idProyecto = d.idProyecto WHERE b.numero = ".$numeroPartida." AND b.version = ".$version." AND d.estado = 0";
-      $res = $conn->query($query);
-      while($row = $res->fetch_object()){
-        $iva = $cd * (1 + $row->CI) * 0.13;
-        $puPartidaEtapa = $cd * (1 + ($row->CI + 0.13));
-        $subtotalPartidaEtapa = $puPartidaEtapa * $row->cantidad;
-        $query = "UPDATE etapapartida SET IVA=".$iva.", CD=".$cd.", PU=".$puPartidaEtapa.", versionPartida=".$nuevaVersion.", subTotal=".$subTotal." WHERE idPartida=".$numeroPartida." AND versionPartida=".$version." AND idEtapa=".$row->idEtapa;
-      }
       $version = $nuevaVersion;
     
   } else {
@@ -120,7 +110,7 @@
     }
     
   }
-  // Creamos los nuevas lineas agregadaspara cualquier caso
+  // Creamos los nuevas lineas agregadas para cualquier caso
 
     
     $n = count($_POST["codigo"]);
@@ -158,6 +148,35 @@
           $query = "INSERT INTO lineasubcontratoPartida (idLinea, numPartida, versionPartida) VALUES (".$idLinea.", ".$numeroPartida.", ".$version.")";
           $conn->query($query);
     }
+
+    // Revisamos si hay proyectos no iniciados relacionados con está partida, si es asi tenemos que actualizar la 
+    // relación con los cambios hechos en la partida
+      $query = "SELECT a.cantidad, a.idEtapa, a.CI, a.subTotal FROM etapapartida a INNER JOIN partida b ON a.idPartida = b.numero AND a.versionPartida = b.version INNER JOIN etapa c ON c.idEtapa = a.idEtapa INNER JOIN proyecto d ON c.idProyecto = d.idProyecto WHERE b.numero = ".$numeroPartida." AND b.version = ".$version." AND d.estado = 0";
+      $res = $conn->query($query);
+      if ($res->num_rows > 0) {
+        
+        while($row = $res->fetch_object()){
+          $iva = $cd * (1 + ($row->CI / 100)) * 0.13;
+          $puPartidaEtapa = $cd * (1 + ($row->CI / 100) + 0.13);
+          $subtotalPartidaEtapa = $puPartidaEtapa * $row->cantidad;
+          $diff = $subtotalPartidaEtapa - $row->subTotal;
+          $query = "UPDATE etapapartida SET IVA=".$iva.", CD=".$cd.", PU=".$puPartidaEtapa;
+          if ($nuevaVersion != 0) {
+            $query .= ", versionPartida=".$nuevaVersion;
+          }
+          query .= ", subTotal=".$subtotalPartidaEtapa." WHERE idPartida=".$numeroPartida." AND versionPartida=".$version." AND idEtapa=".$row->idEtapa;
+          $conn->query($query);
+
+          $query = "SELECT b.idProyecto, b.montoTotal FROM etapa a INNER JOIN proyecto b ON a.idProyecto = b.idProyecto WHERE a.idEtapa=".$row->idEtapa;
+          $res2 = $conn->query($query);
+          $idProyecto = $res2->fetch_object()->idProyecto;
+          $montoTotal = $res2->fetch_object()->montoTotal;
+          $nuevoMontoTotal = $montoTotal + ($diff * (1 + ($row->CI / 100) + 0.13));
+
+          $query = "UPDATE proyecto SET montoTotal=".$nuevoMontoTotal." WHERE idProyecto =".$idProyecto;
+          $conn->query($query);
+        }
+      }
 
     header("Location: consultarPartidas.php");
 

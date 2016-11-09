@@ -18,7 +18,7 @@ if (isset($_POST["id"], $_POST["opt"], $_POST["version"], $_POST["idPartida"])) 
 	}
 
 	// Revisamos si la linea de partida esta relacionada con alguna partida relacionada con algún proyecto finalizado
-	$query = "SELECT a.id FROM ".$table." a INNER JOIN ".$table2." b ON a.id = b.idLinea INNER JOIN partida c ON b.numPartida = c.numero AND b.versionPartida = c.version INNER JOIN etapapartida d ON d.idPartida = c.numero AND d.versionPartida = c.version INNER JOIN etapa e ON e.idEtapa=d.idEtapa INNER JOIN proyecto f ON f.idProyecto = e.idProyecto WHERE f.estado != 0 AND c.version = ".$_POST["version"]." AND a.id = ".$_POST["id"]." AND c.numero = ".$_POST["idPartida"]." GROUP BY e.idEtapa";
+	$query = "SELECT a.id FROM ".$table." a INNER JOIN ".$table2." b ON a.id = b.idLinea INNER JOIN partida c ON b.numPartida = c.numero AND b.versionPartida = c.version INNER JOIN etapapartida d ON d.idPartida = c.numero AND d.versionPartida = c.version INNER JOIN etapa e ON e.idEtapa=d.idEtapa INNER JOIN proyecto f ON f.idProyecto = e.idProyecto WHERE f.estado != 0 AND c.version = ".$_POST["version"]." AND a.id = ".$_POST["id"]." AND c.numero = ".$_POST["idPartida"];
 	$res = $db->query($query);
 
 	// Si la cantidad de filas que manda es mayor a 0 quiere decir que esta relacionado con alguna partida relacionada 
