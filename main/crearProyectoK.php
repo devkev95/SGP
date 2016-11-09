@@ -19,8 +19,8 @@
 
     $nombre = $_POST['nombre'];
     $descripcion = $_POST["descripcion"];
-    $fechaInicio = $_POST["fechaInicio"];
-    $fechaFin = $_POST["fechaFin"];
+  //  $fechaInicio = $_POST["fechaInicio"];
+    //$fechaFin = $_POST["fechaFin"];
     $porcentaje_indirecto= $_POST["porcentajeCI"];
 
     $pci = round(($porcentaje_indirecto / 100), 2);
@@ -28,20 +28,22 @@
     
     $conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 
+ 
+    if(!empty($_POST['nombre'])){
+    $query = "INSERT INTO proyecto(nombre, descripcion, porcentajeCI) VALUES ('".$nombre."', '".$descripcion."', '".$pci."')";
 
-
-
-      $query = "INSERT INTO proyecto(nombre, descripcion, porcentajeCI, fechaInicio, fechaFin) VALUES ('".$nombre."', '".$descripcion."', '".$pci."', '".$fechaInicio."', '".$fechaFin."')";
-
+    // $query = "CALL insertProyecto('".$nombre."', '".$descripcion."', '".$pci."', '".$fechaInicio."', '".$fechaFin."')";
       if ($conn->query($query)) {
           $id = $conn->insert_id;
           
         header("Location: crearEtapa.php?id=".$id);
-      }else{
-      
-        
-      }
-     
+      } 
+        else {
+
+        }
+      }  
+    
+
 
 ?>
 
@@ -232,12 +234,12 @@
           </div>
            <?php
            header("Location: crearProyectoK.php");
-          } else if (isset($_GET["success"])){
+          } else if (isset($_GET["error2"])){
         ?>
-          <div class="alertDiv alert alert-success alert-round alert-border alert-soft">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-              <span class="icon icon-ok-sign" ></span>
-             Se ha ingresado correctamente.
+           <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+             <span class="icon icon-remove-sign"></span> 
+             La fecha de finalizacion debe ser mayor a la fecha de inicio.
             </div>
         <?php
            header("Location: crearProyectoK.php");
@@ -264,22 +266,9 @@
            <input type="number" step="1" min="0.00" class="form-control" required="required" placeholder="Porcentaje"id="inputFName" name="porcentajeCI" >
            <span class="help-block"></span>
           </div>
-           <!-- Fecha Inicio -->
-          <div class="form-group">
-            <label>Fecha Inicio</label>
-            <br>
-             <input type="date" class="tcal" required id="inputFName" placeholder="FechaInicio" name="fechaInicio">
-            <span class="help-block" ></span>
-          </div>
-           <!-- Fecha Fin -->
-          <div class="form-group">
-            <label>Fecha Fin</label>
-            <br>
-            <input type="date" class="tcal" required id="inputFName" placeholder="FechaFin" name="fechaFin"  >
-            <span class="help-block"></span>
-          </div>   
-                <div class="form-actions">
-        <button id="principal" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar">Siguiente >></button>
+
+        <div class="form-actions">
+        <button id="principal" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" disabled>Siguiente >></button>
        </div>
          </form>
         </div>
@@ -338,20 +327,6 @@
                 numeric:{
                   message: 'Este campo debe ser numerico'
                 }
-              }
-            },
-            fechaInicio: {
-              validators : {
-                notEmpty: {
-                  message: 'Este campo no puede estar vacio'
-                  },
-              }
-            },
-            fechaFin: {
-              validators : {
-                notEmpty: {
-                  message: 'Este campo no puede estar vacio'
-                  },
               }
             }
           }

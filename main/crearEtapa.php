@@ -31,6 +31,8 @@ error_reporting(0);
       if(isset($_POST["subTotal_etapa"])){
         $total_etapa = array_sum($_POST["subTotal_etapa"]);
       }
+
+      if($fechaFinProgramada > $fechaInicioProgramada){
       $query = "INSERT INTO etapa(nombre, detalle, idProyecto, fechaInicioProgramada, fechaFinProgramada, estado, totalEtapa) VALUES ('".$nombre."', '".$detalle."', '".$proyecto."', '".$fechaInicioProgramada."', '".$fechaFinProgramada."', '".$estado."', ".$total_etapa.")";
      // $conn->query($query);
       if($conn->query($query)){
@@ -47,10 +49,22 @@ error_reporting(0);
           $conn->query($query1);
 
         }
+
+        header("Location: crearEtapa.php?id=".$proyecto);
+
         
       }else{
        
-      }      
+      }   
+
+      }elseif ($fechaFinProgramada < $fechaInicioProgramada){
+       $str = "error2";
+        
+  
+     // header("Location: crearEtapa.php?".$str);
+
+     header("Location: crearEtapa.php?id=".$proyecto."&".$str);
+     }   
 
 
     
@@ -80,6 +94,7 @@ error_reporting(0);
 
     <!-- Adjustable Styles -->
     <link type="text/css" rel="stylesheet" href="../lib/CSS/DT_bootstrap.css" />
+     <link type="text/css" rel="stylesheet" href="lib/css/DT_bootstrap.css"/>
     <link type="text/css" rel="stylesheet" href="../lib/CSS/icheck.css?v=1.0.1">
    
 
@@ -229,13 +244,116 @@ error_reporting(0);
               <span class="icon icon-exclamation-sign"></span> <strong>Verifique antes de guardar!</strong>
             </div>
           </div>
+
+
+
+
           <div class="tb1">
+
+         <form method="POST" action="">
+            <div class="col-md-12">
+              <div class="wdgt wdgt-primary" hide-btn="true">
+                <div class="wdgt-header">Etapas Proyecto</div>
+
+              <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
+
+
+                  <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered" id="etaps">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>C.D.</th>
+                        <th>C.I.</th>
+                        <th>IVA 13%</th>
+                        <th>Sub-Total</th>
+                        
+                         
+                      </tr>
+                    </thead>
+                    <tbody>
+ <?php
+    //include 'connect_db.php';
+    require("connect_db.php");
+     $sql1 = mysql_query("CALL sp_select_etapas('1','".$proyecto."')");
+    while ($row = mysql_fetch_array($sql1)) {
+        echo '<tr>';
+        echo '<td>'. $row['nombre'] .'</td>';
+        echo '<td>'. $row['CD'] .'</td>';
+        echo '<td>'. $row['CI'] . '</td>';
+        echo '<td>'. $row['IVA'] .'</td>';
+        echo '<td>'. $row['totalEtapa'] .'</td>';
+        
+        echo '</tr>';
+
+
+    
+    }
+
+
+    
+    ?>
+
+
+
+                    </tbody>
+                  </table>
+                  <div>
+                    <strong>Sub-total:<span id="sub-total-etaa"><?php echo $total_proyecto1; ?></span></strong>
+                  </div>
+                  <br>
+                </div>
+              </div>
+
+            </div>
+
+   
+                </form>
+
+
+              <div class="col-md-12">
+
+              <div class="wdgt">
+           <button id="principal1" class="btn btn-success btn-lg"   onclick="window.location.href='proyectos.php'" >Terminar</button>
+
+                             
+                      </div>
+            </div>
             
+<!--*************************************** FORM de la parte CREAR ETAPA  *************************************** -->
+
+
           <form method="POST" action="">
             <div class="col-md-12">
               <div class="wdgt wdgt-primary" hide-btn="true">
                 <div class="wdgt-header">Etapas</div>
                 <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
+
+                          <?php
+          if (isset($_GET["error1"])) {
+            
+         ?>
+
+          <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+             <span class="icon icon-remove-sign"></span> 
+             Se ha producido un error en la conexión a la base de datos, por favor intente realizar esta operación. 
+              
+                
+          </div>
+           <?php
+           header("Location: crearEtapa.php");
+          } else if (isset($_GET["error2"])){
+        ?>
+           <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+             <span class="icon icon-remove-sign"></span> 
+             La fecha de finalizacion debe ser mayor a la fecha de inicio.
+            </div>
+        <?php
+           header("Location: crearEtapa.php?id=".$proyecto);
+          } 
+         
+        ?>
 
               <div class="form-group">
               <label>Nombre de Etapa</label>
@@ -358,11 +476,6 @@ error_reporting(0);
                                     <th>Total Equipo y Herramientas</th>
                                     <th>Total Sub Contratos</th>
                                     <th></th>
-
-
-
-
-
                                   </tr>
                                 </thead>
 
@@ -375,9 +488,9 @@ error_reporting(0);
 
                                   <?php
 #include 'connect_db.php';
-require("connect_db.php");
-$sql = mysql_query("CALL sp_select('3','')");
-while ($row = mysql_fetch_array($sql)) {
+//require("connect_db.php");
+$sql = $conn->query(" SELECT numero, nombre, totalMateriales, ROUND (totalManoObra,2) AS totalManoObra, ROUND (totalEquipoHerramientas,2) AS totalEquipoHerramientas, ROUND (totalSubContratos,2) AS totalSubContratos  FROM partida;");
+while ($row = $sql->fetch_array()) {
     echo '<tr>';
     echo '<td>'. $row['numero'] . '</td>';
     echo '<td>'. $row['nombre'] .'</td>';
@@ -454,6 +567,8 @@ while ($row = mysql_fetch_array($sql)) {
         totalManoObra = +totalManoObra;
         totalEquipoHerramientas = +totalEquipoHerramientas;
         totalSubContratos = +totalSubContratos;
+         
+         subtotal= +subtotal;
         cant = +prompt("Indique la cantidad a agregar de " + nombre + ":", "");
         $('#squarespaceModal').modal('hide');
         if (cant != null) {
@@ -462,8 +577,9 @@ while ($row = mysql_fetch_array($sql)) {
           var CD = (totalMateriales + totalManoObra + totalEquipoHerramientas + totalSubContratos);
           var CI = CD * 0.29;
           var IVA1 = (CD + CI) * 0.13;
-          var precioUnitario = CD + CI + IVA1;
-          var subtotal = precioUnitario*cant;
+          var precioUnitario = (CD + CI + IVA1);
+          precioUnitario = +precioUnitario;
+          var subtotal = precioUnitario * cant;
 
          if (/^([0-9])*$/.test(cant)){
           $("#partidas tr:last td").each(function(index){
@@ -488,24 +604,24 @@ while ($row = mysql_fetch_array($sql)) {
               $("span", this).text(totalOtros.toFixed(2));
             }
             else if(index == 6){
-             $("input[type='hidden']", this).val(CD.toFixed(2));
-              $("span", this).text(CD.toFixed(2));
+             $("input[type='hidden']", this).val(CD.toFixed(4));
+              $("span", this).text(CD.toFixed(4));
             }
             else if(index == 7){
-             $("input[type='hidden']", this).val(CI.toFixed(2));
-              $("span", this).text(CI.toFixed(2));
+             $("input[type='hidden']", this).val(CI.toFixed(4));
+              $("span", this).text(CI.toFixed(4));
             }
             else if(index == 8){
-             $("input[type='hidden']", this).val(IVA1.toFixed(2));
-              $("span", this).text(IVA1.toFixed(2));
+             $("input[type='hidden']", this).val(IVA1.toFixed(4));
+              $("span", this).text(IVA1.toFixed(4));
             }
             else if(index == 9){
-             $("input[type='hidden']", this).val(precioUnitario.toFixed(2));
-              $("span", this).text(precioUnitario.toFixed(2));
+             $("input[type='hidden']", this).val(precioUnitario.toFixed(4));
+              $("span", this).text(precioUnitario.toFixed(4));
             }
             else if(index == 10){
-              $("input[type='hidden']", this).val(subtotal.toFixed(2));
-              $("span", this).text(subtotal.toFixed(2));
+              $("input[type='hidden']", this).val(subtotal.toFixed(4));
+              $("span", this).text(subtotal.toFixed(4));
             }
           });
           var total_etapa = +$("#sub-total-etapa").text() + subtotal;
@@ -547,6 +663,19 @@ while ($row = mysql_fetch_array($sql)) {
           table.append(html);
            $("#principal").prop("disabled", false);
         });
+
+         $(document).on("click", ".eliminar", function(){
+          var total = +$(this).closest("div").find("div span").text();
+          var subtotal = +$(this).closest("tr").find("td span.subtotal").text();
+          total = total - subtotal;
+          $(this).closest("div").find("div span").text(total.toFixed(2));
+          $(this).parents("tr").remove();
+          countRows = $("#partidas tbody tr").length;
+          if (countRows <= 0) {
+             $("#principal").prop("disabled", true);
+          }
+        });
+
       });
     </script>
   </body>
