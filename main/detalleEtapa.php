@@ -14,48 +14,6 @@ session_write_close();
 
 error_reporting(0);
 
-     $proyecto = $_GET['id'];
-    echo $proyecto;
-
-    $nombre = $_POST["nombre"];
-    $detalle = $_POST["detalle"];
-    $fechaInicioProgramada = $_POST["fechaInicioProgramada"];
-    $fechaFinProgramada = $_POST["fechaFinProgramada"];
-    $estado = $_POST["estado"];
-   
-    $conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
-
-   
-      $total_etapa = 0;
-
-      if(isset($_POST["subTotal_etapa"])){
-        $total_etapa = array_sum($_POST["subTotal_etapa"]);
-      }
-      $query = "INSERT INTO etapa(nombre, detalle, idProyecto, fechaInicioProgramada, fechaFinProgramada, estado) VALUES ('".$nombre."', '".$detalle."', '".$proyecto."', '".$fechaInicioProgramada."', '".$fechaFinProgramada."', '".$estado."')";
-     // $conn->query($query);
-      if($conn->query($query)){
-        $id = $conn->insert_id;
-        echo $id;
-
-
-
-        $n = count($_POST["subTotal_etapa"]);
-        echo $n;
-        for ($i = 0; $i < $n; $i++){
-          $query1 = "INSERT INTO etapapartida(idEtapa, cantidad, CD, CI, IVA, PU, subTotal) VALUES('".$id."', ".$_POST["cantidad"][$i].", ".$_POST["CDD"][$i].", ".$_POST["CII"][$i].", '".$_POST["IVAA"][$i]."', ".$_POST["PUU"][$i].", ".$_POST["subTotal_etapa"][$i].")";
-          
-          $conn->query($query1);
-
-        }
-        
-      }else{
-       
-      }      
-
-
-    
-  
-
 ?>
 
 
@@ -228,50 +186,100 @@ error_reporting(0);
           <div class="tb1">
 
             <form method="POST" action="">
-              <div class="col-md-12">
-                <div class="wdgt wdgt-primary" hide-btn="true">
-                  <div class="wdgt-header">Datos Etapa</div>
-                  <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
+            <div class="col-md-12">
+              <div class="wdgt wdgt-primary" hide-btn="true">
+                <div class="wdgt-header">Etapas</div>
+                <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
 
-                    <div class="form-group">
-                      <label>Nombre de Etapa</label>
-                      <input type="text" class="form-control" required id="inputFName" placeholder="nombre" name="nombre">
-                      <span class="help-block"></span>
-                    </div>
+              <div class="form-group">
+              <label>Nombre de Etapa</label>
+               <input type="text" class="form-control" required id="inputFName" placeholder="nombre" name="nombre"  >
+              <span class="help-block"></span>
+               </div>
 
-                    <div class="form-group">
-                      <label>Detalle de Etapa</label>
-                      <input type="text" class="form-control" required id="inputFName" placeholder="detalle" name="detalle">
-                      <span class="help-block"></span>
-                    </div>
+               <div class="form-group">
+              <label>Detalle de Etapa</label>
+               <input type="text" class="form-control" required id="inputFName" placeholder="detalle" name="detalle"  >
+              <span class="help-block"></span>
+               </div>
 
-                    <div class="form-group">
-                      <label>Fecha Inicio Programada</label>
-                      <br>
-                      <input type="date" class="tcal" required id="inputFName" placeholder="FechaInicioProgramada" name="fechaInicioProgramada">
-                      <span class="help-block"></span>
-                    </div>
+              <div class="form-group">
+              <label>Fecha Inicio Programada</label>
+              <br>
+               <input type="date" class="tcal" required id="inputFName" placeholder="FechaInicioProgramada" name="fechaInicioProgramada"  >
+              <span class="help-block"></span>
+               </div>
 
-                    <div class="form-group">
-                      <label>Fecha Fin programada</label>
-                      <br>
-                      <input type="date" class="tcal" required id="inputFName" placeholder="FechaFinProgramada" name="fechaFinProgramada">
-                      <span class="help-block"></span>
-                    </div>
+              <div class="form-group">
+              <label>Fecha Fin programada</label>
+              <br>
+               <input type="date" class="tcal" required id="inputFName" placeholder="FechaFinProgramada" name="fechaFinProgramada"  >
+              <span class="help-block"></span>
+               </div>   
+
+          
+             <div class="form-group">
+               <label for="disabledSelect">Seleccionar el estado</label>
+               <select id="disabledSelect" class="form-control form-primary" name="estado" required="required" id="inputFName">
+                  <option value="Espera" <?php echo $estado == 'Espera'?'selected':'';?>>Espera</option>
+                  <option value="Iniciado" <?php echo $estado == 'Iniciado'?'selected':'';?>>Iniciado</option>
+                  <option value="Terminado" <?php echo $estado == 'Terminado'?'selected':'';?>>Terminado</option>
+
+               </select>
+                <span class="help-block"></span>
+             </div>
+             <br>
+             <br>
+             <br>
+             <br>
+             </div>
+
+              <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
 
 
-                    <div class="form-group">
-                      <label for="disabledSelect">Estado</label>
-                      <select id="disabledSelect" class="form-control form-primary" name="estado" required="required" id="inputFName">
-                      <span class="help-block"></span>
-                    </div>
+                  <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped" id="partidas">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>totalCD</th>
+                        <th>totalCF</th>
+                        <th>precioUnitario</th>
+                        <th>totalMateriales</th>
+                        <th>totalManoObra</th>
+                        <th>totalEquipoHerramientas</th>
+                        <th>totalSubContratos</th>
+                        <th></th>
+                         
+                      </tr>
+                    </thead>
+                    <tbody>
+                       <?php
+                          #include 'connect_db.php';
+                          require("connect_db.php");
+                          $sql = mysql_query("SELECT * FROM partida WHERE numero>=3");
 
-                    <div class="form-group">
-                      <button id="principal" class="btn btn-primary btn-lg" type="submit" name="guardar" value="Guardar" disabled>Regresar</button>
-                    </div>
+                          while ($row = mysql_fetch_array($sql)) {
+                            echo '<tr>';
+                            echo '<td>'. $row['nombre'] . '</td>';
+                            echo '<td>'. $row['totalCD'] .'</td>';
+                            echo '<td>'. $row['totalCF'] .'</td>';
+                            echo '<td>'. $row['precioUnitario'] . '</td>';
+                            echo '<td>'. $row['totalMateriales'] .'</td>';
+                            echo '<td>'. $row['totalManoObra'] .'</td>';
+                            echo '<td>'. $row['totalEquipoHerramientas'] .'</td>';
+                            echo '<td>'. $row['totalSubContratos'] .'</td>';
+                            echo '</tr>';
+                          }
+                       ?> 
 
-                      
-            </form>
+                    </tbody>
+                  </table>
+                  <br>
+                </div>
+              </div>
+
+            </div>
+                </form>
 
 
             </div>
@@ -298,109 +306,7 @@ error_reporting(0);
           <script src="../lib/JS/DT_bootstrap.js"></script>
           <script src="../lib/JS/soft-widgets.js"></script>
           <script src="../lib/js/bootstrapValidator.js"></script>
-          <script>
-      $(document).ready(function() {
-       window.cantidad= function (numero, nombre, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos) {
-        var cant = "";
-        totalMateriales= +totalMateriales;
-        totalManoObra = +totalManoObra;
-        totalEquipoHerramientas = +totalEquipoHerramientas;
-        totalSubContratos = +totalSubContratos;
-        cant = +prompt("Indique la cantidad a agregar de " + nombre + ":", "");
-        $('#squarespaceModal').modal('hide');
-        if (cant != null) {
           
-          var totalOtros = (totalEquipoHerramientas + totalSubContratos);
-          var CD = (totalMateriales + totalManoObra + totalEquipoHerramientas + totalSubContratos);
-          var CI = CD * 0.29;
-          var IVA1 = (CD + CI) * 0.13;
-          var precioUnitario = CD + CI + IVA1;
-          var subtotal = precioUnitario*cant;
-
-         if (/^([0-9])*$/.test(cant)){
-          $("#partidas tr:last td").each(function(index){
-            if (index == 0){
-              $("input[type='hidden']", this).val(numero);
-              $("span", this).text(nombre);
-            }else if(index == 1){
-              $("input[type='hidden']", this).val(cant.toFixed(2));
-              $("span", this).text(cant.toFixed(2));
-
-            }else if(index == 2){
-             // $("span", this).text(unidad);
-            }
-            else if(index == 3){
-              $("span", this).text(totalMateriales.toFixed(2));
-            }
-            else if(index == 4){
-              $("span", this).text(totalManoObra.toFixed(2));
-            }
-            else if(index == 5){
-             $("input[type='hidden']", this).val(totalOtros.toFixed(2));
-              $("span", this).text(totalOtros.toFixed(2));
-            }
-            else if(index == 6){
-             $("input[type='hidden']", this).val(CD.toFixed(2));
-              $("span", this).text(CD.toFixed(2));
-            }
-            else if(index == 7){
-             $("input[type='hidden']", this).val(CI.toFixed(2));
-              $("span", this).text(CI.toFixed(2));
-            }
-            else if(index == 8){
-             $("input[type='hidden']", this).val(IVA1.toFixed(2));
-              $("span", this).text(IVA1.toFixed(2));
-            }
-            else if(index == 9){
-             $("input[type='hidden']", this).val(precioUnitario.toFixed(2));
-              $("span", this).text(precioUnitario.toFixed(2));
-            }
-            else if(index == 10){
-              $("input[type='hidden']", this).val(subtotal.toFixed(2));
-              $("span", this).text(subtotal.toFixed(2));
-            }
-          });
-          var total_etapa = +$("#sub-total-etapa").text() + subtotal;
-          $("#sub-total-etapa").text(total_etapa.toFixed(2));
-        }
-         
-        else {
-         alert("El valor " + cant + " no es un número");
-        }
-        
-       }
-        }
-
-
-        $('#squarespaceModal').modal({ show: false});
-        $("#modal2").modal({show: false});
-        $("#modal3").modal({show: false});
-        $("#modal4").modal({show: false});
-        $('.datatable').dataTable({
-          "sPaginationType": "bs_full"
-        });
-        $('.datatable').each(function() {
-          var datatable = $(this);
-          // SEARCH - Add the placeholder for Search and Turn this into in-line form control
-          var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
-          search_input.attr('placeholder', 'Search');
-          search_input.addClass('form-control input-sm');
-          // LENGTH - Inline-Form control
-          var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
-          length_sel.addClass('form-control input-sm');
-        });
-
-        $("#new-row-recursos").click(function() {
-          $('#squarespaceModal').modal('show');
-          var table = $(this).parents(".wdgt-body").children("table");
-          var count = table.children("tbody").children("tr").length;
-
-          html = "<tr><td><span></span></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
-          table.append(html);
-           $("#principal").prop("disabled", false);
-        });
-      });
-    </script>
   </body>
 
   </html>
