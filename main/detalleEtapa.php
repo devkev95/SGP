@@ -14,6 +14,12 @@ session_write_close();
 
 error_reporting(0);
 
+if (isset($_GET['id'])) {
+    $etapa = $_GET['id'];
+}else{
+    // Fallback behaviour goes here
+}
+
 ?>
 
 
@@ -170,9 +176,7 @@ error_reporting(0);
           <div class="crumbs">
             <ol class="breadcrumb hidden-xs">
               <li><i class="fa fa-home"></i> <a href="home.php">Home</a></li>
-              <li class="active">
-                <Etapas></Etapas>
-              </li>
+              <li class="active"> <a href="javascript:history.go(-1)">Etapas</a></li>
               <li class="active">Detalle Etapa</li>
             </ol>
           </div>
@@ -185,106 +189,117 @@ error_reporting(0);
           </div>
           <div class="tb1">
 
-            <form method="POST" action="">
+<?php
+
+      //include 'connect_db.php';
+      require("connect_db.php");
+
+      $sql = mysql_query("SELECT * FROM etapa WHERE idEtapa='".$etapa."'");
+      while ($row = mysql_fetch_array($sql)) {
+          $nombre = $row['nombre'];
+          $detalle = $row['detalle'];
+          $fechaI = $row['fechaInicioProgramada'];
+          $fechaF = $row['fechaFinProgramada'];
+          $estado = $row['estado'];
+      }
+?>
+
+            <form>
             <div class="col-md-12">
               <div class="wdgt wdgt-primary" hide-btn="true">
-                <div class="wdgt-header">Etapas</div>
+                <div class="wdgt-header">Datos Generales</div>
                 <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
 
-              <div class="form-group">
-              <label>Nombre de Etapa</label>
-               <input type="text" class="form-control" required id="inputFName" placeholder="nombre" name="nombre"  >
-              <span class="help-block"></span>
-               </div>
+                    <div class="form-group">
+                    <label>Nombre de Etapa</label>
+                    <input type="text" class="form-control" value="<?php echo $nombre;?>" disabled>
+                    <span class="help-block"></span>
+                    </div>
 
-               <div class="form-group">
-              <label>Detalle de Etapa</label>
-               <input type="text" class="form-control" required id="inputFName" placeholder="detalle" name="detalle"  >
-              <span class="help-block"></span>
-               </div>
+                    <div class="form-group">
+                    <label>Detalle de Etapa</label>
+                    <input type="text" class="form-control" value="<?php echo $detalle;?>" disabled>
+                    <span class="help-block"></span>
+                    </div>
 
-              <div class="form-group">
-              <label>Fecha Inicio Programada</label>
-              <br>
-               <input type="date" class="tcal" required id="inputFName" placeholder="FechaInicioProgramada" name="fechaInicioProgramada"  >
-              <span class="help-block"></span>
-               </div>
+                    <div class="form-group">
+                    <label>Fecha Inicio Programada</label>
+                    <input type="text" class="form-control" value="<?php echo $fechaI;?>" disabled>
+                    <span class="help-block"></span>
+                    </div>
 
-              <div class="form-group">
-              <label>Fecha Fin programada</label>
-              <br>
-               <input type="date" class="tcal" required id="inputFName" placeholder="FechaFinProgramada" name="fechaFinProgramada"  >
-              <span class="help-block"></span>
-               </div>   
+                    <div class="form-group">
+                    <label>Fecha Fin programada</label>
+                    <input type="text" class="form-control" value="<?php echo $fechaF;?>" disabled>
+                    <span class="help-block"></span>
+                    </div>   
 
-          
-             <div class="form-group">
-               <label for="disabledSelect">Seleccionar el estado</label>
-               <select id="disabledSelect" class="form-control form-primary" name="estado" required="required" id="inputFName">
-                  <option value="Espera" <?php echo $estado == 'Espera'?'selected':'';?>>Espera</option>
-                  <option value="Iniciado" <?php echo $estado == 'Iniciado'?'selected':'';?>>Iniciado</option>
-                  <option value="Terminado" <?php echo $estado == 'Terminado'?'selected':'';?>>Terminado</option>
+                    <div class="form-group">
+                      <label for="disabledSelect">Estado</label>
+                      <input type="text" class="form-control" value="<?php echo $estado;?>" disabled>
+                      <span class="help-block"></span>
+                    </div>
+                </div>
+                </div>
+              </div>
+            </div>
+            </form>
 
-               </select>
-                <span class="help-block"></span>
-             </div>
-             <br>
-             <br>
-             <br>
-             <br>
-             </div>
-
-              <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
+            <div class="col-md-12">
+              <div class="wdgt wdgt-primary" hide-btn="true">
+                <div class="wdgt-header">Partidas de Etapa</div>
+                <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
 
 
                   <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped" id="partidas">
                     <thead>
                       <tr>
-                        <th>Nombre</th>
-                        <th>totalCD</th>
-                        <th>totalCF</th>
-                        <th>precioUnitario</th>
-                        <th>totalMateriales</th>
-                        <th>totalManoObra</th>
-                        <th>totalEquipoHerramientas</th>
-                        <th>totalSubContratos</th>
-                        <th></th>
-                         
+                        <th>Descripcion</th>
+                        <th>Cantidad</th>
+                        <th>Material</th>
+                        <th>M.O</th>
+                        <th>Otros</th>
+                        <th>C.D.</th>
+                        <th>C.I.</th>
+                        <th>IVA 13%</th>
+                        <th>P.U.</th>
+                        <th>Sub-Total</th>    
                       </tr>
                     </thead>
                     <tbody>
-                       <?php
-                          #include 'connect_db.php';
-                          require("connect_db.php");
-                          $sql = mysql_query("SELECT * FROM partida WHERE numero>=3");
+<?php
 
-                          while ($row = mysql_fetch_array($sql)) {
-                            echo '<tr>';
-                            echo '<td>'. $row['nombre'] . '</td>';
-                            echo '<td>'. $row['totalCD'] .'</td>';
-                            echo '<td>'. $row['totalCF'] .'</td>';
-                            echo '<td>'. $row['precioUnitario'] . '</td>';
-                            echo '<td>'. $row['totalMateriales'] .'</td>';
-                            echo '<td>'. $row['totalManoObra'] .'</td>';
-                            echo '<td>'. $row['totalEquipoHerramientas'] .'</td>';
-                            echo '<td>'. $row['totalSubContratos'] .'</td>';
-                            echo '</tr>';
-                          }
-                       ?> 
+      //include 'connect_db.php';
+      require("connect_db.php");
 
+      $sql = mysql_query("CALL select_etapapartida('".$etapa."')");
+      while ($row = mysql_fetch_array($sql)) {
+          echo '<tr>';
+          echo '<td>'. $row['detalle'] . '</td>';
+          echo '<td>'. $row['cantidad'] .'</td>';
+          echo '<td>'. $row['totalMateriales'] .'</td>';
+          echo '<td>'. $row['totalManoObra'] . '</td>';
+          echo '<td>'. $row['otros'] .'</td>';
+          echo '<td>'. $row['CD'] .'</td>';
+          echo '<td>'. $row['CI'] .'</td>';
+          echo '<td>'. $row['IVA'] .'</td>';
+          echo '<td>'. $row['PU'] .'</td>';
+          echo '<td>'. $row['subTotal'] .'</td>';
+          echo '</tr>';
+      }
+?>
                     </tbody>
                   </table>
-                  <br>
-                </div>
+
+
+            </div>
               </div>
+              </div>
+              
+      
+
 
             </div>
-                </form>
-
-
-            </div>
-
-
             </div>
 
             <!-- END PAGE CONTENT -->
