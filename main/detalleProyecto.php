@@ -15,6 +15,11 @@
 
 
 <?php
+
+
+$id=$_GET["id"];
+
+
  error_reporting(0);
 
  $link=mysql_connect("localhost","sgp_user","56p_2016");
@@ -196,111 +201,160 @@
 
 
 
-      <div class="col-md-12">
+
+<div class="col-md-12">
 
 
-        <button id="principal" class="btn btn-success btn-lg" onclick="window.location.href='crearProyectoK.php'">Crear proyecto</button>
-       
 
-       <div class="wdgt" hide-btn="true">
-        <div class="wdgt-header">Tabla de proyectos</div>
-        <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
-        <?php
-          if (isset($_GET["error"])) {
-            
-         ?>
-
-          <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
-              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-             <span class="icon icon-remove-sign"></span> 
-             Se ha producido un error en la conexión a la base de datos, por favor intente realizar esta operación. 
-              
-                
-          </div>
-           <?php
-          // header("Location: tabla_recursos.php");
-          } else if (isset($_GET["success"])){
-        ?>
-          <div class="alertDiv alert alert-success alert-round alert-border alert-soft">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-              <span class="icon icon-ok-sign" ></span>
-             Su actualizacion se ha guardado exitosamente
-            </div>
-        <?php
-         //  header("Location: tabla_recursos.php");
-          } 
-         
-        ?>
-         <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
+       <div class="wdgt wdgt-primary">
 
 
-          <!--ENCABEZADO DE LA TABLA RECURSOS -->
-
-     <thead>
-      <tr>
-       <th>Nombre</th>
-       <th>Descripción</th>
-       <th>Porcentaje CI</th>
-       <th>Fecha de inicio</th>
-       <th>Fecha de fin</th>
-       <th>Monto total</th>
-       <th></th>
- 
-   
-   
-        
-      </tr>
-     </thead>
 
 
-        <!--CUERPO DE LA TABLA RECURSOS -->
 
 
-     <tbody>
 
-
-  <?php
+<?php
     #include 'connect_db.php';
     //require("connect_db.php");
-     $sql = mysql_query("SELECT * FROM proyecto");
+     $sql = mysql_query("SELECT * FROM proyecto where idProyecto='".$id."'");
     while ($row = mysql_fetch_array($sql)) {
-        echo '<tr>';
-        echo '<td>'. $row['nombre'] . '</td>';
-        echo '<td>'. $row['descripcion'] .'</td>';
-        echo '<td>'. $row['porcentajeCI'] .'</td>';
-        echo '<td>'. $row['fechaInicio'] . '</td>';
-        echo '<td>'. $row['fechaFin'] .'</td>';
-        echo '<td>'. $row['montoTotal'] .'</td>'; 
-    
+     
+        echo '<div class="wdgt-header" style="text-align:center; color:black;"><h5>PRESUPUESTO DIAZA S.A DE C.V <br></h5> <b><h3>'. $row['nombre'] . '</h3></b></div>';
+
+      }
 
 
-        echo "
 
-          <td class='center'>
+?>
 
-          
-          
-          <input style='max-width: 25px;' onClick=\"window.location.href='modProyecto.php?id=$row[idProyecto]';\" type='image' src='../Imagenes/editar.png'>
-          &nbsp;&nbsp;&nbsp;
-          <input style='max-width: 25px' onClick=\"window.location.href='detalleProyecto.php?id=$row[idProyecto]';\" type='image' src='../Imagenes/eliminar.png'> 
-
-           </td>";
-
-
-      
 
 
         
-       echo '</tr>';
-    }
-    
-    ?>
 
 
 
+
+
+        <div class="wdgt-body wdgt-table">
+
+         <table class="table">
+          <thead>
+            <tr>
+           
+            <th>No.</th>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>U</th>
+            <th>Material</th>
+            <th>M.O</th>
+            <th>Otros</th>
+            <th>C.D</th>
+            <th>C.I</th>
+            <th>IVA</th> 
+            <th>P.U</th> 
+            <th>Sub-total</th>
+           </tr>
+          </thead>
+          <tbody>
+
+
+            <?php
+    #include 'connect_db.php';
+    //require("connect_db.php");
+     $sql2 = mysql_query("SELECT * FROM etapa where idProyecto='".$id."'");
+    while ($row2 = mysql_fetch_array($sql2)) {
      
-     </tbody>
-    </table>
+        echo '<tr><td></td>';
+        echo '<td><h5><b>'. $row2['nombre'] . '<b></h5></td> 
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+
+            
+        </tr>';
+
+
+      $sql3 = mysql_query("select idPartida, nombre, cantidad, totalMateriales, totalManoObra, (totalEquipoHerramientas+totalSubContratos)AS otros, CD, CI, IVA, precioUnitario, subTotal from etapapartida ep inner join partida p on ep.idPartida=p.numero where ep.idEtapa='" . $row2['idEtapa'] .  "'");
+    while ($row3 = mysql_fetch_array($sql3)) {
+
+
+      echo '<tr>';
+        echo '<td>'. $row3['idPartida'] . '</td>';
+        echo '<td>'. $row3['nombre'] .'</td>';
+        echo '<td>'. $row3['cantidad'] .'</td>';
+        echo '<td></td>';   
+        echo '<td>'. $row3['totalMateriales'] . '</td>';
+        echo '<td>'. $row3['totalManoObra'] .'</td>';
+        echo '<td>'. $row3['otros'] .'</td>'; 
+        echo '<td>'. $row3['CD'] . '</td>';
+        echo '<td>'. $row3['CI'] . '</td>';
+        echo '<td>'. $row3['IVA'] . '</td>';
+        echo '<td>'. $row3['precioUnitario'] . '</td>';
+        echo '<td>'. $row3['subTotal'] . '</td>';
+
+
+    echo '</tr>';
+
+          }   
+
+
+       
+      }
+
+
+
+        $sql4 = mysql_query("select sum(ep.subTotal) as total from proyecto p inner join etapa e on p.idProyecto=e.idProyecto inner join etapapartida ep on e.idEtapa=ep.idEtapa where p.idProyecto='".$id."'");
+    while ($row4 = mysql_fetch_array($sql4)) {
+
+
+
+         echo '<tr><td></td>';
+        echo '<td><h5><b>MONTO TOTAL<b></h5></td> 
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><b><h5>'. $row4['total'] . '</h5></b></td>
+       </tr>';
+
+
+}
+
+
+
+
+?>
+
+
+
+    
+
+
+
+        
+        
+            
+           
+          </tbody>
+         </table>
+        
+
+    
+      
+        
 
 
 
@@ -308,11 +362,16 @@
        </div>
 
       </div>
-     </div>
+
+
+
+    
+
 
     </div>
     <!-- END PAGE CONTENT -->
 
+     </div>
 
 
    </div>
@@ -349,7 +408,10 @@
      length_sel.addClass('form-control input-sm');
     });
    });
+
+
   </script>
   
+
  </body>
 </html>
