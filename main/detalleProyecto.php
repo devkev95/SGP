@@ -15,6 +15,11 @@
 
 
 <?php
+
+
+$id=$_GET["id"];
+
+
  error_reporting(0);
 
  $link=mysql_connect("localhost","sgp_user","56p_2016");
@@ -176,8 +181,8 @@
      <div class="crumbs">
       <ol class="breadcrumb hidden-xs">
        <li><i class="fa fa-home"></i> <a href="home.php">Home</a></li>
-       <li><a href="tabla_recursos.php">Recursos</a></li>
-       <li class="active">Ver Recursos</li>
+       <li><a href="tabla_recursos.php">Proyectos</a></li>
+       
       </ol>
      </div>
     </div>
@@ -185,114 +190,171 @@
     <!-- BEGIN PAGE CONTENT -->
     <div class="content">
      <div class="page-h1">
-      <h1>Recursos <small></small></h1>
+      <h1>Proyectos <small></small></h1>
+
      </div>
+
+
+
      <div class="tbl">
-      <div class="col-md-12">
-       <div class="wdgt" hide-btn="true">
-        <div class="wdgt-header">Tabla de recursos</div>
-        <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
-        <?php
-          if (isset($_GET["error"])) {
-            
-         ?>
-
-          <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
-              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-             <span class="icon icon-remove-sign"></span> 
-             Se ha producido un error en la conexión a la base de datos, por favor intente realizar esta operación. 
-              
-                
-          </div>
-           <?php
-          // header("Location: tabla_recursos.php");
-          } else if (isset($_GET["success"])){
-        ?>
-          <div class="alertDiv alert alert-success alert-round alert-border alert-soft">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-              <span class="icon icon-ok-sign" ></span>
-             Su actualizacion se ha guardado exitosamente
-            </div>
-        <?php
-         //  header("Location: tabla_recursos.php");
-          } 
-         
-        ?>
-         <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
 
 
-          <!--ENCABEZADO DE LA TABLA RECURSOS -->
-
-     <thead>
-      <tr>
-       <th>Código</th>
-       <th>Nombre del recurso</th>
-       <th>Unidad</th>
-       <th>Costo Directo</th>
-       <th>Iva</th>
-       <th>Total</th>
-       <th>Fecha Modificación</th>
-       <th>Empresa Proveedora</th>
-       <th>Tipo de recurso</th>
-       <th></th>
-
-   
-   
-        
-      </tr>
-     </thead>
 
 
-        <!--CUERPO DE LA TABLA RECURSOS -->
+
+<div class="col-md-12">
 
 
-     <tbody>
+
+       <div class="wdgt wdgt-primary">
 
 
-  <?php
+
+
+
+
+
+<?php
     #include 'connect_db.php';
     //require("connect_db.php");
-     $sql = mysql_query("CALL sp_select('2','')");
+     $sql = mysql_query("SELECT * FROM proyecto where idProyecto='".$id."'");
     while ($row = mysql_fetch_array($sql)) {
-        echo '<tr>';
-        echo '<td>'. $row['codigo'] . '</td>';
-        echo '<td>'. $row['nombre'] .'</td>';
-        echo '<td>'. $row['unidad'] .'</td>';
-        echo '<td>'. $row['costoDirecto'] . '</td>';
-        echo '<td>'. $row['iva'] .'</td>';
-        echo '<td>'. $row['total'] .'</td>'; 
-        echo '<td>'. $row['fecha'] . '</td>';
-        echo '<td>'. $row['empresaProveedora'] . '</td>';
-        echo '<td>'. $row['tipoRecurso'] . '</td>';
+     
+        echo '<div class="wdgt-header" style="text-align:center; color:black;"><h5>PRESUPUESTO DIAZA S.A DE C.V <br></h5> <b><h3>'. $row['nombre'] . '</h3></b></div>';
+
+      }
 
 
-        echo "
 
-          <td class='center'>
+?>
 
-          
-          
-          <input style='max-width: 25px;' onClick=\"window.location.href='editarRecursos.php?codigo=$row[codigo]';\" type='image' src='../Imagenes/editar.png'>
-          &nbsp;&nbsp;&nbsp;
-          <input style='max-width: 25px;' onClick=\"if(confirm('Se eliminará este registro')) window.location.href='eliminarRecurso.php?cod=$row[codigo]';\" type='image' src='../Imagenes/eliminar.png'> 
-
-           </td>";
-
-
-      
 
 
         
-       echo '</tr>';
-    }
-    
-    ?>
 
 
 
+
+
+        <div class="wdgt-body wdgt-table">
+
+         <table class="table">
+          <thead>
+            <tr>
+           
+            <th>No.</th>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>U</th>
+            <th>Material</th>
+            <th>M.O</th>
+            <th>Otros</th>
+            <th>C.D</th>
+            <th>C.I</th>
+            <th>IVA</th> 
+            <th>P.U</th> 
+            <th>Sub-total</th>
+           </tr>
+          </thead>
+          <tbody>
+
+
+            <?php
+    #include 'connect_db.php';
+    //require("connect_db.php");
+     $sql2 = mysql_query("SELECT * FROM etapa where idProyecto='".$id."'");
+    while ($row2 = mysql_fetch_array($sql2)) {
      
-     </tbody>
-    </table>
+        echo '<tr><td></td>';
+        echo '<td><h5><b>'. $row2['nombre'] . '<b></h5></td> 
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+
+            
+        </tr>';
+
+
+      $sql3 = mysql_query("select idPartida, nombre, cantidad, totalMateriales, totalManoObra, (totalEquipoHerramientas+totalSubContratos)AS otros, CD, CI, IVA, precioUnitario, subTotal from etapapartida ep inner join partida p on ep.idPartida=p.numero where ep.idEtapa='" . $row2['idEtapa'] .  "'");
+    while ($row3 = mysql_fetch_array($sql3)) {
+
+
+      echo '<tr>';
+        echo '<td>'. $row3['idPartida'] . '</td>';
+        echo '<td>'. $row3['nombre'] .'</td>';
+        echo '<td>'. $row3['cantidad'] .'</td>';
+        echo '<td></td>';   
+        echo '<td>'. $row3['totalMateriales'] . '</td>';
+        echo '<td>'. $row3['totalManoObra'] .'</td>';
+        echo '<td>'. $row3['otros'] .'</td>'; 
+        echo '<td>'. $row3['CD'] . '</td>';
+        echo '<td>'. $row3['CI'] . '</td>';
+        echo '<td>'. $row3['IVA'] . '</td>';
+        echo '<td>'. $row3['precioUnitario'] . '</td>';
+        echo '<td>'. $row3['subTotal'] . '</td>';
+
+
+    echo '</tr>';
+
+          }   
+
+
+       
+      }
+
+
+
+        $sql4 = mysql_query("select sum(ep.subTotal) as total from proyecto p inner join etapa e on p.idProyecto=e.idProyecto inner join etapapartida ep on e.idEtapa=ep.idEtapa where p.idProyecto='".$id."'");
+    while ($row4 = mysql_fetch_array($sql4)) {
+
+
+
+         echo '<tr><td></td>';
+        echo '<td><h5><b>MONTO TOTAL<b></h5></td> 
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><b><h5>'. $row4['total'] . '</h5></b></td>
+       </tr>';
+
+
+}
+
+
+
+
+?>
+
+
+
+    
+
+
+
+        
+        
+            
+           
+          </tbody>
+         </table>
+        
+
+    
+      
+        
 
 
 
@@ -300,11 +362,16 @@
        </div>
 
       </div>
-     </div>
+
+
+
+    
+
 
     </div>
     <!-- END PAGE CONTENT -->
 
+     </div>
 
 
    </div>
@@ -341,7 +408,10 @@
      length_sel.addClass('form-control input-sm');
     });
    });
+
+
   </script>
   
+
  </body>
 </html>
