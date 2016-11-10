@@ -20,6 +20,15 @@ error_reporting(0);
     $proyecto = $_GET['idProyecto'];
     echo $proyecto;
 
+     require("connect_db.php");
+
+        $query12= mysql_query("SELECT porcentajeCI FROM proyecto WHERE idProyecto=".$proyecto);
+
+        $resultado2 = mysql_fetch_array($query12);
+        $porcentajeCI= $resultado2['porcentajeCI'];
+
+        echo $porcentajeCI;
+
     $nombre = $_POST["nombre"];
     $detalle = $_POST["detalle"];
     $fechaInicioProgramada = $_POST["fechaInicioProgramada"];
@@ -76,10 +85,10 @@ error_reporting(0);
      // $conn->query($query);
       if($conn->query($query)){
 
-        $n = count($_POST["idPartida"]);
+        $n = count($_POST["idpartida"]);
         echo $n;
         for ($i = 0; $i < $n; $i++){
-          $query = "UPDATE etapapartida SET cantidad=".$_POST["cantidad"][$i].", CD=".$_POST["CDD"][$i].", CI=".$_POST["CII"][$i].", IVA=".$_POST["IVAA"][$i].", PU=".$_POST["PUU"][$i].", subTotal=".$_POST["subTotal_etapa"][$i]." WHERE id=".$_POST["id"][$i];
+          $query = "UPDATE etapapartida SET cantidad=".$_POST["cantidad"][$i].", CD=".$_POST["CDD"][$i].", CI=".$_POST["CII"][$i].", IVA=".$_POST["IVAA"][$i].", PU=".$_POST["PUU"][$i].", subTotal=".$_POST["subTotal_etapa"][$i]." WHERE idPartida=".$_POST["idpartida"][$i]." AND versionPartida =".$_POST["version"][$i];
           $conn->query($query);
         }
         $offset = $i;
@@ -87,12 +96,17 @@ error_reporting(0);
         $n = count($_POST["numero"]);
 
         for ($i = 0; $i < $n; $i++){
-        $query1 = "INSERT INTO etapapartida(idEtapa, idPartida, cantidad, CD, CI, IVA, PU, subTotal) VALUES('".$etapa."', ".$_POST["numero"][$i].", ".$_POST["cantidad"][$i+$offset].", ".$_POST["CDD"][$i+$offset].", ".$_POST["CII"][$i+$offset].", '".$_POST["IVAA"][$i+$offset]."', ".$_POST["PUU"][$i+$offset].", ".$_POST["subTotal_etapa"][$i+$offset].")";
-          
+        $query1 = "INSERT INTO etapapartida(idEtapa, idPartida, versionPartida, cantidad, CD, CI, IVA, PU, subTotal) VALUES(".$etapa.", ".$_POST["numero"][$i].", ".$_POST["version"][$i].",".$_POST["cantidad"][$i+$offset].", ".$_POST["CDD"][$i+$offset].", ".$_POST["CII"][$i+$offset].", '".$_POST["IVAA"][$i+$offset]."', ".$_POST["PUU"][$i+$offset].", ".$_POST["subTotal_etapa"][$i+$offset].")";
+          echo $etapa.", ".$_POST["numero"][$i].", ".$_POST["version"][$i].",".$_POST["cantidad"][$i+$offset].", ".$_POST["CDD"][$i+$offset].", ".$_POST["CII"][$i+$offset].", '".$_POST["IVAA"][$i+$offset]."', ".$_POST["PUU"][$i+$offset].", ".$_POST["subTotal_etapa"][$i+$offset]."\n";
           $conn->query($query1);
         }
+        if ($conn->errno) {
+          echo $conn->error;
+        } else {
+                  header("Location: editarEtapaK1.php?id=".$etapa."&idProyecto=".$proyecto);
+        }
+        
 
-        header("Location: editarEtapaK1.php?id=".$etapa."&idProyecto=".$proyecto);
 
         
       }else{
@@ -417,7 +431,8 @@ error_reporting(0);
         
         while ( $resultado1 = mysql_fetch_array($query11)) { ?>
             <tr>
-           <input type="hidden" class="id" name="idpartida[]" value="<?php echo  $resultado1['id']; ?>"/>
+           <input type="hidden" class="id" name="idpartida[]" value="<?php echo  $resultado1['idPartida']; ?>"/>
+           <input type="hidden" class="id" name="version[]" value="<?php echo  $resultado1['versionPartida']; ?>"/>
            <td><span><?php echo $resultado1['detalle'] ; ?></span></td>
            
            <td><input type="hidden" name="cantidad[]" value="<?php echo $resultado1['cantidad']; ?>"/><span><?php echo $resultado1['cantidad'];?></span></td>
@@ -427,8 +442,8 @@ error_reporting(0);
            <td><input type="hidden" name="CDD[]" value="<?php echo $resultado1['CDD']; ?>"/><span><?php echo $resultado1['CDD']; ?></span></td>
            <td><input type="hidden" name="CII[]" value="<?php echo $resultado1['CII']; ?>"/><span><?php echo $resultado1['CII']; ?></span></td>
            <td><input type="hidden" name="IVAA[]" value="<?php echo $resultado1['IVAA']; ?>"/><span><?php echo $resultado1['IVAA']; ?></span></td>
-           <td><input type="hidden" name="PUU[]" value="<?php echo $resultado1['PUU']; ?>"/><span><?php echo $resultado1['PUU']; ?></span></td>        
-           <td><span class="subtotal" value="<?php echo $resultado1['subTotal']; ?>"><?php echo $resultado1['subTotal']; ?></span></td>
+           <td><input type="hidden" name="PUU[]" value="<?php echo $resultado1['PUU']; ?>"/><span><?php echo $resultado1['PUU']; ?></span></td>   
+           <td><input type="hidden" name="subTotal_etapa[]" value="<?php echo $resultado1['subTotal']; ?>"/><span><?php echo $resultado1['subTotal']; ?></span></td>       
            <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td>
           
 
@@ -503,6 +518,7 @@ error_reporting(0);
                                 <thead>
                                   <tr>
                                     <th>Numero</th>
+                                    <th>Version</th>
                                     <th>Nombre</th>
                                     <th>Total Materiales</th>
                                     <th>Total Mano de Obra</th>
@@ -522,16 +538,18 @@ error_reporting(0);
                                   <?php
 #include 'connect_db.php';
 //require("connect_db.php");
-$sql = $conn->query(" SELECT numero, nombre, totalMateriales, ROUND (totalManoObra,2) AS totalManoObra, ROUND (totalEquipoHerramientas,2) AS totalEquipoHerramientas, ROUND (totalSubContratos,2) AS totalSubContratos  FROM partida;");
+$sql = $conn->query(" SELECT numero, version, nombre, totalMateriales, ROUND (totalManoObra,2) AS totalManoObra, ROUND (totalEquipoHerramientas,2) AS totalEquipoHerramientas, ROUND (totalSubContratos,2) AS totalSubContratos  FROM partida;");
 while ($row = $sql->fetch_array()) {
     echo '<tr>';
     echo '<td>'. $row['numero'] . '</td>';
+    echo '<td>'. $row['version'] . '</td>';
     echo '<td>'. $row['nombre'] .'</td>';
     echo '<td>'. $row['totalMateriales'] .'</td>';
     echo '<td>'. $row['totalManoObra'] . '</td>';
     echo '<td>'. $row['totalEquipoHerramientas'] .'</td>';
     echo '<td>'. $row['totalSubContratos'] .'</td>';
     $numero = $row['numero'];
+    $version = $row['version'];
     $nombre=$row['nombre'];
     $totalMateriales=$row['totalMateriales'];
     $totalManoObra = $row['totalManoObra'];
@@ -540,7 +558,7 @@ while ($row = $sql->fetch_array()) {
     
     
     
-    echo '<td><button onclick="cantidad(\''.$numero.'\',\''.$nombre.'\', \''.$totalMateriales.'\', \''.$totalManoObra.'\', \''.$totalEquipoHerramientas.'\', \''.$totalSubContratos.'\')">Agregar</button></td>';
+    echo '<td><button onclick="cantidad(\''.$numero.'\',\''.$version.'\',\''.$nombre.'\', \''.$totalMateriales.'\', \''.$totalManoObra.'\', \''.$totalEquipoHerramientas.'\', \''.$totalSubContratos.'\')">Agregar</button></td>';
     
     
     
@@ -566,6 +584,16 @@ while ($row = $sql->fetch_array()) {
                 </div>
               </div>
             </div>
+
+
+<!---->
+
+
+
+
+
+
+
        
 
           </div>
@@ -594,7 +622,7 @@ while ($row = $sql->fetch_array()) {
     <script src="../lib/js/bootstrapValidator.js"></script>
     <script>
       $(document).ready(function() {
-       window.cantidad= function (numero, nombre, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos) {
+       window.cantidad= function (numero, version, nombre, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos) {
         var cant = "";
         totalMateriales= +totalMateriales;
         totalManoObra = +totalManoObra;
@@ -608,7 +636,7 @@ while ($row = $sql->fetch_array()) {
           
           var totalOtros = (totalEquipoHerramientas + totalSubContratos);
           var CD = (totalMateriales + totalManoObra + totalEquipoHerramientas + totalSubContratos);
-          var CI = CD * 0.29;
+          var CI = CD * <?php echo $porcentajeCI; ?>;
           var IVA1 = (CD + CI) * 0.13;
           var precioUnitario = (CD + CI + IVA1);
           precioUnitario = +precioUnitario;
@@ -620,10 +648,11 @@ while ($row = $sql->fetch_array()) {
               $("input[type='hidden']", this).val(numero);
               $("span", this).text(nombre);
             }else if(index == 1){
-              $("input[type='hidden']", this).val(cant.toFixed(2));
+              $("input[type='hidden']", this).val(version);
               $("span", this).text(cant.toFixed(2));
 
             } else if(index == 2){
+              $("input[type='hidden']", this).val(cant.toFixed(2));
               $("span", this).text(totalMateriales.toFixed(2));
             }
             else if(index == 3){
@@ -688,7 +717,7 @@ while ($row = $sql->fetch_array()) {
           $('#squarespaceModal').modal('show');
           var table = $("#table-mat-prima");
 
-          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='version[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
           table.append(html);
            $("#principal").prop("disabled", false);
         });

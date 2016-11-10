@@ -423,6 +423,8 @@ error_reporting(0);
                         <th>C.I.</th>
                         <th>IVA 13%</th>
                         <th>P.U.</th>
+                        <th>Fecha Inicio Programada</th>
+                        <th>Fecha Fin Programada</th>
                         <th>Sub-Total</th>
                         <th></th>
                          
@@ -545,6 +547,67 @@ while ($row = $sql->fetch_array()) {
                 </div>
               </div>
             </div>
+
+
+<!---->
+
+ <div class="modal fade" id="modalIngresarEtapaPartida" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header modal-primary">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myModalLabel">Fechas</h4>
+                    </div>
+                    <div class="modal-body">
+
+                      <!-- content goes here -->
+                      <form class="form-horizontal">
+
+                        <div class="form-group">
+                          <label class="col-lg-3 control-label">Cantidad</label>
+                          <div class="col-lg-7">
+                            <input type="number" class="form-control" name="cantidad" required/>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="col-lg-3 control-label">Fecha Inicio</label>
+                          <div class="col-lg-7">
+                            <input type="date" class="form-control" name="fechaInicioProgramada"/>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="col-lg-3 control-label">Fecha Fin</label>
+                          <div class="col-lg-7">
+                            <input type="date" class="form-control" name="fechaFinProgramada"/>
+                          </div>
+                        </div>
+
+                        
+
+                        <div class="btn-group btn-group-justified" role="group" aria-label="group button">
+                          <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-success" name="agregar" value="Agregar">Ingresar</button>
+                          </div>
+                          <div class="btn-group" role="group">
+                            <button type="reset" class="btn btn-info">Limpiar</button>
+                          </div>
+                        </div>
+
+                      </form>
+
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+
+
+
+
+
+
        
 
           </div>
@@ -574,37 +637,24 @@ while ($row = $sql->fetch_array()) {
     <script>
       $(document).ready(function() {
        window.cantidad= function (numero, version, nombre, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos) {
-        var cant = "";
         totalMateriales= +totalMateriales;
         totalManoObra = +totalManoObra;
         totalEquipoHerramientas = +totalEquipoHerramientas;
         totalSubContratos = +totalSubContratos;
-         
-         subtotal= +subtotal;
-        cant = +prompt("Indique la cantidad a agregar de " + nombre + ":", "");
         $('#squarespaceModal').modal('hide');
-        if (cant != null) {
-          
-          var totalOtros = (totalEquipoHerramientas + totalSubContratos);
+        var totalOtros = (totalEquipoHerramientas + totalSubContratos);
           var CD = (totalMateriales + totalManoObra + totalEquipoHerramientas + totalSubContratos);
           var CI = CD * <?php echo $porcentajeCI; ?>;
           var IVA1 = (CD + CI) * 0.13;
           var precioUnitario = (CD + CI + IVA1);
-          precioUnitario = +precioUnitario;
-          var subtotal = precioUnitario * cant;
 
-         if (/^([0-9])*$/.test(cant)){
           $("#partidas tr:last td").each(function(index){
             if (index == 0){
               $("input[type='hidden']", this).val(numero);
               $("span", this).text(nombre);
             }else if(index == 1){
               $("input[type='hidden']", this).val(version);
-              $("span", this).text(cant.toFixed(2));
-
-            }else if(index == 2){
-             $("input[type='hidden']", this).val(cant.toFixed(2));
-            }
+            } 
             else if(index == 3){
               $("span", this).text(totalMateriales.toFixed(2));
             }
@@ -631,27 +681,25 @@ while ($row = $sql->fetch_array()) {
              $("input[type='hidden']", this).val(precioUnitario.toFixed(4));
               $("span", this).text(precioUnitario.toFixed(4));
             }
-            else if(index == 10){
+            /* else if(index == 10){
               $("input[type='hidden']", this).val(subtotal.toFixed(4));
               $("span", this).text(subtotal.toFixed(4));
-            }
+            }*/
           });
-          var total_etapa = +$("#sub-total-etapa").text() + subtotal;
-          $("#sub-total-etapa").text(total_etapa.toFixed(2));
-        }
+        $('#modalIngresarEtapaPartida').modal("show");
+          
+          
+          /*  */
          
-        else {
-         alert("El valor " + cant + " no es un número");
-        }
         
        }
-        }
 
 
         $('#squarespaceModal').modal({ show: false});
         $("#modal2").modal({show: false});
         $("#modal3").modal({show: false});
         $("#modal4").modal({show: false});
+        $("#modalIngresarEtapaPartida").modal({show: false});
         $('.datatable').dataTable({
           "sPaginationType": "bs_full"
         });
@@ -671,7 +719,7 @@ while ($row = $sql->fetch_array()) {
           var table = $(this).parents(".wdgt-body").children("table");
           var count = table.children("tbody").children("tr").length;
 
-          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='version[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='version[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span></span><input type='hidden' name='fechaInicioProgramada'/></td><td><span></span><input type='hidden' name='fechaInicioProgramada'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
           table.append(html);
            $("#principal").prop("disabled", false);
         });
@@ -686,6 +734,41 @@ while ($row = $sql->fetch_array()) {
           if (countRows <= 0) {
              $("#principal").prop("disabled", true);
           }
+        });
+
+        $("#modalIngresarEtapaPartida form button[name='agregar']").click(function(){
+          var cantidad = +$(this).parents("form").find("input[name='cantidad']").val();
+          var fechaInicioProgramada =  $(this).parents("form").find("input[name='fechaInicioProgramada']").val();
+          var fechaFinProgramada =  $(this).parents("form").find("input[name='fechaFinProgramada']").val();
+          var precioUnitario = "";
+          var subtotal = "";
+          $("#partidas tr:last td").each(function(index){
+            if(index == 1){
+              $("span", this).text(cantidad.toFixed(2));
+            } 
+            else if(index == 2){
+             $("input[type='hidden']", this).val(cantidad.toFixed(2));
+             $("span", this).text(cantidad.toFixed(2));
+            }
+            else if(index == 9){
+             precioUnitario = $("input[type='hidden']", this).val();
+             subtotal = precioUnitario * cantidad;
+            }
+            else if (index == 10) {
+              $("span", this).text(fechaInicioProgramada);
+              $("input[type='hidden']", this).val(fechaInicioProgramada);
+            }else if (index == 11) {
+              $("span", this).text(fechaFinProgramada);
+              $("input[type='hidden']", this).val(fechaFinProgramada);
+            }
+             else if(index == 12){
+              $("input[type='hidden']", this).val(subtotal.toFixed(4));
+              $("span", this).text(subtotal.toFixed(4));
+            }
+          });
+          $("#modalIngresarEtapaPartida").modal("hide");
+          var total_etapa = +$("#sub-total-etapa").text() + subtotal;
+          $("#sub-total-etapa").text(total_etapa.toFixed(2));
         });
 
       });
