@@ -1,38 +1,38 @@
 <?php 
 
-require'../services/conn.php';
-require_once '../model/Usuario.php';
 
+  require'../services/conn.php';
+  require_once '../model/Usuario.php';
+  
   session_start();
 
-  if(isset($_SESSION["userData"]) and $_SESSION["userData"]->getPerfil() == "Administrador"){
+ if (!isset($_SESSION["userData"])){
+    session_destroy();
+    header("Location: home.php");
+    exit();
+  }
     $userData = $_SESSION["userData"];
-  session_write_close();}
+    session_write_close();
   $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
+	
+	$queryProject="SELECT `idProyecto`, `nombre`, `descripcion`, `porcentajeCI`, `fechaInicio`, `fechaFin`, `montoTotal` FROM `proyecto` WHERE idProyecto=1";
+	$resultProject= $db->query($queryProject);
 
-		$queryProyecto="SELECT id, codigo, nombre, descripcion,  estado,  fechaInicio,  fechaFin FROM  proyecto WHERE  codigo='HM13002'";
-		$resultProyecto=mysqli_query($db,$queryProyecto);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
  <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modificar proyecto</title>
-  
+   <title>DIAZA, S.A DE C.V</title>
+
   <!-- Default Styles (DO NOT TOUCH) -->
-  <link rel="stylesheet" href="../lib/css/font-awesome.min.css">
-  <link rel="stylesheet" href="../lib/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../lib/css/fonts.css">
-  <link type="text/css" rel="stylesheet" href="../lib/css/soft-admin.css"/>
-  
+  <link rel="stylesheet" href="../lib/CSS/font-awesome.min.css">
+  <link rel="stylesheet" href="../lib/CSS/bootstrap.min.css">
+  <link rel="stylesheet" href="../lib/CSS/fonts.css">
+  <link type="text/css" rel="stylesheet" href="../lib/CSS/soft-admin.css"/>
+
   <!-- Adjustable Styles -->
-  <link type="text/css" rel="stylesheet" href="../lib/css/select2.css"/>
-  <link type="text/css" rel="stylesheet" href="../lib/css/bootstrap-colorpicker.css"/>
-  <link type="text/css" rel="stylesheet" href="../lib/css/bootstrap-datepicker.css"/>
-  <link type="text/css" rel="stylesheet" href="../lib/css/bootstrap-sliders.css"/>
-  <link type="text/css" rel="stylesheet" href=../"lib/css/icheck.css?v=1.0.1">
-  <link type="text/css" rel="stylesheet" href="../lib/css/jquery.switchButton.css">
+  <link type="text/css" rel="stylesheet" href="../lib/CSS/icheck.css?v=1.0.1"/>
   
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
@@ -41,7 +41,7 @@ require_once '../model/Usuario.php';
   <![endif]-->
 
  </head>
-  <body>
+ <body>
  
   <div class="cntnr">
    
@@ -121,8 +121,8 @@ require_once '../model/Usuario.php';
       <li><a href="ingresar.php">Agregar Recurso</a></li>
       <li class="divider" style="border-bottom:1px solid #ddd; margin:0px; margin-top:5px;"></li>
       <li class="dropdown-header">Partidas</li>
-      <li><a href="../main/consultarPartidas.php">Ver Partidas</a></li>
-      <li><a href="../main/crear_partida.php">Crear Partida</a></li>
+      <li><a href="consultarPartidas.php">Ver Partidas</a></li>
+      <li><a href="crear_partida.php">Crear Partida</a></li>
       <li class="divider" style="border-bottom:1px solid #ddd; margin:0px; margin-top:5px;"></li>
     </ul>
    </div>
@@ -163,7 +163,7 @@ require_once '../model/Usuario.php';
       <ol class="breadcrumb hidden-xs">
        <li><i class="fa fa-home"></i> <a href="home.php">Home</a></li>
        <li><a href="consultarPartidas.php">Partidas</a></li>
-       <li class="active">Modificar Partida</li>
+       <li class="active">Modificar Proyecto</li>
       </ol>
      </div>
     </div>
@@ -171,187 +171,324 @@ require_once '../model/Usuario.php';
     <!-- BEGIN PAGE CONTENT -->
     <div class="content">
      <div class="page-h1">
-      <h1>Proyecto</h1>
+      <h1>Modificar Proyecto</h1>
      </div>
+
      <div class="tbl">
+      
       <div class="col-md-12">
-       <div class="wdgt">
-        <div class="wdgt-header">Codigo:</div>
-        <div class="wdgt-body" style="padding-bottom:10px;">
-        <?php  
-          $num_rows = mysqli_num_rows($resultProyecto);
-          if($num_rows > 0){
-        		while ($row= mysqli_fetch_array($resultProyecto )) {
-        			$fechaInicio="$row[fechaInicio]";
-        			$fechaFin="$row[fechaFin]";
-        			$date = date('m/d/Y', strtotime($fechaInicio));
-        			$date2= date('m/d/Y', strtotime($fechaFin));
-        			?>
+     	<div class="wdgt-body wdgt-table">
 
-         <form role="form" action="modProyecto_exe.php" method="POST">
-          <div class="form-group">
-           <label>Nombre</label>
-           <input type="text" name="nombre" value="<?php echo "$row[nombre]"; ?>" class="form-control" >
-          </div>
-           <div class="form-group">
-           <label>Descripcion</label>
-           <textarea class="form-control form-dark" rows="3" name="descripcion" ><?php echo "$row[descripcion]";?></textarea>
-          </div>
-           <div class="form-group">
-           <label for="disabledSelect">Estado</label>
-           <select id="disabledSelect" class="form-control form-primary">
-            <option>Sin iniciar</option>
-            <option>En proceso</option>
-            <option>Finalizado</option>		
-          </select>
-          </div>
-          <div class="form-group">
-           <label>Fecha Inicio</label>
-           <input type="text" class="form-control demo3" name="fInicio" value="<?php echo "$date";?>">
-          </div>
+         <table class="table" id="table-mat-prima" >
+         <?php
+         $num_rows=$resultProject->num_rows;
+         if($num_rows > 0){
 
-          <div class="form-group">
-           <label>Fecha Fin</label>
-           <input type="text" class="form-control demo3" name="fFin" value="<?php echo "$date2";?>">
+         	while ($projectrow = $resultProject->fetch_object()) { ?>
+         <tr>
+         	<td style="background:#CCCCCC" class="col-md-3"><strong>Nombre</strong>
+         	</td>
+         	<td id="tdName"><input type="hidden" name="projectName" value="<?php echo $projectrow->nombre; ?>"/>
+         		<span><?php echo $projectrow->nombre; ?></span>
+         	</td>
+         </tr>
+         <tr>
+         	<td style="background:#CCCCCC "><strong>Descripcion</strong>
+         	</td>
+         	<td id="tdDescripcion"><input type="hidden" name="projectDescription" value="<?php echo $projectrow->descripcion ;?>" />
+         		<span><?php echo $projectrow->descripcion ;?></span>
+         	</td>
+         </tr>
+         <tr>
+         	<td style="background:#CCCCCC "><strong>Pocentaje</strong>
+         	</td>
+         	<td id="tdPorcentaje"><input type="hidden" name="projectPorcent" value="<?php echo $projectrow->porcentajeCI; ?>" />
+         		<span><?php echo $projectrow->porcentajeCI; ?></span>	
+         	</td>
+         </tr>
+        
+         <tr>
+         	<td style="background:#CCCCCC "><strong>Monto Total</strong>
+         	</td>
+         	<td id="tdTotal"><input type="hidden" name="projectTotal" value="<?php echo $projectrow->montoTotal; ?>" />
+         		<span><?php echo $projectrow->montoTotal; ?></span>
+         	</td>
+         </tr>
+			<?php
+				}
+			}
+			?>
+         </table>
+			<button type="button" id="projectEdit"  class="edit btn btn-primary btn-round btn-tooltip" name="enviarCambios" >Editar</button>
           </div>
-           <button type="submit" class="btn btn-primary" name="agregar2" >Guardar Cambios</button>
-         </form> 
-         <?php }?>
-        </div>
-       </div>
 
       </div>
-     </div>
-     
-  
-     
-     
-   
-     
+        
 
+      </div>
+      <div class="wdgt wdgt-primary" hide-btn="true">
+        <div class="wdgt-header" align="center">
+      ETAPAS
+       <span><i class="fa fa-minus wdgt-hide"></i></span></div>
+         
+        <div class="wdgt-body wdgt-table">
 
-    </div>
+         <table class="table" id="table-mano-obra">
+          <thead>
+            <tr>
+           
+           <th>Nombre</th>
+           <th>Fecha Inicio</th>
+           <th>fecha Fin</th>
+           <th>Total</th>
+           
+            </tr>
+          </thead>
+           <tbody>
+                   
+         
+            <tr class="manoObra">
+           <input type="hidden" class="id" name="idLineaMO[]" value="6">
+           <td><input type="hidden" name="descripcionMO[]" value="asd"><span></span></td>
+           <td><input type="hidden" name="jornadaMO[]" value="5"><span></span></td>
+           <td><input type="hidden" name="FPMO[]" value="5"><span></span></td>
+           
+            </tr>
+          
+             </tbody>
+          
+
+         </table>
+        
+       </div>
+
+        <table>
+              <tbody><tr>
+            <td></td>
+              <td></td>
+                <td></td>
+                <td></td>
+           
+            </tr></tbody></table>
+
+         
+        <table>
+          	<tbody>
+          		<tr>
+            		<td><button type="button" id="new-row-mano-obra" class="btn btn-primary btn-tooltip"><i class="icon icon-plus"></i></button></td>
+          		</tr>
+
+        	</tbody>
+
+      	</table>
+         
+         
+        </div>
+   <div class="col-sm-offset-2 col-sm-8">
+				<p class="mensaje"></p>
+			</div>
+
     <!-- END PAGE CONTENT -->
 
    </div>
-   <!-- END NAV, CRUMBS, & CONTENT -->
-   
-  </div>
   
-  <!-- Default JS (DO NOT TOUCH) -->
-  <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
-  <script src="../lib/js/bootstrap.min.js"></script>
-  <script src="../lib/js/hogan.min.js"></script>
-  <script src="../lib/js/typeahead.min.js"></script>
-  <script src="../lib/js/typeahead-example.js"></script>
+
+   <!-- END NAV, CRUMBS, & CONTENT -->
+ <!--MODAL TO EDIT PROJECT  -->
+  <div class="modal fade" id="modalProject" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header modal-primary">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myModalLabel">Editar Proyecto</h4>
+                    </div>
+                    <div class="modal-body">
+
+                      <!-- content goes here -->
+                      <form id="projectForm" class="form-horizontal" >
+
+                        <div class="form-group">
+                          <label class="col-lg-3 control-label">Nombre</label>
+                          <div class="col-lg-7">
+                            <input type="text" class="form-control" name="projectNameNew" />
+                          </div>
+
+                        </div>
+
+                        <div class="form-group">
+                          <label class="col-lg-3 control-label">Descripcion</label>
+                          <div class="col-lg-7">
+                            <input type="text" class="form-control" name="projectDescriptionNew"/>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="col-lg-3 control-label">Porcentaje</label>
+                          <div class="col-lg-7">
+                            <input type="number" class="form-control" name="projectPorcentNew"/>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="col-lg-3 control-label">Monto Total</label>
+                          <div class="col-lg-7">
+                            <input type="number" step="0.01" class="form-control" name="projectTotalNew"/>
+                          </div>
+                        </div>
+
+                        <div class="btn-group btn-group-justified" role="group" aria-label="group button">
+                          <div class="btn-group" role="group">
+                            <button type="submit" class="btn btn-success" name="agregar2" value="Agregar" >Ingresar</button>
+                          </div>
+                          <div class="btn-group" role="group">
+                            <button type="reset" class="btn btn-info">Limpiar</button>
+                          </div>
+                        </div>
+
+                      </form>
+
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+
+     <!--ALERTAS-->
+
+   <!-- Default JS (DO NOT TOUCH) -->
+  <script src="../lib/JS/jquery-3.1.0.min.js"></script>
+  <script src="../lib/JS/bootstrap.min.js"></script>
+  <script src="../lib/JS/hogan.min.js"></script>
+  <script src="../lib/JS/typeahead.min.js"></script>
+  <script src="../lib/JS/typeahead-example.js"></script>
   
   <!-- Adjustable JS -->
-  <script src="../lib/js/bootstrap-colorpicker.js"></script>
-  <script src="../lib/js/bootstrap-datepicker.js"></script>
+  <script src="../lib/JS/bootstrapValidator.js"></script>
+  <script src="../lib/JS/jquery.dataTables.js"></script>
+  <script src="../lib/JS/DT_bootstrap.js"></script>
+  <script src="../lib/JS/soft-widgets.js"></script>
+  <script src="../lib/JS/icheck.js"></script>
   <script src="../lib/js/jquery.jgrowl.min.js"></script>
-  <script src="../lib/js/select2.min.js"></script>
-  <script src="../lib/js/icheck.js"></script>
-  <script src="../lib/js/jquery.knob.js"></script>
-  <script src="../lib/js/jquery.switchButton.js"></script>
-  <script>
-    $(document).ready(function() { 
-    $("#e1").select2(); 
-    $("#e2").select2(); 
-    $('.demo1').colorpicker(); 
-    $('.demo2').colorpicker(); 
-    $('.demo3').datepicker(); $('.demo4').datepicker({minViewMode: 1});
-    $('.flat-checkbox').iCheck({
-     checkboxClass: 'icheckbox_flat-purple',
-     radioClass: 'iradio_flat-purple'
-    });
-    $( ".ui-slider-range" ).slider({
-     range: true,
-     values: [ 17, 67 ]
-    });
-    $( ".ui-slider2" ).slider({
-     range: "min",
-     max: 255,
-     value: 67
-    });
-    
-    $('.switch1').switchButton();
-    $(".switch2").switchButton({
-      on_label: 'YES',
-      off_label: 'NO'
-    });
-    $(".switch3").switchButton({
-      show_labels: false
-    });
-    $(".switch4").switchButton({
-      width: 100,
-      height: 40,
-      button_width: 50,
-      show_labels: false
-    });
-    
-   });
+ <script>
+    $(document).ready(function() {
 
-  $(function() {
-
-            $(".knob").knob({
-                draw : function () {
-
-                    if(this.$.data('skin') == 'tron') {
-
-                        var a = this.angle(this.cv)  // Angle
-                            , sa = this.startAngle          // Previous start angle
-                            , sat = this.startAngle         // Start angle
-                            , ea                            // Previous end angle
-                            , eat = sat + a                 // End angle
-                            , r = true;
-
-                        this.g.lineWidth = this.lineWidth;
-
-                        this.o.cursor
-                            && (sat = eat - 0.3)
-                            && (eat = eat + 0.3);
-
-                        if (this.o.displayPrevious) {
-                            ea = this.startAngle + this.angle(this.value);
-                            this.o.cursor
-                                && (sa = ea - 0.3)
-                                && (ea = ea + 0.3);
-                            this.g.beginPath();
-                            this.g.strokeStyle = this.previousColor;
-                            this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sa, ea, false);
-                            this.g.stroke();
-                        }
-
-                        this.g.beginPath();
-                        this.g.strokeStyle = r ? this.o.fgColor : this.fgColor ;
-                        this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sat, eat, false);
-                        this.g.stroke();
-
-                        this.g.lineWidth = 2;
-                        this.g.beginPath();
-                        this.g.strokeStyle = this.o.fgColor;
-                        this.g.arc(this.xy, this.xy, this.radius - this.lineWidth + 1 + this.lineWidth * 2 / 3, 0, 2 * Math.PI, false);
-                        this.g.stroke();
-
-                        return false;
-                    }
+        $("#projectForm").bootstrapValidator({
+          fields : {
+            projectNameNew : {
+              validators: {
+                notEmpty : {
+                  message : "Este campo no puede estar vacio"
                 }
-            });
+              }
+            },
+            projectDescriptionNew : {
+              validators : {
+                notEmpty : {
+                  message : "Este campo no puede estar vacio"
+                }
+                
+              }
+            },
+             projectPorcentNew : {
+              validators : {
+                notEmpty : {
+                  message : "Este campo no puede estar vacio"
+                }
+                
+              }
+            },
+           
+            projectTotalNew: {
+              validators : {
+                notEmpty: {
+                  message: 'Este campo no puede estar vacio'
+                  },
+              }
+            }
+          }
         });
+      });
+    $("form").on("submit",function(e){
 
+  			 e.preventDefault();
+
+
+  			 var frm= $(this).serialize();
+
+  			// console.log(frm);
+  			
+
+  			 $.ajax({
+  			 	type: "POST",
+  			 	url: "modificarProyecto_exe.php",
+  			 	data: frm			 
+  			 
+  			 }).done( function(infomation){
+
+  			 	var json_info=JSON.parse(infomation);
+  			 	closeWindows();
+  			 	showMessage(json_info);	
+  			 });
+  		});
+   		var closeWindows=function(){
+   			 $("#modalProject").modal('hide');
+   		}
+   		var showMessage = function( informacion ){
+		var texto = "", color = "";
+		if( informacion.answer == "EXITO" ){
+
+		actualizarTabla();
+		texto = "<strong>EXITO!</strong> Se han guardado los cambios correctamente.";
+		color = "#379911";
+		}else if( informacion.answer == "ERROR"){
+		texto = "<strong>Error</strong>, no se ejecutó la consulta.";
+		color = "#C9302C";
+		}	
+		$(".mensaje").html( texto ).css({"color": color });
+		$(".mensaje").fadeOut(5000, function(){
+		$(this).html("");
+		$(this).fadeIn(3000);
+		}); 
+		}
+
+		var actualizarTabla=function(){
+			var nameNew=$("input[name='projectNameNew']").val();
+			var descriptionNew=$("input[name='projectDescriptionNew']").val();
+			var porcentNew=$("input[name='projectPorcentNew']").val();
+			var totalNew=$("input[name='projectTotalNew']").val();
+			document.getElementById("tdName").innerHTML = nameNew;
+			document.getElementById("tdDescripcion").innerHTML=descriptionNew;
+			document.getElementById("tdPorcentaje").innerHTML=porcentNew;
+			document.getElementById("tdTotal").innerHTML=totalNew
+
+
+		}
+		
 
   </script>
+  <script>
+  	$(document).ready(function() {
+  	 	 $("#modalProject").modal({ show: false});
+  	 	 $("#projectEdit").click(function(){
+  	 	 	var modalForm= $("#modalProject form");
+  	 	 	var name=$("input[name='projectName']").val();
+  	 	 	var description =$("input[name='projectDescription']").val();
+  	 	 	var porcent=$("input[name='projectPorcent']").val();
+  	 	 	var total=$("input[name='projectTotal']").val();
+  	 	 	modalForm.find("input[name='projectNameNew']").val(name);
+  	 	 	modalForm.find("input[name='projectDescriptionNew']").val(description);
+  	 	 	modalForm.find("input[name='projectPorcentNew']").val(porcent);
+  	 	 	modalForm.find("input[name='projectTotalNew']").val(total);
 
-  
+
+  	 	 	$("#modalProject").modal('show');
+
+
+
+  	 	 });
+
+      	 }); 
+  </script>
+ 
  </body>
 </html>
-
-<?php
-}
-else{
- header("Location: ../home.php");
-    session_destroy();
-    exit(); 
-}
-?>
