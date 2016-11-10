@@ -96,7 +96,8 @@ error_reporting(0);
         $n = count($_POST["numero"]);
 
         for ($i = 0; $i < $n; $i++){
-        $query1 = "INSERT INTO etapapartida(idEtapa, idPartida, versionPartida, cantidad, CD, CI, IVA, PU, subTotal) VALUES(".$etapa.", ".$_POST["numero"][$i].", ".$_POST["version"][$i].",".$_POST["cantidad"][$i+$offset].", ".$_POST["CDD"][$i+$offset].", ".$_POST["CII"][$i+$offset].", '".$_POST["IVAA"][$i+$offset]."', ".$_POST["PUU"][$i+$offset].", ".$_POST["subTotal_etapa"][$i+$offset].")";
+          $query1 = "INSERT INTO etapapartida(idEtapa, idPartida, versionPartida, cantidad, CD, CI, IVA, PU, subTotal, fechaInicioProgramada, fechaFinProgramada) VALUES('".$etapa."', ".$_POST["numero"][$i].", ".$_POST["version"][$i].", ".$_POST["cantidad"][$i+$offset].", ".$_POST["CDD"][$i+$offset].", ".$_POST["CII"][$i+$offset].", '".$_POST["IVAA"][$i+$offset]."', ".$_POST["PUU"][$i+$offset].", ".$_POST["subTotal_etapa"][$i+$offset].", '".$_POST["fechaInicioProgramadaa"][$i+$offset]."', '".$_POST["fechaFinProgramadaa"][$i+$offset]."')";
+
           echo $etapa.", ".$_POST["numero"][$i].", ".$_POST["version"][$i].",".$_POST["cantidad"][$i+$offset].", ".$_POST["CDD"][$i+$offset].", ".$_POST["CII"][$i+$offset].", '".$_POST["IVAA"][$i+$offset]."', ".$_POST["PUU"][$i+$offset].", ".$_POST["subTotal_etapa"][$i+$offset]."\n";
           $conn->query($query1);
         }
@@ -119,7 +120,7 @@ error_reporting(0);
   
      // header("Location: crearEtapa.php?".$str);
 
-     header("Location: crearEtapa.php?id=".$proyecto."&".$str);
+     header("Location: editarEtapaK1.php?id=".$etapa."&idProyecto=".$proyecto."&".$str);
      }   
 
    }else{
@@ -306,7 +307,7 @@ error_reporting(0);
         <!-- BEGIN PAGE CONTENT -->
         <div class="content">
           <div class="page-h1">
-            <h1>Nueva Etapa <small>// Ingrese datos de la Etapa</small></h1>
+            <h1>Editar Etapa <small>// Ingrese datos de la Etapa</small></h1>
           </div>
           <div class="col-md-12">
             <div class="alert alert-warning" style="margin-bottom:0px;margin-top:10px;">
@@ -446,8 +447,8 @@ error_reporting(0);
            <td><input type="hidden" name="CII[]" value="<?php echo $resultado1['CII']; ?>"/><span><?php echo $resultado1['CII']; ?></span></td>
            <td><input type="hidden" name="IVAA[]" value="<?php echo $resultado1['IVAA']; ?>"/><span><?php echo $resultado1['IVAA']; ?></span></td>
            <td><input type="hidden" name="PUU[]" value="<?php echo $resultado1['PUU']; ?>"/><span><?php echo $resultado1['PUU']; ?></span></td>   
-           <td><input type="hidden" name="fechaInicioProgramada[]" value="<?php echo $resultado1['fechaInicioProgramada']; ?>"/><span><?php echo $resultado1['fechaInicioProgramada']; ?></span></td>
-           <td><input type="hidden" name="fechaFinProgramada[]" value="<?php echo $resultado1['fechaFinProgramada']; ?>"/><span><?php echo $resultado1['fechaFinProgramada']; ?></span></td>       
+           <td><input type="hidden" name="fechaInicioProgramadaa[]" value="<?php echo $resultado1['fechaInicioProgramad']; ?>"/><span><?php echo $resultado1['fechaInicioProgramada']; ?></span></td>
+           <td><input type="hidden" name="fechaFinProgramadaa[]" value="<?php echo $resultado1['fechaFinProgramada']; ?>"/><span><?php echo $resultado1['fechaFinProgramada']; ?></span></td>       
            <td><input type="hidden" name="subTotal_etapa[]" value="<?php echo $resultado1['subTotal']; ?>"/><span><?php echo $resultado1['subTotal']; ?></span></td>       
            <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td>
           
@@ -615,14 +616,14 @@ while ($row = $sql->fetch_array()) {
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Fecha Inicio</label>
                           <div class="col-lg-7">
-                            <input type="date" class="form-control" name="fechaInicioProgramada"/>
+                            <input type="date" class="form-control" name="fechaInicioProgramadaa"/>
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Fecha Fin</label>
                           <div class="col-lg-7">
-                            <input type="date" class="form-control" name="fechaFinProgramada"/>
+                            <input type="date" class="form-control" name="fechaFinProgramadaa"/>
                           </div>
                         </div>
 
@@ -759,7 +760,7 @@ while ($row = $sql->fetch_array()) {
           $('#squarespaceModal').modal('show');
           var table = $("#table-mat-prima");
 
-          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='version[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span></span><input type='hidden' name='fechaInicioProgramada'/></td><td><span></span><input type='hidden' name='fechaInicioProgramada'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='version[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span></span><input type='hidden' name='fechaInicioProgramadaa[]'/></td><td><span></span><input type='hidden' name='fechaFinProgramadaa[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
           table.append(html);
            $("#principal").prop("disabled", false);
         });
@@ -778,8 +779,8 @@ while ($row = $sql->fetch_array()) {
 
         $("#modalIngresarEtapaPartida form button[name='agregar']").click(function(){
           var cantidad = +$(this).parents("form").find("input[name='cantidad']").val();
-          var fechaInicioProgramada =  $(this).parents("form").find("input[name='fechaInicioProgramada']").val();
-          var fechaFinProgramada =  $(this).parents("form").find("input[name='fechaFinProgramada']").val();
+          var fechaInicioProgramadaa =  $(this).parents("form").find("input[name='fechaInicioProgramadaa']").val();
+          var fechaFinProgramadaa =  $(this).parents("form").find("input[name='fechaFinProgramadaa']").val();
           var precioUnitario = "";
           var subtotal = "";
           $("#table-mat-prima tr:last td").each(function(index){
@@ -795,11 +796,11 @@ while ($row = $sql->fetch_array()) {
              subtotal = precioUnitario * cantidad;
             }
             else if (index == 10) {
-              $("span", this).text(fechaInicioProgramada);
-              $("input[type='hidden']", this).val(fechaInicioProgramada);
+              $("span", this).text(fechaInicioProgramadaa);
+              $("input[type='hidden']", this).val(fechaInicioProgramadaa);
             }else if (index == 11) {
-              $("span", this).text(fechaFinProgramada);
-              $("input[type='hidden']", this).val(fechaFinProgramada);
+              $("span", this).text(fechaFinProgramadaa);
+              $("input[type='hidden']", this).val(fechaFinProgramadaa);
             }
              else if(index == 12){
               $("input[type='hidden']", this).val(subtotal.toFixed(4));

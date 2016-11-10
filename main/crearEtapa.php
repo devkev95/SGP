@@ -50,16 +50,23 @@ error_reporting(0);
 
 
 
-        $n = count($_POST["subTotal_etapa"]);
+        $n = 1;
         echo $n;
         for ($i = 0; $i < $n; $i++){
-          $query1 = "INSERT INTO etapapartida(idEtapa, idPartida, versionPartida, cantidad, CD, CI, IVA, PU, subTotal, fechaInicioProgramada, fechaFinProgramada) VALUES('".$id."', ".$_POST["numero"][$i].", ".$_POST["version"][$i].", ".$_POST["cantidad"][$i].", ".$_POST["CDD"][$i].", ".$_POST["CII"][$i].", '".$_POST["IVAA"][$i]."', ".$_POST["PUU"][$i].", ".$_POST["subTotal_etapa"][$i].", ".$_POST["fechaInicioProgramada1"][$i].", ".$_POST["fechaFinProgramada1"][$i].")";
+          $query1 = "INSERT INTO etapapartida(idEtapa, idPartida, versionPartida, cantidad, CD, CI, IVA, PU, subTotal, fechaInicioProgramada, fechaFinProgramada) VALUES('".$id."', ".$_POST["numero"][$i].", ".$_POST["version"][$i].", ".$_POST["cantidad"][$i].", ".$_POST["CDD"][$i].", ".$_POST["CII"][$i].", '".$_POST["IVAA"][$i]."', ".$_POST["PUU"][$i].", ".$_POST["subTotal_etapa"][$i].", '".$_POST["fechaInicioProgramadaa"][$i]."', '".$_POST["fechaFinProgramadaa"][$i]."')";
           
           $conn->query($query1);
 
         }
 
-        header("Location: crearEtapa.php?id=".$proyecto);
+
+         if ($conn->errno) {
+          echo $conn->error;
+        } else {
+                          header("Location: crearEtapa.php?id=".$proyecto);
+        }
+
+     //   header("Location: crearEtapa.php?id=".$proyecto);
 
         
       }else{
@@ -573,14 +580,14 @@ while ($row = $sql->fetch_array()) {
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Fecha Inicio</label>
                           <div class="col-lg-7">
-                            <input type="date" class="form-control" name="fechaInicioProgramada"/>
+                            <input type="date" class="form-control" name="fechaInicioProgramadaa"/>
                           </div>
                         </div>
 
                         <div class="form-group">
                           <label class="col-lg-3 control-label">Fecha Fin</label>
                           <div class="col-lg-7">
-                            <input type="date" class="form-control" name="fechaFinProgramada"/>
+                            <input type="date" class="form-control" name="fechaFinProgramadaa"/>
                           </div>
                         </div>
 
@@ -719,7 +726,7 @@ while ($row = $sql->fetch_array()) {
           var table = $(this).parents(".wdgt-body").children("table");
           var count = table.children("tbody").children("tr").length;
 
-          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='version[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span></span><input type='hidden' name='fechaInicioProgramada1[]'/></td><td><span></span><input type='hidden' name='fechaFinProgramada1[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='version[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span></span><input type='hidden' name='fechaInicioProgramadaa[]'/></td><td><span></span><input type='hidden' name='fechaFinProgramadaa[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
           table.append(html);
            $("#principal").prop("disabled", false);
         });
@@ -738,8 +745,8 @@ while ($row = $sql->fetch_array()) {
 
         $("#modalIngresarEtapaPartida form button[name='agregar']").click(function(){
           var cantidad = +$(this).parents("form").find("input[name='cantidad']").val();
-          var fechaInicioProgramada =  $(this).parents("form").find("input[name='fechaInicioProgramada1']").val();
-          var fechaFinProgramada =  $(this).parents("form").find("input[name='fechaFinProgramada1']").val();
+          var fechaInicioProgramadaa =  $(this).parents("form").find("input[name='fechaInicioProgramadaa']").val();
+          var fechaFinProgramadaa =  $(this).parents("form").find("input[name='fechaFinProgramadaa']").val();
           var precioUnitario = "";
           var subtotal = "";
           $("#partidas tr:last td").each(function(index){
@@ -755,11 +762,11 @@ while ($row = $sql->fetch_array()) {
              subtotal = precioUnitario * cantidad;
             }
             else if (index == 10) {
-              $("span", this).text(fechaInicioProgramada);
-              $("input[type='hidden']", this).val(fechaInicioProgramada);
+              $("span", this).text(fechaInicioProgramadaa);
+              $("input[type='hidden']", this).val(fechaInicioProgramadaa);
             }else if (index == 11) {
-              $("span", this).text(fechaFinProgramada);
-              $("input[type='hidden']", this).val(fechaFinProgramada);
+              $("span", this).text(fechaFinProgramadaa);
+              $("input[type='hidden']", this).val(fechaFinProgramadaa);
             }
              else if(index == 12){
               $("input[type='hidden']", this).val(subtotal.toFixed(4));
