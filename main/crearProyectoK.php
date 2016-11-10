@@ -30,7 +30,7 @@
 
  
     if(!empty($_POST['nombre'])){
-    $query = "INSERT INTO proyecto(nombre, descripcion, porcentajeCI) VALUES ('".$nombre."', '".$descripcion."', '".$pci."')";
+    $query = "INSERT INTO proyecto(nombre, descripcion, porcentajeCI, fecha_creacion) VALUES ('".$nombre."', '".$descripcion."', '".$pci."', CURRENT_DATE)";
 
     // $query = "CALL insertProyecto('".$nombre."', '".$descripcion."', '".$pci."', '".$fechaInicio."', '".$fechaFin."')";
       if ($conn->query($query)) {
