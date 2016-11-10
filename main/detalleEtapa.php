@@ -22,8 +22,6 @@ if (isset($_GET['id'])) {
 
 ?>
 
-
-
   <!DOCTYPE html>
   <html lang="en">
 
@@ -288,17 +286,24 @@ if (isset($_GET['id'])) {
           echo '</tr>';
       }
 
+      mysql_close($link);
+
 ?>
 
 <?php
+  //include 'connect_db.php';
+  require("connect_db.php");
+  
   $result = mysql_query("CALL total_partidas('".$etapa."')");
   $row = mysql_fetch_array($result);
   $total = $row['total'];
+
+  mysql_close($link);
 ?>
                     </tbody>
                   </table>
                   <div>
-                    <strong>Sub-Total:<?php echo $total; ?></strong>
+                    <strong>Monto Total: <?php echo $total; ?></strong>
                   </div><br>
 
 
