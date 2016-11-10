@@ -53,7 +53,7 @@ error_reporting(0);
         $n = count($_POST["subTotal_etapa"]);
         echo $n;
         for ($i = 0; $i < $n; $i++){
-          $query1 = "INSERT INTO etapapartida(idEtapa, idPartida, versionPartida, cantidad, CD, CI, IVA, PU, subTotal) VALUES('".$id."', ".$_POST["numero"][$i].", ".$_POST["version"][$i].", ".$_POST["cantidad"][$i].", ".$_POST["CDD"][$i].", ".$_POST["CII"][$i].", '".$_POST["IVAA"][$i]."', ".$_POST["PUU"][$i].", ".$_POST["subTotal_etapa"][$i].")";
+          $query1 = "INSERT INTO etapapartida(idEtapa, idPartida, versionPartida, cantidad, CD, CI, IVA, PU, subTotal, fechaInicioProgramada, fechaFinProgramada) VALUES('".$id."', ".$_POST["numero"][$i].", ".$_POST["version"][$i].", ".$_POST["cantidad"][$i].", ".$_POST["CDD"][$i].", ".$_POST["CII"][$i].", '".$_POST["IVAA"][$i]."', ".$_POST["PUU"][$i].", ".$_POST["subTotal_etapa"][$i].", ".$_POST["fechaInicioProgramada1"][$i].", ".$_POST["fechaFinProgramada1"][$i].")";
           
           $conn->query($query1);
 
@@ -719,7 +719,7 @@ while ($row = $sql->fetch_array()) {
           var table = $(this).parents(".wdgt-body").children("table");
           var count = table.children("tbody").children("tr").length;
 
-          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='version[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span></span><input type='hidden' name='fechaInicioProgramada'/></td><td><span></span><input type='hidden' name='fechaInicioProgramada'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='version[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span></span><input type='hidden' name='fechaInicioProgramada1[]'/></td><td><span></span><input type='hidden' name='fechaFinProgramada1[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
           table.append(html);
            $("#principal").prop("disabled", false);
         });
@@ -738,8 +738,8 @@ while ($row = $sql->fetch_array()) {
 
         $("#modalIngresarEtapaPartida form button[name='agregar']").click(function(){
           var cantidad = +$(this).parents("form").find("input[name='cantidad']").val();
-          var fechaInicioProgramada =  $(this).parents("form").find("input[name='fechaInicioProgramada']").val();
-          var fechaFinProgramada =  $(this).parents("form").find("input[name='fechaFinProgramada']").val();
+          var fechaInicioProgramada =  $(this).parents("form").find("input[name='fechaInicioProgramada1']").val();
+          var fechaFinProgramada =  $(this).parents("form").find("input[name='fechaFinProgramada1']").val();
           var precioUnitario = "";
           var subtotal = "";
           $("#partidas tr:last td").each(function(index){
