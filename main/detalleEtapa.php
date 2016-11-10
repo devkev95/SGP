@@ -194,12 +194,12 @@ if (isset($_GET['id'])) {
       //include 'connect_db.php';
       require("connect_db.php");
 
-      $sql = mysql_query("SELECT * FROM etapa WHERE idEtapa='".$etapa."'");
+      $sql = mysql_query("SELECT nombre, detalle, DATE_FORMAT(fechaInicioProgramada,'%d-%b-%Y') AS inicio, DATE_FORMAT(fechaFinProgramada,'%d-%b-%Y') AS fin, estado FROM etapa WHERE idEtapa='".$etapa."'");
       while ($row = mysql_fetch_array($sql)) {
           $nombre = $row['nombre'];
           $detalle = $row['detalle'];
-          $fechaI = $row['fechaInicioProgramada'];
-          $fechaF = $row['fechaFinProgramada'];
+          $fechaI = $row['inicio'];
+          $fechaF = $row['fin'];
           $estado = $row['estado'];
       }
 ?>
@@ -287,9 +287,19 @@ if (isset($_GET['id'])) {
           echo '<td>'. $row['subTotal'] .'</td>';
           echo '</tr>';
       }
+
+?>
+
+<?php
+  $result = mysql_query("CALL total_partidas('".$etapa."')");
+  $row = mysql_fetch_array($result);
+  $total = $row['total'];
 ?>
                     </tbody>
                   </table>
+                  <div>
+                    <strong>Sub-Total:<?php echo $total; ?></strong>
+                  </div><br>
 
 
             </div>
