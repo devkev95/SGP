@@ -14,17 +14,11 @@ session_write_close();
 
 error_reporting(0);
 
-     $proyecto = $_GET['id'];
+     $etapa = $_GET['id'];
+    echo $etapa;
+
+    $proyecto = $_GET['idProyecto'];
     echo $proyecto;
-
-          require("connect_db.php");
-
-        $query12= mysql_query("SELECT porcentajeCI FROM proyecto WHERE idProyecto=".$proyecto);
-
-        $resultado2 = mysql_fetch_array($query12);
-        $porcentajeCI= $resultado2['porcentajeCI'];
-
-        echo $porcentajeCI;
 
     $nombre = $_POST["nombre"];
     $detalle = $_POST["detalle"];
@@ -34,32 +28,71 @@ error_reporting(0);
    
     $conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 
+      require("connect_db.php");
+
+        $query12= mysql_query("SELECT totalEtapa FROM etapa WHERE idEtapa=".$etapa);
+
+        $resultado2 = mysql_fetch_array($query12);
+        echo $resultado2['totalEtapa'];
    
       $total_etapa = 0;
+      $valid = true;
 
       if(isset($_POST["subTotal_etapa"])){
         $total_etapa = array_sum($_POST["subTotal_etapa"]);
       }
 
-      if($fechaFinProgramada > $fechaInicioProgramada){
-      $query = "INSERT INTO etapa(nombre, detalle, idProyecto, fechaInicioProgramada, fechaFinProgramada, estado, totalEtapa) VALUES ('".$nombre."', '".$detalle."', '".$proyecto."', '".$fechaInicioProgramada."', '".$fechaFinProgramada."', '".$estado."', ".$total_etapa.")";
-     // $conn->query($query);
-      if($conn->query($query)){
-        $id = $conn->insert_id;
-        echo $id;
-
-
-
-        $n = count($_POST["subTotal_etapa"]);
-        echo $n;
-        for ($i = 0; $i < $n; $i++){
-          $query1 = "INSERT INTO etapapartida(idEtapa, idPartida, versionPartida, cantidad, CD, CI, IVA, PU, subTotal) VALUES('".$id."', ".$_POST["numero"][$i].", ".$_POST["version"][$i].", ".$_POST["cantidad"][$i].", ".$_POST["CDD"][$i].", ".$_POST["CII"][$i].", '".$_POST["IVAA"][$i]."', ".$_POST["PUU"][$i].", ".$_POST["subTotal_etapa"][$i].")";
-          
-          $conn->query($query1);
-
+        if(empty($nombre)) {
+        
+            $valid = false;
         }
 
-        header("Location: crearEtapa.php?id=".$proyecto);
+        if(empty($detalle)) {
+
+            $valid = false;
+        }
+
+        if(empty($fechaInicioProgramada)) {
+
+            $valid = false;
+        }
+
+        if(empty($fechaFinProgramada)) {
+
+            $valid = false;
+        }
+
+        if(empty($estado)) {
+
+            $valid = false;
+        }
+        // update data
+        if ($valid) {
+
+
+      if($fechaFinProgramada > $fechaInicioProgramada){
+      //$query = "INSERT INTO etapa(nombre, detalle, idProyecto, fechaInicioProgramada, fechaFinProgramada, estado, totalEtapa) VALUES ('".$nombre."', '".$detalle."', '".$proyecto."', '".$fechaInicioProgramada."', '".$fechaFinProgramada."', '".$estado."', ".$total_etapa.")";
+      $query ="UPDATE etapa SET nombre='".$nombre."', detalle='".$detalle."', idProyecto='".$proyecto."', fechaInicioProgramada='".$fechaInicioProgramada."', fechaFinProgramada= '".$fechaFinProgramada."' , estado= '".$estado."', totalEtapa= '".$total_etapa."'   WHERE idEtapa=".$etapa;
+     // $conn->query($query);
+      if($conn->query($query)){
+
+        $n = count($_POST["idPartida"]);
+        echo $n;
+        for ($i = 0; $i < $n; $i++){
+          $query = "UPDATE etapapartida SET cantidad=".$_POST["cantidad"][$i].", CD=".$_POST["CDD"][$i].", CI=".$_POST["CII"][$i].", IVA=".$_POST["IVAA"][$i].", PU=".$_POST["PUU"][$i].", subTotal=".$_POST["subTotal_etapa"][$i]." WHERE id=".$_POST["id"][$i];
+          $conn->query($query);
+        }
+        $offset = $i;
+
+        $n = count($_POST["numero"]);
+
+        for ($i = 0; $i < $n; $i++){
+        $query1 = "INSERT INTO etapapartida(idEtapa, idPartida, cantidad, CD, CI, IVA, PU, subTotal) VALUES('".$etapa."', ".$_POST["numero"][$i].", ".$_POST["cantidad"][$i+$offset].", ".$_POST["CDD"][$i+$offset].", ".$_POST["CII"][$i+$offset].", '".$_POST["IVAA"][$i+$offset]."', ".$_POST["PUU"][$i+$offset].", ".$_POST["subTotal_etapa"][$i+$offset].")";
+          
+          $conn->query($query1);
+        }
+
+        header("Location: editarEtapaK1.php?id=".$etapa."&idProyecto=".$proyecto);
 
         
       }else{
@@ -75,7 +108,21 @@ error_reporting(0);
      header("Location: crearEtapa.php?id=".$proyecto."&".$str);
      }   
 
-
+   }else{
+       require("connect_db.php");
+        
+        $sql1 = mysql_query("SELECT * FROM etapa WHERE idEtapa='".$etapa."'");
+        $row = mysql_fetch_array($sql1);
+       
+        if (empty($row)){
+            header("Location: editarEtapa.php");
+        }
+          $nombre = $row['nombre'];
+          $detalle = $row['detalle'];
+          $fechaI = $row['fechaInicioProgramada'];
+          $fechaF = $row['fechaFinProgramada'];
+          $estado = $row['estado'];
+    }
     
   
 
@@ -89,7 +136,7 @@ error_reporting(0);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Crear Etapa</title>
+    <title>Editar Etapa</title>
 
     <!-- Default Styles (DO NOT TOUCH) -->
     <link rel="stylesheet" href="../lib/CSS/font-awesome.min.css">
@@ -103,7 +150,7 @@ error_reporting(0);
 
     <!-- Adjustable Styles -->
     <link type="text/css" rel="stylesheet" href="../lib/CSS/DT_bootstrap.css" />
-     <link type="text/css" rel="stylesheet" href="lib/css/DT_bootstrap.css"/>
+
     <link type="text/css" rel="stylesheet" href="../lib/CSS/icheck.css?v=1.0.1">
    
 
@@ -149,10 +196,10 @@ error_reporting(0);
                       <span class="caret"></span>
                     </a>
                   </div>
-                  <div id="c-tables" class="accordion-body collapse">
+                  <div id="c-tables" class="accordion-body collapse in">
                     <div class="accordion-inner">
                       <a href="consultarPartidas.php" class="sbtn sbtn-default">Ver Partidas</a>
-                      <a href="crear_partida.php" class="sbtn sbtn-default">Crear Partida</a>
+                      <a href="crear_partida.php" class="sbtn sbtn-default active">Crear Partida</a>
                     </div>
                   </div>
                 </div>
@@ -174,7 +221,7 @@ error_reporting(0);
 
                  <div class="accordion-group">
                   <div class="accordion-heading">
-                    <a class="sbtn btn-default active" href="proyectos.php">
+                    <a class="sbtn btn-default" href="proyectos.php">
                     <span class="fa fa-list-alt"></span>
                       &nbsp;&nbsp;Proyectos
                     </a>
@@ -237,7 +284,7 @@ error_reporting(0);
           <div class="crumbs">
             <ol class="breadcrumb hidden-xs">
               <li><i class="fa fa-home"></i> <a href="home.php">Home</a></li>
-              <li class="active">Crear Etapa</li>
+              <li class="active">Editar Etapa</li>
             </ol>
           </div>
         </div>
@@ -258,75 +305,6 @@ error_reporting(0);
 
 
           <div class="tb1">
-
-         <form method="POST" action="">
-            <div class="col-md-12">
-              <div class="wdgt wdgt-primary" hide-btn="true">
-                <div class="wdgt-header">Etapas Proyecto</div>
-
-              <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
-
-
-                  <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered" id="etaps">
-                    <thead>
-                      <tr>
-                        <th>Nombre</th>
-                        <th>C.D.</th>
-                        <th>C.I.</th>
-                        <th>IVA 13%</th>
-                        <th>Sub-Total</th>
-                        
-                         
-                      </tr>
-                    </thead>
-                    <tbody>
- <?php
-    //include 'connect_db.php';
-    require("connect_db.php");
-     $sql1 = mysql_query("CALL sp_select_etapas('1','".$proyecto."')");
-    while ($row = mysql_fetch_array($sql1)) {
-        echo '<tr>';
-        echo '<td>'. $row['nombre'] .'</td>';
-        echo '<td>'. $row['CD'] .'</td>';
-        echo '<td>'. $row['CI'] . '</td>';
-        echo '<td>'. $row['IVA'] .'</td>';
-        echo '<td>'. $row['totalEtapa'] .'</td>';
-        
-        echo '</tr>';
-
-
-    
-    }
-
-
-    
-    ?>
-
-
-
-                    </tbody>
-                  </table>
-                  <div>
-                    <strong>Sub-total:<span id="sub-total-etaa"><?php echo $total_proyecto1; ?></span></strong>
-                  </div>
-                  <br>
-                </div>
-              </div>
-
-            </div>
-
-   
-                </form>
-
-
-              <div class="col-md-12">
-
-              <div class="wdgt">
-           <button id="principal1" class="btn btn-success btn-lg"   onclick="window.location.href='proyectos.php'" >Terminar</button>
-
-                             
-                      </div>
-            </div>
             
 <!--*************************************** FORM de la parte CREAR ETAPA  *************************************** -->
 
@@ -366,27 +344,27 @@ error_reporting(0);
 
               <div class="form-group">
               <label>Nombre de Etapa</label>
-               <input type="text" class="form-control" required id="inputFName" placeholder="nombre" name="nombre"  >
+               <input type="text" class="form-control" required id="inputFName" placeholder="nombre" name="nombre" value="<?php echo $nombre;?>" >
               <span class="help-block"></span>
                </div>
 
                <div class="form-group">
               <label>Detalle de Etapa</label>
-               <input type="text" class="form-control" required id="inputFName" placeholder="detalle" name="detalle"  >
+               <input type="text" class="form-control" required id="inputFName" placeholder="detalle" name="detalle" value="<?php echo $detalle;?>"  >
               <span class="help-block"></span>
                </div>
 
               <div class="form-group">
               <label>Fecha Inicio Programada</label>
               <br>
-               <input type="date" class="tcal" required id="inputFName" placeholder="FechaInicioProgramada" name="fechaInicioProgramada"  >
+               <input type="date" class="tcal" required id="inputFName" placeholder="FechaInicioProgramada" name="fechaInicioProgramada" value="<?php echo $fechaI;?>" >
               <span class="help-block"></span>
                </div>
 
               <div class="form-group">
               <label>Fecha Fin programada</label>
               <br>
-               <input type="date" class="tcal" required id="inputFName" placeholder="FechaFinProgramada" name="fechaFinProgramada"  >
+               <input type="date" class="tcal" required id="inputFName" placeholder="FechaFinProgramada" name="fechaFinProgramada" value="<?php echo $fechaF;?>" >
               <span class="help-block"></span>
                </div>   
 
@@ -409,13 +387,11 @@ error_reporting(0);
 
               <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
 
-
-                  <table cellpadding="0" cellspacing="0" border="0" class="table table-hover table-striped" id="partidas">
+                  <table class="table" id="table-mat-prima">
                     <thead>
                       <tr>
                         <th>Descripcion</th>
                         <th>Cantidad</th>
-                        <th>Unidad</th>
                         <th>Material</th>
                         <th>M.O</th>
                         <th>Otros</th>
@@ -428,22 +404,63 @@ error_reporting(0);
                          
                       </tr>
                     </thead>
-                    <tbody>
-                    </tbody>
+                               <tbody>
+           <?php  
+           require("connect_db.php");
+
+        $query11= mysql_query("CALL select_etapapartidas('".$etapa."')");
+       // $resultado1 = mysql_fetch_array($query11);
+
+
+
+
+        
+        while ( $resultado1 = mysql_fetch_array($query11)) { ?>
+            <tr>
+           <input type="hidden" class="id" name="idpartida[]" value="<?php echo  $resultado1['id']; ?>"/>
+           <td><span><?php echo $resultado1['detalle'] ; ?></span></td>
+           
+           <td><input type="hidden" name="cantidad[]" value="<?php echo $resultado1['cantidad']; ?>"/><span><?php echo $resultado1['cantidad'];?></span></td>
+           <td><span><?php echo $resultado1['totalMateriales']; ?></span></td>
+           <td><span><?php echo $resultado1['totalManoObra'];?></span></td>
+           <td><span><?php echo $resultado1['otros']; ?></span></td>
+           <td><input type="hidden" name="CDD[]" value="<?php echo $resultado1['CDD']; ?>"/><span><?php echo $resultado1['CDD']; ?></span></td>
+           <td><input type="hidden" name="CII[]" value="<?php echo $resultado1['CII']; ?>"/><span><?php echo $resultado1['CII']; ?></span></td>
+           <td><input type="hidden" name="IVAA[]" value="<?php echo $resultado1['IVAA']; ?>"/><span><?php echo $resultado1['IVAA']; ?></span></td>
+           <td><input type="hidden" name="PUU[]" value="<?php echo $resultado1['PUU']; ?>"/><span><?php echo $resultado1['PUU']; ?></span></td>        
+           <td><span class="subtotal" value="<?php echo $resultado1['subTotal']; ?>"><?php echo $resultado1['subTotal']; ?></span></td>
+           <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td>
+          
+
+            </tr>
+            <?php }  ?>
+             </tbody>
                   </table>
-                  <div>
-                    <button type="button" id="new-row-recursos" class="btn btn-info btn-sm"><i class="icon icon-plus"></i></button>
-                    <strong>Sub-total:<span id="sub-total-etapa">0.00</span></strong>
-                  </div>
-                  <br>
+                  
+                  <table>
+              <tr>
+            <td></td>
+              <td></td>
+           <td></td>
+            <td> <strong>SUBTOTAL:</strong></td>
+            <td class="subtotal" id="sub-total-etapa">&nbsp;<?php echo $resultado2['totalEtapa']; ?></td>
+            </tr>
+          </table>
+
+          <table>
+          <tr>
+            <td><button type="button" id="new-row-recursos" class="btn btn-primary btn-tooltip"><i class="icon icon-plus"></i></button></td>
+          </tr>
+
+        </table>
+
+
+                  <br>               
+
+
+                </div>
                 </div>
               </div>
-
-            </div>
-
-              
-
-
             
 
               <div class="col-md-12">
@@ -451,8 +468,15 @@ error_reporting(0);
                   <button id="principal" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" disabled>Agregar Etapa</button>
               </div>
             </div>
-                </form>
 
+         </form>
+
+
+
+
+
+
+<!--*********** MODAL PARA AGREGAR PARTIDAS A LA ETAPA *****************-->
                 <div class="modal fade" id="squarespaceModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
               <div class="modal-dialog" style="width:75%">
                 <div class="modal-content">
@@ -479,7 +503,6 @@ error_reporting(0);
                                 <thead>
                                   <tr>
                                     <th>Numero</th>
-                                    <th>Version</th>
                                     <th>Nombre</th>
                                     <th>Total Materiales</th>
                                     <th>Total Mano de Obra</th>
@@ -499,18 +522,16 @@ error_reporting(0);
                                   <?php
 #include 'connect_db.php';
 //require("connect_db.php");
-$sql = $conn->query(" SELECT numero, version, nombre, totalMateriales, ROUND (totalManoObra,2) AS totalManoObra, ROUND (totalEquipoHerramientas,2) AS totalEquipoHerramientas, ROUND (totalSubContratos,2) AS totalSubContratos  FROM partida;");
+$sql = $conn->query(" SELECT numero, nombre, totalMateriales, ROUND (totalManoObra,2) AS totalManoObra, ROUND (totalEquipoHerramientas,2) AS totalEquipoHerramientas, ROUND (totalSubContratos,2) AS totalSubContratos  FROM partida;");
 while ($row = $sql->fetch_array()) {
     echo '<tr>';
     echo '<td>'. $row['numero'] . '</td>';
-    echo '<td>'. $row['version'] . '</td>';
     echo '<td>'. $row['nombre'] .'</td>';
     echo '<td>'. $row['totalMateriales'] .'</td>';
     echo '<td>'. $row['totalManoObra'] . '</td>';
     echo '<td>'. $row['totalEquipoHerramientas'] .'</td>';
     echo '<td>'. $row['totalSubContratos'] .'</td>';
     $numero = $row['numero'];
-    $version = $row['version'];
     $nombre=$row['nombre'];
     $totalMateriales=$row['totalMateriales'];
     $totalManoObra = $row['totalManoObra'];
@@ -519,7 +540,7 @@ while ($row = $sql->fetch_array()) {
     
     
     
-    echo '<td><button onclick="cantidad(\''.$numero.'\',\''.$version.'\',\''.$nombre.'\', \''.$totalMateriales.'\', \''.$totalManoObra.'\', \''.$totalEquipoHerramientas.'\', \''.$totalSubContratos.'\')">Agregar</button></td>';
+    echo '<td><button onclick="cantidad(\''.$numero.'\',\''.$nombre.'\', \''.$totalMateriales.'\', \''.$totalManoObra.'\', \''.$totalEquipoHerramientas.'\', \''.$totalSubContratos.'\')">Agregar</button></td>';
     
     
     
@@ -573,7 +594,7 @@ while ($row = $sql->fetch_array()) {
     <script src="../lib/js/bootstrapValidator.js"></script>
     <script>
       $(document).ready(function() {
-       window.cantidad= function (numero, version, nombre, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos) {
+       window.cantidad= function (numero, nombre, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos) {
         var cant = "";
         totalMateriales= +totalMateriales;
         totalManoObra = +totalManoObra;
@@ -587,51 +608,48 @@ while ($row = $sql->fetch_array()) {
           
           var totalOtros = (totalEquipoHerramientas + totalSubContratos);
           var CD = (totalMateriales + totalManoObra + totalEquipoHerramientas + totalSubContratos);
-          var CI = CD * <?php echo $porcentajeCI; ?>;
+          var CI = CD * 0.29;
           var IVA1 = (CD + CI) * 0.13;
           var precioUnitario = (CD + CI + IVA1);
           precioUnitario = +precioUnitario;
           var subtotal = precioUnitario * cant;
 
          if (/^([0-9])*$/.test(cant)){
-          $("#partidas tr:last td").each(function(index){
+          $("#table-mat-prima tr:last td").each(function(index){
             if (index == 0){
               $("input[type='hidden']", this).val(numero);
               $("span", this).text(nombre);
             }else if(index == 1){
-              $("input[type='hidden']", this).val(version);
+              $("input[type='hidden']", this).val(cant.toFixed(2));
               $("span", this).text(cant.toFixed(2));
 
-            }else if(index == 2){
-             $("input[type='hidden']", this).val(cant.toFixed(2));
-            }
-            else if(index == 3){
+            } else if(index == 2){
               $("span", this).text(totalMateriales.toFixed(2));
             }
-            else if(index == 4){
+            else if(index == 3){
               $("span", this).text(totalManoObra.toFixed(2));
             }
-            else if(index == 5){
+            else if(index == 4){
              $("input[type='hidden']", this).val(totalOtros.toFixed(2));
               $("span", this).text(totalOtros.toFixed(2));
             }
-            else if(index == 6){
+            else if(index == 5){
              $("input[type='hidden']", this).val(CD.toFixed(4));
               $("span", this).text(CD.toFixed(4));
             }
-            else if(index == 7){
+            else if(index == 6){
              $("input[type='hidden']", this).val(CI.toFixed(4));
               $("span", this).text(CI.toFixed(4));
             }
-            else if(index == 8){
+            else if(index == 7){
              $("input[type='hidden']", this).val(IVA1.toFixed(4));
               $("span", this).text(IVA1.toFixed(4));
             }
-            else if(index == 9){
+            else if(index == 8){
              $("input[type='hidden']", this).val(precioUnitario.toFixed(4));
               $("span", this).text(precioUnitario.toFixed(4));
             }
-            else if(index == 10){
+            else if(index == 9){
               $("input[type='hidden']", this).val(subtotal.toFixed(4));
               $("span", this).text(subtotal.toFixed(4));
             }
@@ -668,10 +686,9 @@ while ($row = $sql->fetch_array()) {
 
         $("#new-row-recursos").click(function() {
           $('#squarespaceModal').modal('show');
-          var table = $(this).parents(".wdgt-body").children("table");
-          var count = table.children("tbody").children("tr").length;
+          var table = $("#table-mat-prima");
 
-          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='version[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
           table.append(html);
            $("#principal").prop("disabled", false);
         });
