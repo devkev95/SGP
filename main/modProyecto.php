@@ -294,7 +294,7 @@
            <td><span><?php echo $etapaRow->estado; ?></span></td>
            <td><span><?php echo $etapaRow->totalEtapa; ?></span></td>
            <td class="center">
-              <input style="max-width: 25px;" onclick="window.location.href='#';" type="image" src="../Imagenes/editar.png">
+              <input style="max-width: 25px;" onclick="window.location.href='editarEtapak1.php?id=<?php echo $etapaRow->etapa; ?>&idProyecto=<?php echo $idProyecto; ?>';" type="image" src="../Imagenes/editar.png">
               <input style="max-width: 25px;" type="image" src="../Imagenes/eliminar.png" class="detele" id="delete<?php echo $etapaRow->etapa; ?>">
            </td>
            
