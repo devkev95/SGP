@@ -15,6 +15,11 @@
 
 
 <?php
+
+
+$id=$_GET["id"];
+
+
  error_reporting(0);
 
  $link=mysql_connect("localhost","sgp_user","56p_2016");
@@ -42,6 +47,7 @@
   
   <!-- Adjustable Styles -->
   <link type="text/css" rel="stylesheet" href="lib/css/DT_bootstrap.css"/>
+<script type="text/javascript" src="canvasjs.min.js"></script>
   
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
@@ -196,127 +202,242 @@
 
 
 
-      <div class="col-md-12">
+
+<div class="col-md-12">
 
 
-        <button id="principal" class="btn btn-success btn-lg" onclick="window.location.href='crearProyectoK.php'">Crear proyecto</button>
-       
 
-       <div class="wdgt" hide-btn="true">
-        <div class="wdgt-header">Tabla de proyectos</div>
-        <div class="wdgt-body" style="padding-bottom:0px; padding-top:10px;">
-        <?php
-          if (isset($_GET["error"])) {
-            
-         ?>
-
-          <div class="alertDiv alert alert-danger alert-round alert-border alert-soft">
-              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-             <span class="icon icon-remove-sign"></span> 
-             Se ha producido un error en la conexión a la base de datos, por favor intente realizar esta operación. 
-              
-                
-          </div>
-           <?php
-          // header("Location: tabla_recursos.php");
-          } else if (isset($_GET["success"])){
-        ?>
-          <div class="alertDiv alert alert-success alert-round alert-border alert-soft">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-              <span class="icon icon-ok-sign" ></span>
-             Su actualizacion se ha guardado exitosamente
-            </div>
-        <?php
-         //  header("Location: tabla_recursos.php");
-          } 
-         
-        ?>
-         <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
+       <div class="wdgt wdgt-primary">
 
 
-          <!--ENCABEZADO DE LA TABLA RECURSOS -->
-
-     <thead>
-      <tr>
-       <th>Nombre</th>
-       <th>Descripción</th>
-       <th>Porcentaje CI</th>
-       <th>Fecha de inicio</th>
-       <th>Fecha de fin</th>
-       <th>Monto total</th>
-       <th>Estado</th>
-       <th></th>
- 
-   
-   
-        
-      </tr>
-     </thead>
 
 
-        <!--CUERPO DE LA TABLA RECURSOS -->
 
 
-     <tbody>
 
-
-  <?php
+<?php
     #include 'connect_db.php';
     //require("connect_db.php");
-     $sql = mysql_query("SELECT * FROM proyecto");
+     $sql = mysql_query("SELECT * FROM proyecto where idProyecto='".$id."'");
     while ($row = mysql_fetch_array($sql)) {
+     
+        echo '<div class="wdgt-header" style="text-align:center; color:black;"><h4>CONTROL DE PROYECTO <br></h4> <b><h3>'. $row['nombre'] . '</h3></b><h5>Fecha: '. $row['fecha_creacion'] . '</h5></div>';
+
+      }
+
+
+
+?>
+
+
+
+        
+
+
+
+
+
+        <div class="wdgt-body wdgt-table">
+
+         <table class="table">
+          <thead>
+            <tr>
+           
+          
+            <th>Nombre</th>
+            <th>Descripcion</th>
+            <th>Estado</th>
+            <th>Monto</th>
+             <th>Fecha de inicio</th>
+              <th>Fecha de finalización</th>
+                 <th>Observacion</th>
+         
+           </tr>
+          </thead>
+          <tbody>
+
+
+            <?php
+    #include 'connect_db.php';
+    //require("connect_db.php");
+     $sql2 = mysql_query("SELECT * FROM etapa where idProyecto='".$id."'");
+    while ($row2 = mysql_fetch_array($sql2)) {
+     
         echo '<tr>';
-        echo '<td>'. $row['nombre'] . '</td>';
-        echo '<td>'. $row['descripcion'] .'</td>';
-        echo '<td>'. $row['porcentajeCI'] .'</td>';
-        echo '<td>'. $row['fechaInicio'] . '</td>';
-        echo '<td>'. $row['fechaFin'] .'</td>';
-        echo '<td>'. $row['montoTotal'] .'</td>'; 
-          echo '<td>'. $row['estado'] .'</td>'; 
-    
-
-
-        echo "
-
-          <td class='center'>
-
-          
-          
-          <input title='Editar proyecto' style='max-width: 25px;' onClick=\"window.location.href='modProyecto.php?id=$row[idProyecto]';\" type='image' src='../Imagenes/editar.png'>
-          &nbsp;&nbsp;&nbsp;
-          <input title='Ver presupuesto' style='max-width: 25px' onClick=\"window.location.href='detalleProyecto.php?id=$row[idProyecto]';\" type='image' src='../Imagenes/info.png'> 
-          &nbsp;&nbsp;&nbsp;
-          <input title='Ver avance proyecto' style='max-width: 25px' onClick=\"window.location.href='avanceProyecto.php?id=$row[idProyecto]';\" type='image' src='../Imagenes/check.png'> 
-
-           </td>";
+        echo '<td><h5><b>'. $row2['nombre'] . '<b></h5></td> 
+        <td>'. $row2['detalle'] . '</td>
+        <td>'. $row2['estado'] . '</td>
+        <td>'. $row2['totalEtapa'] . '</td>
+        <td>'. $row2['fechaInicioProgramada'] . '</td>
+        <td>'. $row2['fechaFinProgramada'] . '</td>';
 
 
       
 
+   
+
+
+
+
+
+       $datetime1 = date_create(date("Y-m-d"));
+      $datetime2 = date_create($row2['fechaFinProgramada']);
+      $interval = date_diff($datetime1, $datetime2);
+
+      if ($interval->format('%R%a')<0)
+
+              echo "<td bgcolor='#ff8a8a'>Atrasado ".$interval->format('%a dias')."</td></tr>";
+
+
+      if ($interval->format('%R%a')>=0)
+
+              echo "<td>A tiempo. Quedan ".$interval->format('%a dias')."</td></tr>";
+
+
+
+      
+
+    }
+
+
+
+
+
+
+
+
+?>
+
+
+
+    
+
+
 
         
-       echo '</tr>';
-    }
-    
-    ?>
+        
+            
+           
+          </tbody>
+         </table>
+        
 
-
-
-     
-     </tbody>
-    </table>
+ 
+      
+        
 
 
 
         </div>
        </div>
 
+
+<?php
+
+
+ $sql3 = mysql_query("select count(estado) as iniciadas from etapa where idProyecto='".$id."' and estado='Iniciado'");
+    while ($row3 = mysql_fetch_array($sql3)) {
+
+
+ $cantInicio=$row3['iniciadas'];
+
+}
+
+
+ $sql4 = mysql_query("select count(estado) as espera from etapa where idProyecto='".$id."' and estado='Espera'");
+    while ($row4 = mysql_fetch_array($sql4)) {
+
+
+ $cantEspera=$row4['espera'];
+
+}
+
+
+
+ $sql5 = mysql_query("select count(estado) as terminadas from etapa where idProyecto='".$id."' and estado='Terminado'");
+    while ($row5 = mysql_fetch_array($sql5)) {
+
+
+ $cantTerminado=$row5['terminadas'];
+
+}
+
+
+
+echo ' <script type="text/javascript">
+window.onload = function () {
+  var chart = new CanvasJS.Chart("chartContainer",
+  {
+    title:{
+      text: "Etapas"
+    },
+    legend: {
+      maxWidth: 350,
+      itemWidth: 120
+    },
+    data: [
+    {
+      type: "pie",
+      showInLegend: true,
+      legendText: "{indexLabel}",
+      dataPoints: [
+        { y:'.$cantInicio. ', indexLabel: "Iniciadas" },
+       
+        { y:'.$cantTerminado.', indexLabel: "Terminadas" },
+       
+        { y: '.$cantEspera.', indexLabel: "Finalizadas"}
+      ]
+    }
+    ]
+  });
+  chart.render();
+}
+</script>
+';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+?>
+
+<br>
+ <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+  
+
       </div>
-     </div>
+
+
+
+   
+
+   
+
+
+
+
 
     </div>
     <!-- END PAGE CONTENT -->
 
+
+     <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+
+
+     </div>
 
 
    </div>
@@ -353,7 +474,14 @@
      length_sel.addClass('form-control input-sm');
     });
    });
+
+
   </script>
-  
+
+
+ 
+
+
+
  </body>
 </html>

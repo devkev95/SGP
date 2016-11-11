@@ -220,7 +220,7 @@ $id=$_GET["id"];
      $sql = mysql_query("SELECT * FROM proyecto where idProyecto='".$id."'");
     while ($row = mysql_fetch_array($sql)) {
      
-        echo '<div class="wdgt-header" style="text-align:center; color:black;"><h5>PRESUPUESTO DIAZA S.A DE C.V <br></h5> <b><h3>'. $row['nombre'] . '</h3></b></div>';
+        echo '<div class="wdgt-header" style="text-align:center; color:black;"><h4>PRESUPUESTO DIAZA S.A DE C.V <br></h4> <b><h3>'. $row['nombre'] . '</h3></b><h5>Fecha: '. $row['fecha_creacion'] . '</h5></div>';
 
       }
 
@@ -311,7 +311,7 @@ $id=$_GET["id"];
 
 
 
-        $sql4 = mysql_query("select sum(ep.subTotal) as total from proyecto p inner join etapa e on p.idProyecto=e.idProyecto inner join etapapartida ep on e.idEtapa=ep.idEtapa where p.idProyecto='".$id."'");
+        $sql4 = mysql_query("select montoTotal from proyecto where idProyecto='".$id."'");
     while ($row4 = mysql_fetch_array($sql4)) {
 
 
@@ -327,7 +327,7 @@ $id=$_GET["id"];
         <td></td>
         <td></td>
         <td></td>
-        <td><b><h5>'. $row4['total'] . '</h5></b></td>
+        <td><b><h5>'. $row4['montoTotal'] . '</h5></b></td>
        </tr>';
 
 
