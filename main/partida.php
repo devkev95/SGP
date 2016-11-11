@@ -15,13 +15,13 @@ $numeroPartida = $_GET['numero'];
 $query= "SELECT numero,nombre FROM partida WHERE numero=".$numeroPartida;
                 $resultado= mysqli_query($db,$query);
                 $numrows = mysqli_num_rows($resultado);
-$query1="SELECT a.nombre, a.unidad, b.cantidad, a.total, b.subTotal FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo WHERE numero =".$numeroPartida;
+$query1="SELECT a.nombre, a.unidad, b.cantidad, a.total, b.subTotal FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo WHERE id=".$numeroPartida;
           $resultado1=mysqli_query($db,$query1);
-$query2="SELECT descripcion, jornada, FP, jornadaTotal, rendimiento, subTotal FROM lineamanoobra WHERE numero =".$numeroPartida;
+$query2="SELECT descripcion, jornada, FP, jornadaTotal, rendimiento, subTotal FROM lineamanoobra WHERE id =".$numeroPartida;
           $resultado2=mysqli_query($db,$query2);
-$query3="SELECT descripcion, tipo, capacidad, rendimiento, costoHora, subTotal FROM  `lineaequipoherramienta` WHERE numero =".$numeroPartida;
+$query3="SELECT descripcion, tipo, capacidad, rendimiento, costoHora, subTotal FROM  `lineaequipoherramienta` WHERE id =".$numeroPartida;
            $resultado3=mysqli_query($db,$query3);
-$query4="SELECT descripcion, unidad, cantidad, valor, subTotal FROM lineasubcontrato WHERE numero =".$numeroPartida;
+$query4="SELECT descripcion, unidad, cantidad, valor, subTotal FROM lineasubcontrato WHERE id =".$numeroPartida;
 $resultado4=mysqli_query($db,$query4);
 
 $queryC="SELECT totalCD, totalCF,precioUnitario from partida WHERE numero=".$numeroPartida;

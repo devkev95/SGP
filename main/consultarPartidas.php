@@ -194,9 +194,10 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
       <tr class="gradeA">
        <td><?php echo "$fila[numero]";?></td>
        <td><?php echo "$fila[nombre]";?></td>
-       <td> <a type="button" class="btn btn-info btn-xs" href="modPartida.php?numero=<?php echo "$fila[numero]"?>"><i class="icon icon-edit" ></i></a>
-            <a type="button" class="btn btn-soft btn-xs" href="partida.php?numero=<?php echo "$fila[numero]"?>"><i class="icon  icon-eye-open"></i></a></td>
-       
+       <td>
+       <input title="Editar Partida" style="max-width: 25px;" onclick="window.location.href='modPartida.php?numero=<?php echo "$fila[numero]"?>';" type="image" src="../Imagenes/editar.png">
+       <input title="Ver partida" style="max-width: 25px" onclick="window.location.href='modPartida.php?numero=<?php echo "$fila[numero]" ?>';" type="image" src="../Imagenes/info.png">
+       </td>
       </tr>
      <?php } ?>
      </tbody>

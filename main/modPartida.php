@@ -20,14 +20,14 @@ $numeroPartida = $_GET['numero'];
 $query= "SELECT numero, nombre, totalCD, totalCF, precioUnitario, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos FROM partida WHERE numero=".$numeroPartida;
 $resultado= $db->query($query);
             
-$query1="SELECT b.id ,a.nombre, a.unidad, b.cantidad, a.total, b.subTotal FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo WHERE numero =".$numeroPartida;
+$query1="SELECT b.id ,a.nombre, a.unidad, b.cantidad, a.total, b.subTotal FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo WHERE id =".$numeroPartida;
 $resultado1=$db->query($query1);
 
-$query2="SELECT id, descripcion, jornada, FP, jornadaTotal, rendimiento, subTotal FROM lineamanoobra WHERE numero =".$numeroPartida;
+$query2="SELECT id, descripcion, jornada, FP, jornadaTotal, rendimiento, subTotal FROM lineamanoobra WHERE id =".$numeroPartida;
   $resultado2=$db->query($query2);
-$query3="SELECT id, descripcion, tipo, capacidad, rendimiento, costoHora, subTotal FROM  `lineaequipoherramienta` WHERE numero =".$numeroPartida;
+$query3="SELECT id, descripcion, tipo, capacidad, rendimiento, costoHora, subTotal FROM  `lineaequipoherramienta` WHERE id =".$numeroPartida;
   $resultado3=$db->query($query3);
-$query4="SELECT id, descripcion, unidad, cantidad, valor, subTotal FROM lineasubcontrato WHERE numero =".$numeroPartida;
+$query4="SELECT id, descripcion, unidad, cantidad, valor, subTotal FROM lineasubcontrato WHERE id =".$numeroPartida;
 $resultado4=$db->query($query4);
 
 ?>
