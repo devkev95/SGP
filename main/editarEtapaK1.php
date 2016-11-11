@@ -814,17 +814,7 @@ while ($row = $sql->fetch_array()) {
            $("#principal").prop("disabled", false);
         });
 
-       /*  $(document).on("click", ".eliminar", function(){
-          var total = +$(this).closest("div").find("div span").text();
-          var subtotal = +$(this).closest("tr").find("td span.subtotal").text();
-          total = total - subtotal;
-          $(this).closest("div").find("div span").text(total.toFixed(2));
-          $(this).parents("tr").remove();
-          countRows = $("#partidas tbody tr").length;
-          if (countRows <= 0) {
-             $("#principal").prop("disabled", true);
-          }
-        });*/
+
 
         $("#modalIngresarEtapaPartida form button[name='agregar']").click(function(){
           var cantidad = +$(this).parents("form").find("input[name='cantidad']").val();
@@ -922,6 +912,38 @@ while ($row = $sql->fetch_array()) {
 
         });
       });
+
+
+         $(document).on("click", ".eliminar", function(){
+          var row = $(this).closest("tr");
+          var total = +$(this).closest("div").find("table tr td.subtotal").text();
+          var subtotal = +$(this).closest("tr").find("td span.subtotal").text();
+          total = total - subtotal;
+          $(this).closest("div").find("div span").text(total.toFixed(2));
+          $(this).parents("tr").remove();
+          countRows = $("#partidas tbody tr").length;
+          if (countRows <= 0) {
+             $("#principal").prop("disabled", true);
+          }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     $(document).on("click", ".editar", function(){
       var row = $(this).closest("tr");
