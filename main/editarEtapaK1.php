@@ -15,10 +15,10 @@ session_write_close();
 error_reporting(0);
 
      $etapa = $_GET['id'];
-    echo $etapa;
+   // echo $etapa;
 
     $proyecto = $_GET['idProyecto'];
-    echo $proyecto;
+  //  echo $proyecto;
 
      require("connect_db.php");
 

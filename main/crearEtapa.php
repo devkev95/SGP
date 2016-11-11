@@ -15,7 +15,7 @@ session_write_close();
 error_reporting(0);
 
      $proyecto = $_GET['id'];
-    echo $proyecto;
+   // echo $proyecto;
 
           require("connect_db.php");
 
@@ -24,7 +24,7 @@ error_reporting(0);
         $resultado2 = mysql_fetch_array($query12);
         $porcentajeCI= $resultado2['porcentajeCI'];
 
-        echo $porcentajeCI;
+        //echo $porcentajeCI;
 
     $nombre = $_POST["nombre"];
     $detalle = $_POST["detalle"];
@@ -313,9 +313,7 @@ error_reporting(0);
 
                     </tbody>
                   </table>
-                  <div>
-                    <strong>Sub-total:<span id="sub-total-etaa"><?php echo $total_proyecto1; ?></span></strong>
-                  </div>
+
                   <br>
                 </div>
               </div>
