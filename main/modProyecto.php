@@ -13,10 +13,19 @@
   }
     $userData = $_SESSION["userData"];
     session_write_close();
+
   $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
+
+  $idProyecto= $_GET['id'];
 	
-	$queryProject="SELECT `idProyecto`, `nombre`, `descripcion`, `porcentajeCI`, `fechaInicio`, `fechaFin`, `montoTotal` FROM `proyecto` WHERE idProyecto=1";
+	$queryProject="SELECT `idProyecto`, `nombre`, `descripcion`, `porcentajeCI`, `fechaInicio`, `fechaFin`, `montoTotal` FROM `proyecto` WHERE idProyecto=".$idProyecto;
 	$resultProject= $db->query($queryProject);
+
+  $sql = "call sp_selectEtapas_ModProyecto('1','".$idProyecto."')";
+  $resultEtapas= $db->query($sql);
+
+
+
 
 ?>
 <!DOCTYPE html>
@@ -34,7 +43,7 @@
   <!-- Adjustable Styles -->
   <link type="text/css" rel="stylesheet" href="../lib/CSS/icheck.css?v=1.0.1"/>
   
-  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+ <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
    <script src="lib/js/html5shiv.js"></script>
    <script src="lib/js/respond.min.js"></script>
@@ -162,7 +171,7 @@
      <div class="crumbs">
       <ol class="breadcrumb hidden-xs">
        <li><i class="fa fa-home"></i> <a href="home.php">Home</a></li>
-       <li><a href="consultarPartidas.php">Partidas</a></li>
+       <li><a href="consultarPartidas.php">Proyectos</a></li>
        <li class="active">Modificar Proyecto</li>
       </ol>
      </div>
@@ -178,6 +187,7 @@
       
       <div class="col-md-12">
      	<div class="wdgt-body wdgt-table">
+      <h4>Detalle de Proyecto</h4>
 
          <table class="table" id="table-mat-prima" >
          <?php
@@ -186,29 +196,43 @@
 
          	while ($projectrow = $resultProject->fetch_object()) { ?>
          <tr>
-         	<td style="background:#CCCCCC" class="col-md-3"><strong>Nombre</strong>
+         	<td class="wdgt-primary wdgt-header col-md-3" >Nombre
          	</td>
          	<td id="tdName"><input type="hidden" name="projectName" value="<?php echo $projectrow->nombre; ?>"/>
          		<span><?php echo $projectrow->nombre; ?></span>
          	</td>
          </tr>
          <tr>
-         	<td style="background:#CCCCCC "><strong>Descripcion</strong>
+         	<td class="wdgt-primary wdgt-header">Descripcion
          	</td>
          	<td id="tdDescripcion"><input type="hidden" name="projectDescription" value="<?php echo $projectrow->descripcion ;?>" />
          		<span><?php echo $projectrow->descripcion ;?></span>
          	</td>
          </tr>
          <tr>
-         	<td style="background:#CCCCCC "><strong>Pocentaje</strong>
+         	<td class="wdgt-primary wdgt-header">Porcentaje
          	</td>
          	<td id="tdPorcentaje"><input type="hidden" name="projectPorcent" value="<?php echo $projectrow->porcentajeCI; ?>" />
          		<span><?php echo $projectrow->porcentajeCI; ?></span>	
          	</td>
          </tr>
-        
+        <tr>
+
+          <td class="wdgt-primary wdgt-header col-md-3" >Fecha Inicio
+          </td>
+          <td id="tdDate"><input type="hidden" name="projectDate" value="<?php echo $projectrow->fechaInicio; ?>"/>
+            <span><?php echo $projectrow->fechaInicio; ?></span>
+          </td>
+         </tr>
+          <tr>
+          <td class="wdgt-primary wdgt-header col-md-3" >Fecha Fin
+          </td>
+          <td id="tdDate1"><input type="hidden" name="projectDate1" value="<?php echo $projectrow->fechaFin; ?>"/>
+            <span><?php echo $projectrow->fechaFin; ?></span>
+          </td>
+         </tr>
          <tr>
-         	<td style="background:#CCCCCC "><strong>Monto Total</strong>
+         	<td class="wdgt-primary wdgt-header">Monto total
          	</td>
          	<td id="tdTotal"><input type="hidden" name="projectTotal" value="<?php echo $projectrow->montoTotal; ?>" />
          		<span><?php echo $projectrow->montoTotal; ?></span>
@@ -219,16 +243,20 @@
 			}
 			?>
          </table>
-			<button type="button" id="projectEdit"  class="edit btn btn-primary btn-round btn-tooltip" name="enviarCambios" >Editar</button>
-          </div>
+         <div class="row">
+           
+         </div>
+			<button type="button" id="projectEdit"  class="edit btn btn-success btn-round btn-tooltip" name="enviarCambios" >    Editar   </button>
 
-      </div>
+       </div>
+         
         
+  
 
-      </div>
+      <div class="wdgt-body wdgt-table">
       <div class="wdgt wdgt-primary" hide-btn="true">
         <div class="wdgt-header" align="center">
-      ETAPAS
+      ETAPAS DEL PROYECTO
        <span><i class="fa fa-minus wdgt-hide"></i></span></div>
          
         <div class="wdgt-body wdgt-table">
@@ -238,60 +266,69 @@
             <tr>
            
            <th>Nombre</th>
-           <th>Fecha Inicio</th>
-           <th>fecha Fin</th>
+           <th>C.D.</th>
+           <th>C.I.</th>
+           <th>IVA 13%</th>
+           <th>Inicio Programado</th>
+           <th>Fin Programado</th>
+           <th>Estado</th>
            <th>Total</th>
-           
+           <th></th>
             </tr>
           </thead>
-           <tbody>
+          <tbody>
+          <?php
+         
+
+          while ($etapaRow = $resultEtapas->fetch_object()) { ?>
+           
                    
          
-            <tr class="manoObra">
-           <input type="hidden" class="id" name="idLineaMO[]" value="6">
-           <td><input type="hidden" name="descripcionMO[]" value="asd"><span></span></td>
-           <td><input type="hidden" name="jornadaMO[]" value="5"><span></span></td>
-           <td><input type="hidden" name="FPMO[]" value="5"><span></span></td>
+            <tr id=<?php echo $etapaRow->etapa; ?> >
+           <td><span><?php echo $etapaRow->nombre; ?></span></td>
+           <td><span><?php echo $etapaRow->CD; ?></span></td>
+           <td><span><?php echo $etapaRow->CI; ?></span></td>
+           <td><span><?php echo $etapaRow->IVA; ?></span></td>
+           <td><span><?php echo $etapaRow->inicioProgramado; ?></span></td>
+           <td><span><?php echo $etapaRow->finProgramado; ?></span></td>
+           <td><span><?php echo $etapaRow->estado; ?></span></td>
+           <td><span><?php echo $etapaRow->totalEtapa; ?></span></td>
+           <td class="center">
+              <input style="max-width: 25px;" onclick="window.location.href='#';" type="image" src="../Imagenes/editar.png">
+              <input style="max-width: 25px;" type="image" src="../Imagenes/eliminar.png" class="detele" id="delete<?php echo $etapaRow->etapa; ?>">
+           </td>
            
             </tr>
           
-             </tbody>
-          
+            
+          <?php
+        }
+      
 
+           ?>
+            </tbody>
          </table>
         
        </div>
+       <br></br>
 
-        <table>
-              <tbody><tr>
-            <td></td>
-              <td></td>
-                <td></td>
-                <td></td>
-           
-            </tr></tbody></table>
-
+       <button type="button" id="agregarEtapa"  class="edit btn btn-success btn-round btn-tooltip" onclick="window.location.href='crearEtapa.php?id= <?php echo "$idProyecto";?>';" >Agregar Etapa</button>
+        <br></br>
+          <div id="alertaExito" class="alert alert-success alert-round alert-border alert-soft " >
+   <span class="icon icon-ok-sign"></span>
+   <a class="close" data-dismiss="alert">×</a><strong>EXITO</strong> La operacion se realizo correctamente </div>
          
-        <table>
-          	<tbody>
-          		<tr>
-            		<td><button type="button" id="new-row-mano-obra" class="btn btn-primary btn-tooltip"><i class="icon icon-plus"></i></button></td>
-          		</tr>
-
-        	</tbody>
-
-      	</table>
-         
-         
+      <div id="AlertaError" class="alert alert-danger alert-round alert-border alert-soft ">
+      <span class="icon icon-remove-sign"></span> 
+       <a class="close" data-dismiss="alert">×</a> <strong>Error</strong> La operacion fallo, intente de nuevo </div>
         </div>
-   <div class="col-sm-offset-2 col-sm-8">
-				<p class="mensaje"></p>
-			</div>
 
+
+ 
     <!-- END PAGE CONTENT -->
 
    </div>
-  
+  </div>
 
    <!-- END NAV, CRUMBS, & CONTENT -->
  <!--MODAL TO EDIT PROJECT  -->
@@ -329,16 +366,9 @@
                           </div>
                         </div>
 
-                        <div class="form-group">
-                          <label class="col-lg-3 control-label">Monto Total</label>
-                          <div class="col-lg-7">
-                            <input type="number" step="0.01" class="form-control" name="projectTotalNew"/>
-                          </div>
-                        </div>
-
                         <div class="btn-group btn-group-justified" role="group" aria-label="group button">
                           <div class="btn-group" role="group">
-                            <button type="submit" class="btn btn-success" name="agregar2" value="Agregar" >Ingresar</button>
+                            <button type="submit" class="btn btn-success" id="agregar2" disabled="false">Ingresar</button>
                           </div>
                           <div class="btn-group" role="group">
                             <button type="reset" class="btn btn-info">Limpiar</button>
@@ -372,6 +402,32 @@
  <script>
     $(document).ready(function() {
 
+       $("#modalProject").modal({ show: false});
+
+       $("#projectEdit").click(function(){
+        
+        prepararModal();
+        
+
+
+        $("#modalProject").modal('show');
+
+
+
+       });
+
+       var prepararModal=function(){
+        var modalForm= $("#modalProject form");
+        var name=$("input[name='projectName']").val();
+        var description =$("input[name='projectDescription']").val();
+        var porcent=$("input[name='projectPorcent']").val();
+        var total=$("input[name='projectTotal']").val();
+        modalForm.find("input[name='projectNameNew']").val(name);
+        modalForm.find("input[name='projectDescriptionNew']").val(description);
+        modalForm.find("input[name='projectPorcentNew']").val(porcent);
+       }
+        $('#alertaExito').hide();
+        $('#AlertaError').hide();
         $("#projectForm").bootstrapValidator({
           fields : {
             projectNameNew : {
@@ -396,99 +452,93 @@
                 }
                 
               }
-            },
-           
-            projectTotalNew: {
-              validators : {
-                notEmpty: {
-                  message: 'Este campo no puede estar vacio'
-                  },
-              }
             }
           }
         });
       });
+    var closeWindows=function(){
+         $("#modalProject").modal('hide');
+      }
+    var actualizarTabla=function(){
+      var nameNew=$("input[name='projectNameNew']").val();
+      var descriptionNew=$("input[name='projectDescriptionNew']").val();
+      var porcentNew=$("input[name='projectPorcentNew']").val();
+      var totalNew=$("input[name='projectTotalNew']").val();
+      document.getElementById("tdName").innerHTML = nameNew;
+      document.getElementById("tdDescripcion").innerHTML=descriptionNew;
+      document.getElementById("tdPorcentaje").innerHTML=porcentNew;
+
+    }
+    var idProyecto=<?php echo "$idProyecto";?>;
+
     $("form").on("submit",function(e){
-
-  			 e.preventDefault();
-
-
+        $("#agregar2").attr('disabled','disabled'); 
+          $('#alertaExito').hide();
+          $('#AlertaError').hide();
+  			   e.preventDefault();
+          
   			 var frm= $(this).serialize();
-
-  			// console.log(frm);
+  			 actualizarTabla();
+          closeWindows();
   			
 
   			 $.ajax({
   			 	type: "POST",
-  			 	url: "modificarProyecto_exe.php",
+  			 	url: "modificarProyecto_exe.php?id="+idProyecto,
   			 	data: frm			 
   			 
-  			 }).done( function(infomation){
-
-  			 	var json_info=JSON.parse(infomation);
-  			 	closeWindows();
-  			 	showMessage(json_info);	
+  			 }).done( function(information){
+          
+          $("#agregar2").attr('disabled','disabled'); 
+  			 	var json_info=JSON.parse(information);
+         
+          if((json_info.answer)=="ERROR"){
+              
+              $('#AlertaError').show();
+              
+          }else{
+            $('#alertaExito').show();
+            
+          }
+  			 
   			 });
   		});
-   		var closeWindows=function(){
-   			 $("#modalProject").modal('hide');
-   		}
-   		var showMessage = function( informacion ){
-		var texto = "", color = "";
-		if( informacion.answer == "EXITO" ){
+   		
+   		
 
-		actualizarTabla();
-		texto = "<strong>EXITO!</strong> Se han guardado los cambios correctamente.";
-		color = "#379911";
-		}else if( informacion.answer == "ERROR"){
-		texto = "<strong>Error</strong>, no se ejecutó la consulta.";
-		color = "#C9302C";
-		}	
-		$(".mensaje").html( texto ).css({"color": color });
-		$(".mensaje").fadeOut(5000, function(){
-		$(this).html("");
-		$(this).fadeIn(3000);
-		}); 
-		}
-
-		var actualizarTabla=function(){
-			var nameNew=$("input[name='projectNameNew']").val();
-			var descriptionNew=$("input[name='projectDescriptionNew']").val();
-			var porcentNew=$("input[name='projectPorcentNew']").val();
-			var totalNew=$("input[name='projectTotalNew']").val();
-			document.getElementById("tdName").innerHTML = nameNew;
-			document.getElementById("tdDescripcion").innerHTML=descriptionNew;
-			document.getElementById("tdPorcentaje").innerHTML=porcentNew;
-			document.getElementById("tdTotal").innerHTML=totalNew
-
-
-		}
 		
 
+    $('.detele').click(function(){
+        $('#alertaExito').hide();
+        $('#AlertaError').hide();
+       var idEtapa=$(this).parent().parent().attr('id');
+       var identificador=parseInt(idEtapa);
+      $.ajax({
+      type: "POST",
+       url: "modificarProyecto_exe.php?id="+idProyecto+"&iden="+idEtapa,
+       data: identificador
+      }).done(function(info){
+       
+        var json_info=JSON.parse(info);
+       
+          if((json_info.deleteAnswer)=="ERROR"){
+              
+              $('#AlertaError').show();
+              
+          }else{
+            $('#alertaExito').show();
+            
+          }
+
+         
+      }); 
+
+      
+    });
+		
+    
   </script>
-  <script>
-  	$(document).ready(function() {
-  	 	 $("#modalProject").modal({ show: false});
-  	 	 $("#projectEdit").click(function(){
-  	 	 	var modalForm= $("#modalProject form");
-  	 	 	var name=$("input[name='projectName']").val();
-  	 	 	var description =$("input[name='projectDescription']").val();
-  	 	 	var porcent=$("input[name='projectPorcent']").val();
-  	 	 	var total=$("input[name='projectTotal']").val();
-  	 	 	modalForm.find("input[name='projectNameNew']").val(name);
-  	 	 	modalForm.find("input[name='projectDescriptionNew']").val(description);
-  	 	 	modalForm.find("input[name='projectPorcentNew']").val(porcent);
-  	 	 	modalForm.find("input[name='projectTotalNew']").val(total);
-
-
-  	 	 	$("#modalProject").modal('show');
-
-
-
-  	 	 });
-
-      	 }); 
-  </script>
+  
  
  </body>
 </html>
