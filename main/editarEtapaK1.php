@@ -130,7 +130,7 @@ error_reporting(0);
         $row = mysql_fetch_array($sql1);
        
         if (empty($row)){
-            header("Location: editarEtapa.php");
+                  header("Location: editarEtapaK1.php?id=".$etapa."&idProyecto=".$proyecto);
         }
           $nombre = $row['nombre'];
           $detalle = $row['detalle'];
@@ -436,7 +436,7 @@ error_reporting(0);
         while ( $resultado1 = mysql_fetch_array($query11)) { ?>
             <tr>
            <input type="hidden" class="id" name="idpartida[]" value="<?php echo  $resultado1['idPartida']; ?>"/>
-           <input type="hidden" class="id" name="version[]" value="<?php echo  $resultado1['versionPartida']; ?>"/>
+           <input type="hidden"  name="version[]" value="<?php echo  $resultado1['versionPartida']; ?>"/>
            <td><span><?php echo $resultado1['detalle'] ; ?></span></td>
            <td><input type="hidden" name="cantidad[]" value="<?php echo $resultado1['cantidad']; ?>"/><span><?php echo $resultado1['cantidad'];?></span></td>
            <td><span></span></td>
@@ -449,8 +449,9 @@ error_reporting(0);
            <td><input type="hidden" name="PUU[]" value="<?php echo $resultado1['PUU']; ?>"/><span><?php echo $resultado1['PUU']; ?></span></td>   
            <td><input type="hidden" name="fechaInicioProgramadaa[]" value="<?php echo $resultado1['fechaInicioProgramad']; ?>"/><span><?php echo $resultado1['fechaInicioProgramada']; ?></span></td>
            <td><input type="hidden" name="fechaFinProgramadaa[]" value="<?php echo $resultado1['fechaFinProgramada']; ?>"/><span><?php echo $resultado1['fechaFinProgramada']; ?></span></td>       
-           <td><input type="hidden" name="subTotal_etapa[]" value="<?php echo $resultado1['subTotal']; ?>"/><span><?php echo $resultado1['subTotal']; ?></span></td>       
-           <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td>
+           <td><input type="hidden" name="subTotal_etapa[]" value="<?php echo $resultado1['subTotal']; ?>"/><span class="subtotal"><?php echo $resultado1['subTotal']; ?></span></td>       
+           <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>
+           <button type="button" class="editar btn btn-info btn-sm"><i class="icon icon-edit" ></i></button></td>
           
 
             </tr>
@@ -486,14 +487,66 @@ error_reporting(0);
 
               <div class="col-md-12">
               <div class="wdgt">
-                  <button id="principal" class="btn btn-success btn-lg" type="submit" name="guardar" value="Guardar" disabled>Agregar Etapa</button>
+                  <button id="principal" class="btn btn-success btn-lg" type="submit" name="enviarCambios" value="Guardar" disabled>Agregar Etapa</button>
               </div>
             </div>
 
          </form>
 
 
+<!--********************************** MODAL ELIMINAR ***********************************-->
 
+            <div class="modal fade" id="modalEliminar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+          <div class="modal-dialog">
+           <div class="modal-content">
+            
+            <div class="modal-body">
+
+      <div class="alert alert-warning"><span class="icon icon-warning-sign"></span> 
+      <strong>Cuidado</strong> <span id="confirmMessage"></span></div>
+             
+            </div>
+            <div class="modal-footer">
+             <button type="button" class="btn btn-dark" id="cancel">Cancelar</button>
+             <button type="button" class="btn btn-warning"  id="accept">Aceptar</button>
+            </div>
+           </div>
+          </div>
+         </div> 
+
+<!-- MODAL EDITAR MATERIALES -->
+    <div class="modal fade" id="modalEditarPartidaEtapa" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header modal-primary">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myModalLabel">Editar Partidad de etapa</h4>
+                    </div>
+                    <div class="modal-body">
+
+                      <!-- content goes here -->
+                      <form class="form-horizontal">
+                        <div class="form-group">
+                          <label class="col-lg-3 control-label">Cantidad</label>
+                          <div class="col-lg-7">
+                            <input type="text" class="form-control" name="cantidad" required/>
+                          </div>
+                        </div>
+                        <div class="btn-group btn-group-justified" role="group" aria-label="group button">
+                          <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-primary" name="agregar4">Ingresar</button>
+                          </div>
+                          <div class="btn-group" role="group">
+                            <button type="reset" class="btn btn-info">Limpiar</button>
+                          </div>
+                        </div>
+                      </form>
+
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
 
 
 
@@ -724,10 +777,6 @@ while ($row = $sql->fetch_array()) {
              $("input[type='hidden']", this).val(precioUnitario.toFixed(4));
               $("span", this).text(precioUnitario.toFixed(4));
             }
-            /* else if(index == 10){
-              $("input[type='hidden']", this).val(subtotal.toFixed(4));
-              $("span", this).text(subtotal.toFixed(4));
-            }*/
           });
         $('#modalIngresarEtapaPartida').modal("show");
           
@@ -765,7 +814,7 @@ while ($row = $sql->fetch_array()) {
            $("#principal").prop("disabled", false);
         });
 
-         $(document).on("click", ".eliminar", function(){
+       /*  $(document).on("click", ".eliminar", function(){
           var total = +$(this).closest("div").find("div span").text();
           var subtotal = +$(this).closest("tr").find("td span.subtotal").text();
           total = total - subtotal;
@@ -775,7 +824,7 @@ while ($row = $sql->fetch_array()) {
           if (countRows <= 0) {
              $("#principal").prop("disabled", true);
           }
-        });
+        });*/
 
         $("#modalIngresarEtapaPartida form button[name='agregar']").click(function(){
           var cantidad = +$(this).parents("form").find("input[name='cantidad']").val();
@@ -811,6 +860,83 @@ while ($row = $sql->fetch_array()) {
           var total_etapa = +$("#sub-total-etapa").text() + subtotal;
           $("#sub-total-etapa").text(total_etapa.toFixed(2));
         });
+
+   $("#modalEditarPartidaEtapa form button[name='agregar4']").click(function(){
+      cantidad = + $(this).parents("form").find("input[name='cantidad']").val();
+       var selector = '';
+
+          if (length > 0) {
+            selector = $("#table-mat-prima tr.selected td");
+          }else{
+            selector = $("#table-mat-prima tr:last td");
+          }
+          var valor = + selector.eq(9).find("span").text();
+          var cantidadAnterior = +selector.eq(2).find("span").text();
+          var subTotalAnterior = valor * cantidadAnterior;
+
+          subTotal = valor * cantidad;
+       selector.each(function(index){
+            if (index == 1) {
+              $("span", this).text(cantidad);
+              $("input[type='hidden']", this).val(cantidad);
+            } else if (index == 12){
+              $("input[type='hidden']", this).val(subTotal);
+              $("span", this).text(subTotal);
+            }
+          });
+          $("#table-mat-prima tr").removeClass("selected");
+          $("#modalEditarMateriales").modal("hide");
+          var total_etapa = +$("#sub-total-etapa").text() + (subTotal - subTotalAnterior);
+          $("#sub-total-etapa").text(total_etapa.toFixed(2));
+    });
+        
+       $(document).on("click", ".eliminar", function(){
+      var row = $(this).closest("tr");
+       var total1 = +$(this).parents("div.wdgt-primary").find("table tr td.subtotal").text();
+      var subtotal = +$(this).closest("tr").find("td span.subtotal").text();
+        confirmDialog("Esta seguro que desea eliminar el registro", function(){
+          $("button[name='enviarCambios']").prop("disabled", false);
+          total1 = total1 - subtotal;
+          row.parents("div.wdgt-primary").find("table tr td.subtotal").text(total1.toFixed(2));
+          countRows = $("#table-mat-prima tbody tr").length;
+          if (countRows <= 0) {
+             $("button[name='enviarCambios']").prop("disabled", true);
+          }
+          if(row.find("input.id").length > 0){
+            var id1 = row.closest("tr").find("input.idpartida").val();
+            var id2 = row.closest("tr").find("input.version").val();
+            var id3 = <?php echo $etapa; ?>;
+            var opt = "";
+            var table = row.closest("table").attr("idpartida").attr("version");
+            if (table == "table-mat-prima") {
+              opt = 1;
+            } 
+            $.ajax({
+            url: "eliminarElementosEtapaPartida.php",
+            method: "POST",
+            data: { "opt" : opt , "id1" : id1 , "id2" : id2 , "id3" : id3 } 
+          });
+          }
+          total();
+          row.remove();
+
+        });
+      });
+
+    $(document).on("click", ".editar", function(){
+      var row = $(this).closest("tr");
+      row.addClass("selected");
+      $("button[name='enviarCambios']").prop("disabled", false);
+      var id = $(this).closest("table").attr('id');
+        if (id == "table-mat-prima") {
+          var modalForm = $("#modalEditarPartidaEtapa form");
+          var val = row.find("td input[name='cantidad[]']").val();
+          modalForm.find("input[name='cantidad']").val(val);
+          $("#modalEditarPartidaEtapa").modal("show");
+        } 
+
+    });
+
 
       });
     </script>
