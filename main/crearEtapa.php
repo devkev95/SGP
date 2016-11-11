@@ -50,7 +50,7 @@ error_reporting(0);
 
 
 
-        $n = 1;
+        $n = count($_POST["subTotal_etapa"]);
         echo $n;
         for ($i = 0; $i < $n; $i++){
           $query1 = "INSERT INTO etapapartida(idEtapa, idPartida, versionPartida, cantidad, CD, CI, IVA, PU, subTotal, fechaInicioProgramada, fechaFinProgramada) VALUES('".$id."', ".$_POST["numero"][$i].", ".$_POST["version"][$i].", ".$_POST["cantidad"][$i].", ".$_POST["CDD"][$i].", ".$_POST["CII"][$i].", '".$_POST["IVAA"][$i]."', ".$_POST["PUU"][$i].", ".$_POST["subTotal_etapa"][$i].", '".$_POST["fechaInicioProgramadaa"][$i]."', '".$_POST["fechaFinProgramadaa"][$i]."')";
