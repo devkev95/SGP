@@ -367,7 +367,7 @@ session_write_close();
                                   <?php
 #include 'connect_db.php';
 //require("connect_db.php");
-$sql = $db->query("SELECT codigo, version, nombre, unidad, costoDirecto, iva, total, fecha, empresaProveedora, tipoRecurso FROM recurso GROUP BY codigo HAVING version = MAX(version)");
+$sql = $db->query("SELECT a.codigo, a.version, a.nombre, a.unidad, a.costoDirecto, a.iva, a.total, a.fecha, a.empresaProveedora, a.tipoRecurso FROM recurso a INNER JOIN (SELECT codigo, MAX(version) version FROM recurso GROUP BY codigo) as b ON a.codigo = b.codigo AND a.version = b.version");
 while ($row = $sql->fetch_array()) {
     echo '<tr>';
     echo '<td>'. $row['codigo'] . '</td>';

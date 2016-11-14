@@ -83,71 +83,65 @@
           $fecha = new DateTime();
           $iva = $costoDirecto * 0.13;
           $total = $costoDirecto * (1 + 0.13);
+          // Revisar como diablos hacer esta consulta
+
           // Revisar si el recurso no esta relacionado con lineas relacionadas con partidas relacionadas con proyectos 
           // finalizados o en progreso
-          $query = "SELECT COUNT(id) cantidad FROM (SELECT b.id id, d.version FROM recurso a INNER JOIN linearecurso b ON b.codigo = a.codigo AND b.version = a.version INNER JOIN linearecursoPartida c ON c.idLinea = b.id INNER JOIN partida d ON d.numero = c.numPartida AND d.version = c.versionPartida INNER JOIN etapapartida e ON e.idPartida = d.numero AND e.versionPartida = d.version INNER JOIN etapa f ON f.idEtapa = e.idEtapa INNER JOIN proyecto g ON g.idProyecto = f.idProyecto WHERE a.codigo = ".$codigo." AND a.version = ".$version." AND g.estado != 0 GROUP BY d.numero HAVING d.version = MAX(d.version)) as a";
+          $query = "SELECT d.numero, d.version, b.cantidad, b.subTotal FROM recurso a INNER JOIN linearecurso b ON b.codigo = a.codigo AND b.version = a.version INNER JOIN linearecursoPartida c ON c.idLinea = b.id INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as d ON d.numero = c.numPartida AND d.version = c.versionPartida INNER JOIN etapapartida e ON e.idPartida = d.numero AND e.versionPartida = d.version INNER JOIN etapa f ON f.idEtapa = e.idEtapa INNER JOIN proyecto g ON g.idProyecto = f.idProyecto WHERE a.codigo = ".$codigo." AND a.version = ".$version." AND g.estado != 0";
 
           $res = $conn->query($query);
 
           // Si retona un valor mayor a 0 quiere decir que está relacionado con lineas de partidas relacionadas con 
           // partidas relacionadas con proyectos finalizados o en progreso y por lo tanto es necesario crear una nueva
           // versión del recurso
-          $cantidad = $res->fetch_object()->cantidad;
 
-          if ($cantidad > 0) {
-            $query = "INSERT INTO recurso (codigo, version ,nombre, unidad, costoDirecto, fecha, empresaProveedora, tipoRecurso, iva, total) VALUES(".$codigo.", ".($version + 1).", '".$nombre."', '".$unidad."', ".$costoDirecto.", '".$fecha->format("Y-m-d")."', '".$empresa."', '".$tipo."', ".$iva.", ".$total.")";
+          if ($res->num_rows > 0) {
 
+            $query = "INSERT INTO recurso (codigo, version ,nombre, unidad, costoDirecto, fecha, empresaProveedora, tipoRecurso, iva, total) VALUES (".$codigo.", (".$version." + 1), '".$nombre."', '".$unidad."', ".$costoDirecto.", '".$fecha->format("Y-m-d")."', '".$empresa."', '".$tipo."', ".$iva.", ".$total.")";
+            $conn->query($query);
             // Ya que creamos una nueva versión del recurso, es necesario crear una nueva versión de las partidas
             // incluyendo los datos actualizados del recurso
-
-            // Seleccionamos todas las partidas relacionadas con el recurso que se encuentren relacionadas con 
-            // proyectos finalizados o en progreso
-            $query = "SELECT d.numero, d.version, b.cantidad, b.subTotal FROM recurso a INNER JOIN linearecurso b ON b.codigo = a.codigo AND b.version = a.version INNER JOIN linearecursoPartida c ON c.idLinea = b.id INNER JOIN partida d ON d.numero = c.numPartida AND d.version = c.versionPartida INNER JOIN etapapartida e ON e.idPartida = d.numero AND e.versionPartida = d.version INNER JOIN etapa f ON f.idEtapa = e.idEtapa INNER JOIN proyecto g ON g.idProyecto = f.idProyecto WHERE a.codigo = ".$codigo." AND a.version = ".$version." AND g.estado != 0 GROUP BY d.numero HAVING d.version = MAX(d.version)";
 
             $idPartida = array();
             $versionArray = array();
             $diffArray = array();
             $versionNuevaArray = array();
 
-            $res = $conn->query($query);
-            if($res->num_rows > 0){
+            // Creamos la nueva versión de la partida. La nueva linea de recurso y las relacionamos, además de las
+            // relacionar la nueva versión de la partida con las antiguas lineas de la partida
+            while ($row = $res->fetch_object()) {
+              $idPartida[] = $row->numero;
+              $versionNueva = $row->version + 1;
+              $versionNuevaArray[] = $versionNueva;
+              $versionArray[] = $row->version;
+              $subTotalNuevaLinea = $row->cantidad * $total;
+              $diff = ($row->cantidad * $total) - $row->subTotal;
+              $diffArray[] = $diff;
 
-              // Creamos la nueva versión de la partida. La nueva linea de recurso y las relacionamos, además de las
-              // relacionar la nueva versión de la partida con las antiguas lineas de la partida
-              while ($row = $res->fetch_object()) {
-                // $idPartida[] = $row->numero;
-                $versionNueva = $row->version + 1;
-                // $versionNuevaArray[] = $versionNueva;
-                // $versionArray[] = $row->version;
-                $subTotalNuevaLinea = $row->cantidad * $total;
-                $diff = ($row->cantidad * $total) - $row->subTotal;
-                // $diffArray[] = $diff;
+              // Creando la nueva partida
+              $query = "INSERT INTO partida (numero, version, nombre, totalCD, totalCF, precioUnitario, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos) SELECT numero, ".$versionNueva.", nombre, (totalCD + ".$diff."), totalCF, ((totalCD + ".$diff.") * (1 + (totalCF / 100))), (totalMateriales + ".$diff."), totalManoObra, totalEquipoHerramientas, totalSubContratos FROM partida WHERE numero = ".$row->numero." AND version = ".$row->version;
+              $conn->query($query);
 
-                // Creando la nueva partida
-                $query = "INSERT INTO partida (numero, version, nombre, totalCD, totalCF, precioUnitario, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos) SELECT numero, ".$versionNueva.", nombre, (totalCD + ".$diff."), totalCF, ((totalCD + ".$diff.") * (totalCF / 100)), (totalMateriales + ".$diff."), totalManoObra, totalEquipoHerramientas, totalSubContratos FROM partida WHERE numero = ".$row->numero." AND version = ".$row->version;
-                $conn->query($query);
+              // Creando la nueva versión de linea de recurso
+              $query = "INSERT INTO linearecurso (version, codigo, cantidad, subTotal) VALUES (".($version + 1).", ".$codigo.", ".$row->cantidad.", ".$subTotalNuevaLinea.")";
+              $conn->query($query);
+              $idLinea = $conn->insert_id;
 
-                // Creando la nueva versión de linea de recurso
-                $query = "INSERT INTO linearecurso (version, codigo, cantidad, subTotal) VALUES (".$versionNueva.", ".$codigo.", ".$row->cantidad.", ".$subTotalNuevaLinea.")";
-                $conn->query($query);
-                $idLinea = $conn->insert_id;
+              // Relacionando la nueva versión de la partida con la nueva versión de recurso
+              $query = "INSERT INTO linearecursoPartida (idLinea, numPartida, versionPartida) VALUES (".$idLinea.", ".$row->numero.", ".$versionNueva.")";
+              $conn->query($query);
 
-                // Relacionando la nueva versión de la partida con la nueva versión de recurso
-                $query = "INSERT INTO linearecursoPartida (idLinea, numPartida, versionPartida) VALUES (".$idLinea.", ".$$row->numero.", ".$versionNueva.")";
-                $conn->query($query);
+              // Relacionando las lineas de la antigua versión con la nueva
+              $query = "INSERT INTO linearecursoPartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM linearecursoPartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$row->version;
 
-                // Relacionando las lineas de la antigua versión con la nueva
-                $query = "INSERT INTO linearecursoPartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM lineamanoobraPartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$version;
+              $query = "INSERT INTO lineamanoobraPartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM lineamanoobraPartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$row->version;
+              $conn->query($query);
 
-                $query = "INSERT INTO lineamanoobraPartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM lineamanoobraPartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$version;
-                $conn->query($query);
+              $query = "INSERT INTO lineaequipoherramientaPartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM lineaequipoherramientaPartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$row->version;
+              $conn->query($query);
 
-                $query = "INSERT INTO lineaequipoherramientaPartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM lineamanoobraPartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$version;
-                $conn->query($query);
-
-                $query = "INSERT INTO lineasubcontratoPartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM lineamanoobraPartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$version;
-                $conn->query($query);
-              }
+              $query = "INSERT INTO lineasubcontratoPartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM lineasubcontratoPartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$row->version;
+              $conn->query($query);
             }
           }
 
@@ -158,13 +152,13 @@
             $conn->query($query);
 
             // Buscamos con que partidas y lineas esta relacionado este recurso y las actualizamos
-            $query = "SELECT d.numero, d.version, b.cantidad, b.subTotal FROM recurso a INNER JOIN linearecurso b ON b.codigo = a.codigo AND b.version = a.version INNER JOIN linearecursoPartida c ON c.idLinea = b.id INNER JOIN partida d ON d.numero = c.numPartida AND d.version = c.versionPartida INNER JOIN etapapartida e ON e.idPartida = d.numero AND e.versionPartida = d.version INNER JOIN etapa f ON f.idEtapa = e.idEtapa INNER JOIN proyecto g ON g.idProyecto = f.idProyecto WHERE a.codigo = ".$codigo." AND a.version = ".$version."GROUP BY d.numero HAVING d.version = MAX(d.version)";
+            $query = "SELECT d.numero, d.version, b.cantidad, b.subTotal FROM recurso a INNER JOIN linearecurso b ON b.codigo = a.codigo AND b.version = a.version INNER JOIN linearecursoPartida c ON c.idLinea = b.id INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as d ON d.numero = c.numPartida AND d.version = c.versionPartida INNER JOIN etapapartida e ON e.idPartida = d.numero AND e.versionPartida = d.version INNER JOIN etapa f ON f.idEtapa = e.idEtapa INNER JOIN proyecto g ON g.idProyecto = f.idProyecto WHERE a.codigo = ".$codigo." AND a.version = ".$version." AND g.estado = 0";
             $res = $conn->query($query);
             if ($res->num_rows > 0) {
 
               while ($row = $res->fetch_object()) {
                 $idPartida[] = $row->numero;
-                $versionArray][] = $row->version;
+                $versionArray[] = $row->version;
                 $subTotalNuevaLinea = $row->cantidad * $total;
                 $diff = ($row->cantidad * $total) - $row->subTotal;
                 $diffArray[] = $diff;
@@ -179,19 +173,19 @@
           }
 
           // Actualizamos los proyectos que no han sido iniciados con los cambios en las partidas
-          n = count($idPartida);
-          for ($i=0; $i < n ; $i++) { 
+          $n = count($idPartida);
+          for ($i=0; $i < $n ; $i++) { 
               $query = "SELECT a.idEtapa, a.CI FROM etapapartida a INNER JOIN partida b ON a.idPartida = b.numero AND a.versionPartida = b.version INNER JOIN etapa c ON c.idEtapa = a.idEtapa INNER JOIN proyecto d ON c.idProyecto = d.idProyecto WHERE b.numero = ".$idPartida[$i]." AND b.version = ".$versionArray[$i]." AND d.estado = 0";
               $res = $conn->query($query);
 
               if ($res->num_rows > 0) {
                 while($row = $res->fetch_object()){
 
-                    $query = "UPDATE etapapartida SET IVA = ((CD + ".diffArray[$i].") * (1 + (CI / 100)) * 0.13), CD = (CD + ".$diffArray[$i]."), PU = ((CD + ".diffArray[$i].") * (1 + (CI / 100) + 0.13))";
+                    $query = "UPDATE etapapartida SET IVA = ((CD + ".$diffArray[$i].") * (1 + (CI / 100)) * 0.13), CD = (CD + ".$diffArray[$i]."), PU = ((CD + ".$diffArray[$i].") * (1 + (CI / 100) + 0.13))";
                     if (isset($versionNuevaArray[$i])) {
                       $query .= ", versionPartida=".$versionNuevaArray[$i];
                     }
-                    query .= ", subTotal = (((CD + ".diffArray[$i].") * (1 + (CI / 100) + 0.13)) * cantidad)  WHERE idPartida=".$idPartida[$i]." AND versionPartida=".$versionNuevaArray[$i]." AND idEtapa=".$row->idEtapa;
+                    $query .= ", subTotal = (((CD + ".$diffArray[$i].") * (1 + (CI / 100) + 0.13)) * cantidad)  WHERE idPartida=".$idPartida[$i]." AND versionPartida=".$versionNuevaArray[$i]." AND idEtapa=".$row->idEtapa;
                     $conn->query($query);
 
                     $query = "SELECT b.idProyecto, b.montoTotal FROM etapa a INNER JOIN proyecto b ON a.idProyecto = b.idProyecto WHERE a.idEtapa=".$row->idEtapa;
@@ -204,13 +198,14 @@
                     $conn->query($query);
                 }
           } 
-          header("Location: tabla_recursos.php?".$str);
         }
+         header("Location: tabla_recursos.php?".$str);
     }
+  }
     else {
        //require("connect_db.php");
         
-        $res = $conn->query("SELECT r.nombre, r.unidad, r.costoDirecto, r.empresaProveedora, r.tipoRecurso, r.version FROM recurso r WHERE codigo = ".$codigo." HAVING r.version = MAX(r.version)");
+        $res = $conn->query("SELECT a.codigo, a.version, a.nombre, a.unidad, a.costoDirecto, a.iva, a.total, a.fecha, a.empresaProveedora, a.tipoRecurso FROM recurso a INNER JOIN (SELECT codigo, MAX(version) version FROM recurso GROUP BY codigo) as b ON a.codigo = b.codigo AND a.version = b.version WHERE a.codigo = ".$codigo);
         $data = $res->fetch_object(); 
        
         if (empty($data)){

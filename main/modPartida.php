@@ -17,17 +17,19 @@
 
 $numeroPartida = $_GET['numero'];
 
-$query= "SELECT numero, version, nombre, totalCD, totalCF, precioUnitario, totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos FROM partida WHERE numero=".$numeroPartida." HAVING version = MAX(version)";
+$query= "SELECT a.numero, a.version, a.nombre, a.totalCD, a.totalCF, a.precioUnitario, a.totalMateriales, a.totalManoObra, a.totalEquipoHerramientas, a.totalSubContratos FROM partida a INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as b ON a.numero = b.numero AND a.version = b.version WHERE a.numero = ".$numeroPartida;
 $resultado= $db->query($query);
             
-$query1="SELECT b.id, a.nombre, a.unidad, b.cantidad, a.total, b.subTotal, d.version partidaVersion FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo AND a.version = b.version INNER JOIN linearecursoPartida c ON b.id = c.idLinea INNER JOIN partida d ON c.numPartida = d.numero AND c.versionPartida = d.version WHERE d.numero=".$numeroPartida." GROUP BY b.id HAVING d.version = MAX(d.version)";
+$query1="SELECT b.id, a.nombre, a.unidad, b.cantidad, a.total, b.subTotal, d.version partidaVersion FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo AND a.version = b.version INNER JOIN linearecursoPartida c ON b.id = c.idLinea INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as d ON c.numPartida = d.numero AND c.versionPartida = d.version WHERE d.numero = ".$numeroPartida;
 $resultado1=$db->query($query1);
 
-$query2="SELECT a.id, a.descripcion, a.jornada, a.FP, a.jornadaTotal, a.rendimiento, a.subTotal, c.version partidaVersion FROM lineamanoobra a INNER JOIN lineamanoobraPartida b ON a.id = b.idLinea INNER JOIN partida c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE numero = ".$numeroPartida." HAVING c.version = MAX(c.version)";
+$query2="SELECT a.id, a.descripcion, a.jornada, a.FP, a.jornadaTotal, a.rendimiento, a.subTotal, c.version partidaVersion FROM lineamanoobra a INNER JOIN lineamanoobraPartida b ON a.id = b.idLinea INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE c.numero = ".$numeroPartida;
   $resultado2=$db->query($query2);
-$query3="SELECT a.id, a.descripcion, a.tipo, a.capacidad, a.rendimiento, a.costoHora, a.subTotal, c.version partidaVersion FROM lineaequipoherramienta a INNER JOIN lineaequipoherramientaPartida b ON b.idLinea INNER JOIN partida c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE c.numero = ".$numeroPartida." HAVING c.version = MAX(c.version)";
+
+$query3="SELECT a.id, a.descripcion, a.tipo, a.capacidad, a.rendimiento, a.costoHora, a.subTotal, c.version partidaVersion FROM lineaequipoherramienta a INNER JOIN lineaequipoherramientaPartida b ON b.idLinea = a.id INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE c.numero = ".$numeroPartida;
   $resultado3=$db->query($query3);
-$query4="SELECT a.id, a.descripcion, a.unidad, a.cantidad, a.valor, a.subTotal, c.version partidaVersion FROM  lineasubcontrato a INNER JOIN lineasubcontratoPartida b ON  b.idLinea = a.id INNER JOIN partida c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE c.numero = ".$numeroPartida." HAVING c.version = MAX(c.version)";
+
+$query4="SELECT a.id, a.descripcion, a.unidad, a.cantidad, a.valor, a.subTotal, c.version partidaVersion FROM  lineasubcontrato a INNER JOIN lineasubcontratoPartida b ON  b.idLinea = a.id INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE c.numero = ".$numeroPartida;
 $resultado4=$db->query($query4);
 
 ?>
@@ -191,7 +193,7 @@ $resultado4=$db->query($query4);
       <div class="col-md-12">
       <form action="modPartida_exe.php" method="POST">
       <!-- ENCABEZADO-->
-      <input type="hidden" value="<?php echo $numeroPartida; ?>" name="idPartida" />
+      <input type="hidden" name="idPartida" value="<?php echo $numeroPartida; ?>" />
        <div class="wdgt wdgt-primary" hide-btn="true">
        <div class="wdgt-body wdgt-table"></div>
         <div class="wdgt-body wdgt-table" align="center">
@@ -209,7 +211,7 @@ $resultado4=$db->query($query4);
           <?php
           echo $fila->nombre."<br>";
         ?><br></div>
-       <input type="hidden" value="<?php echo $fila->version; ?>" name="version" />
+       <input type="hidden" name="version" value="<?php echo $fila->version; ?>" />
        </div>
        <!--PRIMERA TABLA-->
           <div class="wdgt wdgt-primary" hide-btn="true">
@@ -580,7 +582,7 @@ $resultado4=$db->query($query4);
 
                                 <tbody>
 <?php
-$sql = $db->query("SELECT codigo, version, nombre, unidad, costoDirecto, iva, total, fecha, empresaProveedora, tipoRecurso FROM recurso GROUP BY codigo HAVING version = MAX(version)");
+$sql = $db->query("SELECT a.codigo, a.version, a.nombre, a.unidad, a.costoDirecto, a.iva, a.total, a.fecha, a.empresaProveedora, a.tipoRecurso FROM recurso a INNER JOIN (SELECT codigo, MAX(version) version FROM recurso GROUP BY codigo) as b ON a.codigo = b.codigo AND a.version = b.version");
 while ($row = $sql->fetch_array()) {
     echo '<tr>';
     echo '<td>'. $row['codigo'] . '</td>';
@@ -601,7 +603,7 @@ while ($row = $sql->fetch_array()) {
     
     
     
-    echo '<td><button onclick="cantidad(\''.$codigo.'\', \''.$nombre.'\', \''.$unidad.'\', \''.$valor.'\', \''.$version.'\')">Agregar</button></td>';
+    echo '<td><button onclick="cantidadMatPrima(\''.$codigo.'\', \''.$nombre.'\', \''.$unidad.'\', \''.$valor.'\', \''.$version.'\')">Agregar</button></td>';
     
     
     
@@ -897,7 +899,7 @@ while ($row = $sql->fetch_array()) {
         if (cant != null) {
           var subtotal = valor * cant;
          if (/^([0-9])*$/.test(cant)){
-          $("#recursos tr:last td").each(function(index){
+          $("#table-mat-prima tr:last td").each(function(index){
             if (index == 0){
               $("input[type='hidden']", this).val(codigo);
               $("span", this).text(nombre);
@@ -916,8 +918,8 @@ while ($row = $sql->fetch_array()) {
               $("span", this).text(subtotal.toFixed(2));
             }
           });
-          var total_recursos = +$("#sub-total-recursos").text() + subtotal;
-          $("#sub-total-recursos").text(total_recursos.toFixed(2));
+          var total_recursos = +$("#subtotalMatPrima").text() + subtotal;
+          $("#subtotalMatPrima").text(total_recursos.toFixed(2));
         }
          
         else {
@@ -931,7 +933,7 @@ while ($row = $sql->fetch_array()) {
           $('#squarespaceModal').modal('show');
           var table = $("#table-mat-prima");
 
-          html = "<tr><td><span></span><input type='hidden' name='codigo[]'/></td><td><span></span><input type='hidden' name='cantidadMateria[]'/></td><td><input type='hidden' name='version[]'/><span></span></td><td><span></span></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_recursos[]'/></td><td><button type='button' class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>&nbsp;<button type='button' class='editar btn btn-info btn-sm'><i class='icon icon-edit' ></i></button></td></tr>";
+          html = "<tr><td><span></span><input type='hidden' name='codigo[]'/></td><td><span></span><input type='hidden' name='cantidadMateria[]'/></td><td><input type='hidden' name='versionMatPrima[]'/><span></span></td><td><span></span></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_recursos[]'/></td><td><button type='button' class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>&nbsp;<button type='button' class='editar btn btn-info btn-sm'><i class='icon icon-edit' ></i></button></td></tr>";
           table.append(html);
            $("button[name='enviarCambios']").prop("disabled", false);
         });
@@ -982,7 +984,7 @@ while ($row = $sql->fetch_array()) {
              $("button[name='enviarCambios']").prop("disabled", true);
           }
           var version = $("input[name='version']").val();
-          var idPartida = $("input[name='idPartida']").val():
+          var idPartida = $("input[name='idPartida']").val();
           if(row.find("input.id").length > 0){
             var id = row.closest("tr").find("input.id").val();
             var opt = "";
