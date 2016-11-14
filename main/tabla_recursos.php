@@ -252,7 +252,7 @@
   <?php
     #include 'connect_db.php';
     //require("connect_db.php");
-     $sql = mysql_query("CALL sp_select('2','')");
+     $sql = mysql_query("SELECT a.codigo, a.version, a.nombre, a.unidad, a.costoDirecto, a.iva, a.total, a.fecha, a.empresaProveedora, a.tipoRecurso FROM recurso a INNER JOIN (SELECT codigo, MAX(version) version FROM recurso GROUP BY codigo) as b ON a.codigo = b.codigo AND a.version = b.version");
     while ($row = mysql_fetch_array($sql)) {
         echo '<tr>';
         echo '<td>'. $row['codigo'] . '</td>';

@@ -1,7 +1,7 @@
 <?php
 require_once '../services/conn.php';
 if (isset($_POST["id"], $_POST["opt"], $_POST["version"], $_POST["idPartida"])) {
-	$db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "prueba_sgp_system")->getConnection();
+	$db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 	$table = "";
 	if ($_POST["opt"] == 1) {
 		$table = "linearecurso";

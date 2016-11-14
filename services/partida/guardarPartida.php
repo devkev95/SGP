@@ -3,7 +3,7 @@
 	if(isset($_POST["nombre"], $_POST["CI"])){
 		$nombre = $_POST["nombre"];
 		$porcentaje_indirecto= $_POST["CI"];
-		$conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "prueba_sgp_system")->getConnection();
+		$conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 		if($conn->connect_errno){
 			$error = 1;
 		}

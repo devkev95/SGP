@@ -10,7 +10,7 @@ if (!isset($_SESSION["userData"])){
     header("Location: home.php");
     exit();
 }
-$db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "prueba_sgp_system")->getConnection();
+$db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 $userData = $_SESSION["userData"];
 session_write_close();
 

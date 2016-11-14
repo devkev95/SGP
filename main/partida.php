@@ -11,23 +11,35 @@
    $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 
 $numeroPartida = $_GET['numero'];
+if (isset($_POST["version"])) {
+  $query= "SELECT numero,nombre FROM partida WHERE numero=".$numeroPartida." AND version = ".$_POST["version"];
+  $query1="SELECT a.nombre, a.unidad, b.cantidad, a.total, b.subTotal FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo AND a.version = b.version INNER JOIN linearecursoPartida c ON b.id = c.idLinea WHERE c.numPartida=".$numeroPartida." AND c.versionPartida =".$_POST["version"];
+  $query2="SELECT a.descripcion, a.jornada, a.FP, a.jornadaTotal, a.rendimiento, a.subTotal FROM lineamanoobra a INNER JOIN lineamanoobraPartida b ON a.id = b.idLinea WHERE b.numPartida =".$numeroPartida." AND b.versionPartida = ".$_POST["version"];
+  $query4="SELECT a.descripcion, a.unidad, a.cantidad, a.valor, a.subTotal FROM lineasubcontrato a INNER JOIN lineasubcontratoPartida b ON a.id = b.idLinea WHERE b.numPartida =".$numeroPartida." AND b.versionPartida =".$_POST["version"];
+  $query3="SELECT a.descripcion, a.tipo, a.capacidad, a.rendimiento, a.costoHora, a.subTotal FROM  lineaequipoherramienta a INNER JOIN lineaequipoherramientaPartida b ON a.id = b.idLinea WHERE b.numPartida =".$numeroPartida." AND b.versionPartida = ".$_POST["version"];
+  $queryC="SELECT totalCD, totalCF,precioUnitario from partida WHERE numero=".$numeroPartida." AND version = ".$_POST["version"];
+  $queryTotales="SELECT totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos from partida WHERE numero=".$numeroPartida." AND version =".$_POST["version"];
+} else {
+  $query= "SELECT a.numero, a.nombre FROM partida a INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as b ON a.numero = b.numero AND a.version = b.version WHERE numero=".$numeroPartida;
+  $query1="SELECT a.nombre, a.unidad, b.cantidad, a.total, b.subTotal FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo AND a.version = b.version INNER JOIN linearecursoPartida c ON b.id = c.idLinea WHERE c.numPartida=".$numeroPartida." AND b.versionPartida = (SELECT MAX(versionPartida) FROM lineamanoobraPartida WHERE numPartida = ".$numeroPartida.")";
+  $query2="SELECT a.descripcion, a.jornada, a.FP, a.jornadaTotal, a.rendimiento, a.subTotal FROM lineamanoobra a INNER JOIN lineamanoobraPartida as b ON a.id = b.idLinea WHERE b.numPartida =".$numeroPartida." AND b.versionPartida = (SELECT MAX(versionPartida) FROM lineamanoobraPartida WHERE numPartida = ".$numeroPartida.")";
+  $query4="SELECT a.descripcion, a.unidad, a.cantidad, a.valor, a.subTotal FROM lineasubcontrato a INNER JOIN (SELECT idLinea, MAX(versionPartida) versionPartida, numPartida FROM lineamanoobraPartida GROUP BY numPartida) as b ON a.id = b.idLinea WHERE b.numPartida =".$numeroPartida." AND b.versionPartida = (SELECT MAX(versionPartida) FROM lineamanoobraPartida WHERE numPartida = ".$numeroPartida.")";
+  $query3="SELECT a.descripcion, a.tipo, a.capacidad, a.rendimiento, a.costoHora, a.subTotal FROM  lineaequipoherramienta a lineamanoobraPartida b ON a.id = b.idLinea WHERE b.numPartida =".$numeroPartida." AND b.versionPartida = (SELECT MAX(versionPartida) FROM lineamanoobraPartida WHERE numPartida = ".$numeroPartida.")";
+  $queryC="SELECT a.totalCD, a.totalCF, a.precioUnitario from partida a INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as b ON a.numero = b.numero AND a.version = b.version WHERE numero=".$numeroPartida;
+  $queryTotales="SELECT a.totalMateriales, a.totalManoObra, a.totalEquipoHerramientas, a.totalSubContratos from partida a INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as b ON a.numero = b.numero AND a.version = b.version WHERE numero=".$numeroPartida;
+}
 
-$query= "SELECT numero,nombre FROM partida WHERE numero=".$numeroPartida;
+
                 $resultado= mysqli_query($db,$query);
                 $numrows = mysqli_num_rows($resultado);
-$query1="SELECT a.nombre, a.unidad, b.cantidad, a.total, b.subTotal FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo WHERE id=".$numeroPartida;
+
           $resultado1=mysqli_query($db,$query1);
-$query2="SELECT descripcion, jornada, FP, jornadaTotal, rendimiento, subTotal FROM lineamanoobra WHERE id =".$numeroPartida;
           $resultado2=mysqli_query($db,$query2);
-$query3="SELECT descripcion, tipo, capacidad, rendimiento, costoHora, subTotal FROM  `lineaequipoherramienta` WHERE id =".$numeroPartida;
            $resultado3=mysqli_query($db,$query3);
-$query4="SELECT descripcion, unidad, cantidad, valor, subTotal FROM lineasubcontrato WHERE id =".$numeroPartida;
 $resultado4=mysqli_query($db,$query4);
 
-$queryC="SELECT totalCD, totalCF,precioUnitario from partida WHERE numero=".$numeroPartida;
 $resultadoC=mysqli_query($db,$queryC);
 
-$queryTotales="SELECT totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos from partida WHERE numero=".$numeroPartida;
 $resultadoTotales=mysqli_query($db,$queryTotales);
 $filaTotales = mysqli_fetch_array($resultadoTotales);
 
