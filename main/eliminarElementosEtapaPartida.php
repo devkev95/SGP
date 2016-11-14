@@ -1,12 +1,37 @@
+
+
 <?php
+
 require_once '../services/conn.php';
-if (isset($_POST["id1"], $_POST["id2"], $_POST["id3"], $_POST["opt"])) {
-	$db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
-	$table = "";
-	if ($_POST["opt"] == 1) {
-		$table = "etapapartida";
-	} 
-	$query = "DELETE FROM ".$table." WHERE idPartida=".$_POST["id1"]." AND versionPartida=".$_POST["id2"]." AND idEtapa=".$_POST["id3"];
-	$db->query($query);
+ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
+ error_reporting(0);
+
+  $idPartida= $_GET['id1'];
+
+  echo $idPartida;
+ $identificar=$_GET['id3'];
+ echo $identificar;
+ $versionPartida=$_GET['versionPartida'];
+ echo $versionPartida;
+
+
+$information=[];
+
+
+if(isset($identificar)){
+	if ($db->query("DELETE FROM etapapartida WHERE idPartida=".$idPartida." AND idEtapa=".$identificar." AND versionPartida=".$versionPartida."")) {
+    echo $db->error;
 }
+
+
+$fila = $result->fetch_assoc();
+$valor= $fila['_respuesta_'];
+$information["deleteAnswer"]= $valor;
+}
+
+echo json_encode($information);
+
+
+
+
 ?>

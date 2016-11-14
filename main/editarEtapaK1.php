@@ -88,7 +88,7 @@ error_reporting(0);
         $n = count($_POST["idpartida"]);
         echo $n;
         for ($i = 0; $i < $n; $i++){
-          $query = "UPDATE etapapartida SET cantidad=".$_POST["cantidad"][$i].", CD=".$_POST["CDD"][$i].", CI=".$_POST["CII"][$i].", IVA=".$_POST["IVAA"][$i].", PU=".$_POST["PUU"][$i].", subTotal=".$_POST["subTotal_etapa"][$i]." WHERE idPartida=".$_POST["idpartida"][$i]." AND versionPartida =".$_POST["version"][$i];
+          $query = "UPDATE etapapartida SET cantidad=".$_POST["cantidad"][$i].", CD=".$_POST["CDD"][$i].", CI=".$_POST["CII"][$i].", IVA=".$_POST["IVAA"][$i].", PU=".$_POST["PUU"][$i].", subTotal=".$_POST["subTotal_etapa"][$i]." WHERE idPartida=".$_POST["idpartida"][$i]." AND versionPartida=".$_POST["version"][$i]."";
           $conn->query($query);
         }
         $offset = $i;
@@ -434,7 +434,7 @@ error_reporting(0);
 
         
         while ( $resultado1 = mysql_fetch_array($query11)) { ?>
-            <tr>
+            <tr id="<?php echo  $resultado1['idPartida']; ?>" version="<?php echo  $resultado1['versionPartida']; ?>" >
            <input type="hidden" class="id" name="idpartida[]" value="<?php echo  $resultado1['idPartida']; ?>"/>
            <input type="hidden"  name="version[]" value="<?php echo  $resultado1['versionPartida']; ?>"/>
            <td><span><?php echo $resultado1['detalle'] ; ?></span></td>
@@ -450,7 +450,8 @@ error_reporting(0);
            <td><input type="hidden" name="fechaInicioProgramadaa[]" value="<?php echo $resultado1['fechaInicioProgramad']; ?>"/><span><?php echo $resultado1['fechaInicioProgramada']; ?></span></td>
            <td><input type="hidden" name="fechaFinProgramadaa[]" value="<?php echo $resultado1['fechaFinProgramada']; ?>"/><span><?php echo $resultado1['fechaFinProgramada']; ?></span></td>       
            <td><input type="hidden" name="subTotal_etapa[]" value="<?php echo $resultado1['subTotal']; ?>"/><span class="subtotal"><?php echo $resultado1['subTotal']; ?></span></td>       
-           <td><button type="button" class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button>
+           <td>
+           <input style="max-width: 25px;" type="image" src="../Imagenes/eliminar.png" class="detele" id="delete<?php echo  $resultado1['idPartida']; ?><?php echo  $resultado1['versionPartida']; ?>">
            <button type="button" class="editar btn btn-info btn-sm"><i class="icon icon-edit" ></i></button></td>
           
 
@@ -684,13 +685,12 @@ while ($row = $sql->fetch_array()) {
 
                         <div class="btn-group btn-group-justified" role="group" aria-label="group button">
                           <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-success" name="agregar" value="Agregar">Ingresar</button>
+                            <button type="button" class="btn btn-primary" name="agregar4">Ingresar</button>
                           </div>
                           <div class="btn-group" role="group">
                             <button type="reset" class="btn btn-info">Limpiar</button>
                           </div>
                         </div>
-
                       </form>
 
                     </div>
@@ -846,7 +846,7 @@ while ($row = $sql->fetch_array()) {
               $("span", this).text(subtotal.toFixed(4));
             }
           });
-          $("#modalIngresarEtapaPartida").modal("hide");
+          $('#modalIngresarEtapaPartida').modal('hide');
           var total_etapa = +$("#sub-total-etapa").text() + subtotal;
           $("#sub-total-etapa").text(total_etapa.toFixed(2));
         });
@@ -854,8 +854,7 @@ while ($row = $sql->fetch_array()) {
    $("#modalEditarPartidaEtapa form button[name='agregar4']").click(function(){
       cantidad = + $(this).parents("form").find("input[name='cantidad']").val();
        var selector = '';
-
-          if (length > 0) {
+          if ($("#table-mat-prima tbody tr").length > 0) {
             selector = $("#table-mat-prima tr.selected td");
           }else{
             selector = $("#table-mat-prima tr:last td");
@@ -870,77 +869,51 @@ while ($row = $sql->fetch_array()) {
               $("span", this).text(cantidad);
               $("input[type='hidden']", this).val(cantidad);
             } else if (index == 12){
-              $("input[type='hidden']", this).val(subTotal);
-              $("span", this).text(subTotal);
+              $("input[type='hidden']", this).val(subTotal.toFixed(4));
+              $("span", this).text(subTotal.toFixed(4));
             }
           });
           $("#table-mat-prima tr").removeClass("selected");
-          $("#modalEditarMateriales").modal("hide");
+          $("#modalEditarPartidaEtapa").modal("hide");
           var total_etapa = +$("#sub-total-etapa").text() + (subTotal - subTotalAnterior);
           $("#sub-total-etapa").text(total_etapa.toFixed(2));
+          $(this).parents("form").find(":input").val("");
     });
         
-       $(document).on("click", ".eliminar", function(){
-      var row = $(this).closest("tr");
-       var total1 = +$(this).parents("div.wdgt-primary").find("table tr td.subtotal").text();
-      var subtotal = +$(this).closest("tr").find("td span.subtotal").text();
-        confirmDialog("Esta seguro que desea eliminar el registro", function(){
-          $("button[name='enviarCambios']").prop("disabled", false);
-          total1 = total1 - subtotal;
-          row.parents("div.wdgt-primary").find("table tr td.subtotal").text(total1.toFixed(2));
-          countRows = $("#table-mat-prima tbody tr").length;
-          if (countRows <= 0) {
-             $("button[name='enviarCambios']").prop("disabled", true);
+ 
+  
+
+    $('.detele').click(function(){
+        $('#alertaExito').hide();
+        $('#AlertaError').hide();
+       var idPartida=$(this).parent().parent().attr('id');
+       var identificador=parseInt(idPartida);
+       var versionPartida=$(this).parent().parent().attr('version');
+       var identificador1=parseInt(versionPartida);       
+       var id3 = <?php echo $etapa; ?>;
+      $.ajax({
+      type: "POST",
+       url: "eliminarElementosEtapaPartida.php?id1="+identificador+"&id3="+id3+"&versionPartida="+identificador1,
+       data: identificador
+      }).done(function(info){
+       
+        var json_info=JSON.parse(info);
+       
+          if((json_info.deleteAnswer)=="ERROR"){
+              
+              $('#AlertaError').show();
+              
+          }else{
+            $('#alertaExito').show();
+            
           }
-          if(row.find("input.id").length > 0){
-            var id1 = row.closest("tr").find("input.idpartida").val();
-            var id2 = row.closest("tr").find("input.version").val();
-            var id3 = <?php echo $etapa; ?>;
-            var opt = "";
-            var table = row.closest("table").attr("idpartida").attr("version");
-            if (table == "table-mat-prima") {
-              opt = 1;
-            } 
-            $.ajax({
-            url: "eliminarElementosEtapaPartida.php",
-            method: "POST",
-            data: { "opt" : opt , "id1" : id1 , "id2" : id2 , "id3" : id3 } 
-          });
-          }
-          total();
-          row.remove();
 
-        });
-      });
+         
+      }); 
 
-
-         $(document).on("click", ".eliminar", function(){
-          var row = $(this).closest("tr");
-          var total = +$(this).closest("div").find("table tr td.subtotal").text();
-          var subtotal = +$(this).closest("tr").find("td span.subtotal").text();
-          total = total - subtotal;
-          $(this).closest("div").find("div span").text(total.toFixed(2));
-          $(this).parents("tr").remove();
-          countRows = $("#partidas tbody tr").length;
-          if (countRows <= 0) {
-             $("#principal").prop("disabled", true);
-          }
-        });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      
+    });
+    
 
 
 
