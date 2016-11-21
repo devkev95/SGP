@@ -13,7 +13,7 @@
   session_write_close();
 
     require_once "../services/conn.php";
-    $conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "prueba_sgp_system")->getConnection();
+    $conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
         $codigoError= null;
         $nombreError=null;
         $unidadError=null;
@@ -148,7 +148,7 @@
           // Si no simplemente actualizamos los datos del recurso y actualizamos las partidas con la que está 
           // relacionado
           else {
-            $query = "UPDATE recurso SET nombre='".$nombre."', unidad='".$unidad."', costoDirecto=".$$costoDirecto.", iva=".$iva.", total=".$total.", fecha='".$fecha->format("Y-m-d")."', empresaProveedora='".$empresa."', tipoRecurso='".$tipo."' WHERE codigo=".$codigo." AND version=".$version;
+            $query = "UPDATE recurso SET nombre='".$nombre."', unidad='".$unidad."', costoDirecto=".$costoDirecto.", iva=".$iva.", total=".$total.", fecha='".$fecha->format("Y-m-d")."', empresaProveedora='".$empresa."', tipoRecurso='".$tipo."' WHERE codigo=".$codigo." AND version=".$version;
             $conn->query($query);
 
             // Buscamos con que partidas y lineas esta relacionado este recurso y las actualizamos
