@@ -451,8 +451,7 @@ $etapa = $_GET['id'];
            <td><input type="hidden" name="fechaFinProgramadaa[]" value="<?php echo $resultado1['fechaFinProgramada']; ?>"/><span><?php echo $resultado1['fechaFinProgramada']; ?></span></td>       
            <td><input type="hidden" name="subTotal_etapa[]" value="<?php echo $resultado1['subTotal']; ?>"/><span class="subtotal"><?php echo $resultado1['subTotal']; ?></span></td>       
            <td>
-           <input style="max-width: 25px;" type="image" src="../Imagenes/eliminar.png" class="detele" id="delete<?php echo  $resultado1['idPartida']; ?><?php echo  $resultado1['versionPartida']; ?>">
-            <button type="button" class="detele" id="delete<?php echo  $resultado1['idPartida']; ?><?php echo  $resultado1['versionPartida']; ?>" ><i class='icon icon-trash'></i></button>
+            <button type="button"  class="detele" id="delete<?php echo  $resultado1['idPartida']; ?><?php echo  $resultado1['versionPartida']; ?>" ><i class='icon icon-trash'></i></button>
            <button type="button" class="editar btn btn-info btn-sm"><i class="icon icon-edit" ></i></button></td>
           
 
