@@ -181,7 +181,7 @@ $id=$_GET["id"];
      <div class="crumbs">
       <ol class="breadcrumb hidden-xs">
        <li><i class="fa fa-home"></i> <a href="home.php">Home</a></li>
-       <li><a href="tabla_recursos.php">Proyectos</a></li>
+       <li><a href="tabla_recursos.php">Presupuesto de proyecto</a></li>
        
       </ol>
      </div>
@@ -190,7 +190,7 @@ $id=$_GET["id"];
     <!-- BEGIN PAGE CONTENT -->
     <div class="content">
      <div class="page-h1">
-      <h1>Proyectos <small></small></h1>
+      <h1>Presupuesto de proyecto <small></small></h1>
 
      </div>
 
@@ -352,13 +352,18 @@ $id=$_GET["id"];
          </table>
         
 
-    
       
         
 
 
 
         </div>
+        <br>
+         <center>
+             <button class="btn btn-primary hidden-print" onclick="myFunction()" style="max-width:25%; background-color:#5f8ea0; color:white;"> Imprimir   &nbsp; 
+            <img alt="User Pic" src="../Imagenes/printerlogo.png"  style="max-width:20%;"></button>
+          </center>
+    
        </div>
 
       </div>
@@ -411,6 +416,13 @@ $id=$_GET["id"];
 
 
   </script>
+
+  <script type="text/javascript">
+
+     function myFunction() {
+    window.print();
+}</script>
+
   
 
  </body>
