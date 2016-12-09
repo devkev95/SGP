@@ -182,7 +182,7 @@ $id=$_GET["id"];
      <div class="crumbs">
       <ol class="breadcrumb hidden-xs">
        <li><i class="fa fa-home"></i> <a href="home.php">Home</a></li>
-       <li><a href="tabla_recursos.php">Proyectos</a></li>
+       <li><a href="tabla_recursos.php">Control de proyecto</a></li>
        
       </ol>
      </div>
@@ -191,7 +191,7 @@ $id=$_GET["id"];
     <!-- BEGIN PAGE CONTENT -->
     <div class="content">
      <div class="page-h1">
-      <h1>Proyectos <small></small></h1>
+      <h1>Avances del proyecto <small></small></h1>
 
      </div>
 
@@ -250,7 +250,7 @@ $id=$_GET["id"];
             <th>Monto</th>
              <th>Fecha de inicio</th>
               <th>Fecha de finalización</th>
-                 <th>Observacion</th>
+                 <th>Observación</th>
          
            </tr>
           </thead>
@@ -385,7 +385,7 @@ window.onload = function () {
        
         { y:'.$cantTerminado.', indexLabel: "Terminadas" },
        
-        { y: '.$cantEspera.', indexLabel: "Finalizadas"}
+        { y: '.$cantEspera.', indexLabel: "En espera"}
       ]
     }
     ]
@@ -434,7 +434,17 @@ window.onload = function () {
     <!-- END PAGE CONTENT -->
 
 
-     <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+
+     <div id="chartContainer" style="height: 100px; width: 100%;"></div>
+
+     
+
+       <center>
+             <button class="btn btn-primary hidden-print" onclick="myFunction()" style="max-width:25%; background-color:#5f8ea0; color:white;"> Imprimir   &nbsp; 
+            <img alt="User Pic" src="../Imagenes/printerlogo.png"  style="max-width:20%;"></button>
+          </center>
+          <br><br>
+
 
 
      </div>
@@ -480,6 +490,11 @@ window.onload = function () {
 
 
  
+ <script type="text/javascript">
+
+     function myFunction() {
+    window.print();
+}</script>
 
 
 
