@@ -71,7 +71,7 @@
       <?php if ($userData->getPerfil() == "Administrador"){ ?>
       <div class="accordion-group">
        <div class="accordion-heading">
-        <a class="sbtn btn-default active" href="admin/users.php">
+        <a class="sbtn btn-default" href="admin/users.php">
          <span class="fa fa-users"></span>
          &nbsp;&nbsp;Usuarios
         </a>
@@ -101,15 +101,15 @@
          <span class="caret"></span>
         </a>
        </div>
-       <div id="c-forms" class="accordion-body collapse in"><div class="accordion-inner">
-        <a href="../main/tabla_recursos.php" class="sbtn sbtn-default active">Ver Recursos</a>
+       <div id="c-forms" class="accordion-body collapse"><div class="accordion-inner">
+        <a href="../main/tabla_recursos.php" class="sbtn sbtn-default">Ver Recursos</a>
         <a href="../main/ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
        </div></div>
       </div>
 
       <div class="accordion-group">
        <div class="accordion-heading">
-        <a class="sbtn btn-default" href="proyectos.php">
+        <a class="sbtn btn-default active" href="proyectos.php">
          <span class="fa fa-list-alt"></span>
          &nbsp;&nbsp;Proyectos
         </a>
@@ -464,9 +464,14 @@
       var descriptionNew=$("input[name='projectDescriptionNew']").val();
       var porcentNew=$("input[name='projectPorcentNew']").val();
       var totalNew=$("input[name='projectTotalNew']").val();
-      document.getElementById("tdName").innerHTML = nameNew;
-      document.getElementById("tdDescripcion").innerHTML=descriptionNew;
-      document.getElementById("tdPorcentaje").innerHTML=porcentNew;
+      $("input[name='projectName']").val(nameNew);
+      $("input[name='projectDescription']").val(descriptionNew);
+      $("input[name='projectTotal']").val(totalNew);
+      $("input[name='projectPorcent']").val(porcentNew);
+      $("#tdName span").text(nameNew);
+      $("#tdDescripcion span").text(descriptionNew);
+      $("#tdPorcentaje span").text(porcentNew);
+      $("#tdTotal span").text(totalNew);
 
     }
     var idProyecto=<?php echo "$idProyecto";?>;

@@ -61,8 +61,7 @@
   <link type="text/css" rel="stylesheet" href="../lib/CSS/soft-admin.css"/>
 
    <script src="../lib/JS/bootstrap-datepicker.js"></script> 
-   <script> $('.datepicker').datepicker({ format : 'yyyy-mm-dd' }); </script>
-  
+   
 
   <!-- link calendar resources -->
   <link rel="stylesheet" type="text/css" href="../lib/CSS/tcal.css" >

@@ -46,7 +46,6 @@ error_reporting(0);
      // $conn->query($query);
       if($conn->query($query)){
         $id = $conn->insert_id;
-        echo $id;
 
 
 
@@ -110,7 +109,7 @@ error_reporting(0);
 
     <!-- Adjustable Styles -->
     <link type="text/css" rel="stylesheet" href="../lib/CSS/DT_bootstrap.css" />
-     <link type="text/css" rel="stylesheet" href="lib/css/DT_bootstrap.css"/>
+     <link type="text/css" rel="stylesheet" href="../lib/CSS/DT_bootstrap.css"/>
     <link type="text/css" rel="stylesheet" href="../lib/CSS/icheck.css?v=1.0.1">
    
 
@@ -257,7 +256,7 @@ error_reporting(0);
           <div class="col-md-12">
             <div class="alert alert-warning" style="margin-bottom:0px;margin-top:10px;">
               <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-              <span class="icon icon-exclamation-sign"></span> <strong>Verifique antes de guardar!</strong>
+              <span class="icon icon-exclamation-sign"></span> <strong>Verifique antes de Terminar!</strong>
             </div>
           </div>
 
@@ -774,6 +773,7 @@ while ($row = $sql->fetch_array()) {
           $("#modalIngresarEtapaPartida").modal("hide");
           var total_etapa = +$("#sub-total-etapa").text() + subtotal;
           $("#sub-total-etapa").text(total_etapa.toFixed(2));
+          $(this).parents("form").find(":input").val("");
         });
 
       });

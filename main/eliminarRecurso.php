@@ -2,18 +2,17 @@
 
 
 $cod=$_GET["cod"];
-
+require_once "../services/conn.php";
+$conn = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
  error_reporting(0);
 
- $link=mysql_connect("localhost","sgp_user","56p_2016");
- 
- if ($link) {
-  mysql_select_db("sgp_system", $link);
-  # code...
- }
+$sql="SELECT codigo FROM linearecurso WHERE codigo='$cod'";
+$comprobar = $conn->query($sql);
 
-$sql="DELETE FROM recurso WHERE codigo='$cod'";
-$comprobar=mysql_query($sql);
+if($comprobar->num_rows <= 0){
+    $sql="DELETE FROM recurso WHERE codigo='$cod'";
+    $conn->query($sql);
+}
 
 
 

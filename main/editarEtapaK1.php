@@ -211,10 +211,10 @@ error_reporting(0);
                       <span class="caret"></span>
                     </a>
                   </div>
-                  <div id="c-tables" class="accordion-body collapse in">
+                  <div id="c-tables" class="accordion-body collapse">
                     <div class="accordion-inner">
                       <a href="consultarPartidas.php" class="sbtn sbtn-default">Ver Partidas</a>
-                      <a href="crear_partida.php" class="sbtn sbtn-default active">Crear Partida</a>
+                      <a href="crear_partida.php" class="sbtn sbtn-default">Crear Partida</a>
                     </div>
                   </div>
                 </div>
@@ -236,7 +236,7 @@ error_reporting(0);
 
                  <div class="accordion-group">
                   <div class="accordion-heading">
-                    <a class="sbtn btn-default" href="proyectos.php">
+                    <a class="sbtn btn-default active" href="proyectos.php">
                     <span class="fa fa-list-alt"></span>
                       &nbsp;&nbsp;Proyectos
                     </a>
