@@ -6,12 +6,12 @@ require_once '../services/conn.php';
  $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
  error_reporting(0);
 
-  $idPartida= $_GET['id1'];
+  $idPartida= $_POST['id1'];
 
   echo $idPartida;
- $identificar=$_GET['id3'];
+ $identificar=$_POST['id3'];
  echo $identificar;
- $versionPartida=$_GET['versionPartida'];
+ $versionPartida=$_POST['versionPartida'];
  echo $versionPartida;
 
 

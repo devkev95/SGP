@@ -533,6 +533,8 @@ $resultado4=$db->query($query4);
           </div>
          </div> 
 
+         
+
        <div class="modal fade" id="squarespaceModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
               <div class="modal-dialog" style="width:75%">
                 <div class="modal-content">
