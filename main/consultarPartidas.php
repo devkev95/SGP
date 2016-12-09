@@ -186,7 +186,7 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
     
      <tbody>
       <?php 
-                $query= "SELECT numero,nombre FROM partida a INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as b ON a.numero = b.numero AND b.version = a.version";
+                $query= "SELECT a.numero,nombre FROM partida a INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as b ON a.numero = b.numero AND b.version = a.version";
                 $resultado= mysqli_query($db,$query);
                
 
@@ -196,7 +196,7 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
        <td><?php echo "$fila[nombre]";?></td>
        <td>
        <input title="Editar Partida" style="max-width: 25px;" onclick="window.location.href='modPartida.php?numero=<?php echo "$fila[numero]"?>';" type="image" src="../Imagenes/editar.png">
-       <input title="Ver partida" style="max-width: 25px" onclick="window.location.href='modPartida.php?numero=<?php echo "$fila[numero]" ?>';" type="image" src="../Imagenes/info.png">
+       <input title="Ver partida" style="max-width: 25px" onclick="window.location.href='partida.php?numero=<?php echo "$fila[numero]" ?>';" type="image" src="../Imagenes/info.png">
        </td>
       </tr>
      <?php } ?>

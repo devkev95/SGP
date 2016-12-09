@@ -13,7 +13,7 @@
   }
     $userData = $_SESSION["userData"];
     session_write_close();
-  $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "prueba_sgp_system")->getConnection();
+  $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getConnection();
 
 $numeroPartida = $_GET['numero'];
 
