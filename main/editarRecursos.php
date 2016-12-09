@@ -87,7 +87,7 @@
 
           // Revisar si el recurso no esta relacionado con lineas relacionadas con partidas relacionadas con proyectos 
           // finalizados o en progreso
-          $query = "SELECT d.numero, d.version, b.cantidad, b.subTotal FROM recurso a INNER JOIN linearecurso b ON b.codigo = a.codigo AND b.version = a.version INNER JOIN linearecursoPartida c ON c.idLinea = b.id INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as d ON d.numero = c.numPartida AND d.version = c.versionPartida INNER JOIN etapapartida e ON e.idPartida = d.numero AND e.versionPartida = d.version INNER JOIN etapa f ON f.idEtapa = e.idEtapa INNER JOIN proyecto g ON g.idProyecto = f.idProyecto WHERE a.codigo = ".$codigo." AND a.version = ".$version." AND g.estado != 0";
+          $query = "SELECT d.numero, d.version, b.cantidad, b.subTotal FROM recurso a INNER JOIN linearecurso b ON b.codigo = a.codigo AND b.version = a.version INNER JOIN linearecursopartida c ON c.idLinea = b.id INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as d ON d.numero = c.numPartida AND d.version = c.versionPartida INNER JOIN etapapartida e ON e.idPartida = d.numero AND e.versionPartida = d.version INNER JOIN etapa f ON f.idEtapa = e.idEtapa INNER JOIN proyecto g ON g.idProyecto = f.idProyecto WHERE a.codigo = ".$codigo." AND a.version = ".$version." AND g.estado != 0";
 
           $res = $conn->query($query);
 
@@ -128,19 +128,19 @@
               $idLinea = $conn->insert_id;
 
               // Relacionando la nueva versión de la partida con la nueva versión de recurso
-              $query = "INSERT INTO linearecursoPartida (idLinea, numPartida, versionPartida) VALUES (".$idLinea.", ".$row->numero.", ".$versionNueva.")";
+              $query = "INSERT INTO linearecursopartida (idLinea, numPartida, versionPartida) VALUES (".$idLinea.", ".$row->numero.", ".$versionNueva.")";
               $conn->query($query);
 
               // Relacionando las lineas de la antigua versión con la nueva
-              $query = "INSERT INTO linearecursoPartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM linearecursoPartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$row->version;
+              $query = "INSERT INTO linearecursopartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM linearecursopartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$row->version;
 
-              $query = "INSERT INTO lineamanoobraPartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM lineamanoobraPartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$row->version;
+              $query = "INSERT INTO lineamanoobrapartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM lineamanoobrapartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$row->version;
               $conn->query($query);
 
-              $query = "INSERT INTO lineaequipoherramientaPartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM lineaequipoherramientaPartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$row->version;
+              $query = "INSERT INTO lineaequipoherramientapartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM lineaequipoherramientapartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$row->version;
               $conn->query($query);
 
-              $query = "INSERT INTO lineasubcontratoPartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM lineasubcontratoPartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$row->version;
+              $query = "INSERT INTO lineasubcontratopartida (idLinea, numPartida, versionPartida) SELECT idLinea, numPartida, ".$versionNueva." FROM lineasubcontratopartida WHERE numPartida = ".$row->numero." AND versionPartida = ".$row->version;
               $conn->query($query);
             }
           }
@@ -152,7 +152,7 @@
             $conn->query($query);
 
             // Buscamos con que partidas y lineas esta relacionado este recurso y las actualizamos
-            $query = "SELECT d.numero, d.version, b.cantidad, b.subTotal FROM recurso a INNER JOIN linearecurso b ON b.codigo = a.codigo AND b.version = a.version INNER JOIN linearecursoPartida c ON c.idLinea = b.id INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as d ON d.numero = c.numPartida AND d.version = c.versionPartida INNER JOIN etapapartida e ON e.idPartida = d.numero AND e.versionPartida = d.version INNER JOIN etapa f ON f.idEtapa = e.idEtapa INNER JOIN proyecto g ON g.idProyecto = f.idProyecto WHERE a.codigo = ".$codigo." AND a.version = ".$version." AND g.estado = 0";
+            $query = "SELECT d.numero, d.version, b.cantidad, b.subTotal FROM recurso a INNER JOIN linearecurso b ON b.codigo = a.codigo AND b.version = a.version INNER JOIN linearecursopartida c ON c.idLinea = b.id INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as d ON d.numero = c.numPartida AND d.version = c.versionPartida INNER JOIN etapapartida e ON e.idPartida = d.numero AND e.versionPartida = d.version INNER JOIN etapa f ON f.idEtapa = e.idEtapa INNER JOIN proyecto g ON g.idProyecto = f.idProyecto WHERE a.codigo = ".$codigo." AND a.version = ".$version." AND g.estado = 0";
             $res = $conn->query($query);
             if ($res->num_rows > 0) {
 
@@ -163,7 +163,7 @@
                 $diff = ($row->cantidad * $total) - $row->subTotal;
                 $diffArray[] = $diff;
 
-                $query = "UPDATE linearecurso INNER JOIN linearecursoPartida ON linearecurso.id = linearecursoPartida.idLinea SET subTotal= ".$subTotalNuevaLinea." WHERE linearecursoPartida.numPartida = ".$row->numero." AND linearecursoPartida.versionPartida = ".$row->version." AND linearecurso.codigo = ".$codigo." AND linearecurso.version = ".$version;
+                $query = "UPDATE linearecurso INNER JOIN linearecursopartida ON linearecurso.id = linearecursopartida.idLinea SET subTotal= ".$subTotalNuevaLinea." WHERE linearecursopartida.numPartida = ".$row->numero." AND linearecursopartida.versionPartida = ".$row->version." AND linearecurso.codigo = ".$codigo." AND linearecurso.version = ".$version;
                 $conn->query($query);
 
                 $query = "UPDATE partida SET totalCD = totalCD + ".$diff.", precioUnitario = ((totalCD + ".$diff.") * (totalCF / 100)), totalManoObra = totalManoObra + ".$diff." WHERE numero = ".$row->numero." AND version = ".$row->version;

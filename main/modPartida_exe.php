@@ -51,7 +51,7 @@
       if (isset($_POST["idLineaMatPrima"])) {
         $n = count($_POST["idLineaMatPrima"]);
         for ($i = 0; $i < $n; $i++){
-          $query = "INSERT INTO linearecursoPartida (idLinea, numPartida, versionPartida) VALUES (".$_POST["idLineaMatPrima"][$i].", ".$numeroPartida.", ".$nuevaVersion.")";
+          $query = "INSERT INTO linearecursopartida (idLinea, numPartida, versionPartida) VALUES (".$_POST["idLineaMatPrima"][$i].", ".$numeroPartida.", ".$nuevaVersion.")";
             $conn->query($query);
         }
         $offsetMatPrima = $i;   
@@ -60,7 +60,7 @@
       if (isset($_POST["idLineaMO"])) {
         $n = count($_POST["idLineaMO"]);
         for ($i = 0; $i < $n; $i++){
-            $query = "INSERT INTO lineamanoobraPartida (idLinea, numPartida, versionPartida) VALUES (".$_POST["idLineaMO"][$i].", ".$numeroPartida.", ".$nuevaVersion.")";
+            $query = "INSERT INTO lineamanoobrapartida (idLinea, numPartida, versionPartida) VALUES (".$_POST["idLineaMO"][$i].", ".$numeroPartida.", ".$nuevaVersion.")";
             $conn->query($query);
         }
         $offsetMO = $i;
@@ -69,7 +69,7 @@
       if (isset($_POST["idLineaEH"])) {
         $n = count($_POST["idLineaEH"]);
         for ($i = 0; $i < $n; $i++){
-          $query = "INSERT INTO lineaequipoherramientaPartida (idLinea, numPartida, versionPartida) VALUES (".$_POST["idLineaEH"][$i].", ".$numeroPartida.", ".$nuevaVersion.")";
+          $query = "INSERT INTO lineaequipoherramientapartida (idLinea, numPartida, versionPartida) VALUES (".$_POST["idLineaEH"][$i].", ".$numeroPartida.", ".$nuevaVersion.")";
             $conn->query($query);
         }
         $offsetEH = $i;
@@ -79,7 +79,7 @@
       if (isset($_POST["idLineaSC"])) {
         $n = count($_POST["idLineaSC"]);
         for ($i = 0; $i < $n; $i++){
-          $query = "INSERT INTO lineasubcontratoPartida (idLinea, numPartida, versionPartida) VALUES (".$_POST["idLineaSC"][$i].", ".$numeroPartida.", ".$nuevaVersion.")";
+          $query = "INSERT INTO lineasubcontratopartida (idLinea, numPartida, versionPartida) VALUES (".$_POST["idLineaSC"][$i].", ".$numeroPartida.", ".$nuevaVersion.")";
             $conn->query($query);
         }
         $offsetSC = $i;

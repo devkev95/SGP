@@ -20,16 +20,16 @@ $numeroPartida = $_GET['numero'];
 $query= "SELECT a.numero, a.version, a.nombre, a.totalCD, a.totalCF, a.precioUnitario, a.totalMateriales, a.totalManoObra, a.totalEquipoHerramientas, a.totalSubContratos FROM partida a INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as b ON a.numero = b.numero AND a.version = b.version WHERE a.numero = ".$numeroPartida;
 $resultado= $db->query($query);
             
-$query1="SELECT b.id, a.nombre, a.unidad, b.cantidad, a.total, b.subTotal, d.version partidaVersion FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo AND a.version = b.version INNER JOIN linearecursoPartida c ON b.id = c.idLinea INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as d ON c.numPartida = d.numero AND c.versionPartida = d.version WHERE d.numero = ".$numeroPartida;
+$query1="SELECT b.id, a.nombre, a.unidad, b.cantidad, a.total, b.subTotal, d.version partidaVersion FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo AND a.version = b.version INNER JOIN linearecursopartida c ON b.id = c.idLinea INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as d ON c.numPartida = d.numero AND c.versionPartida = d.version WHERE d.numero = ".$numeroPartida;
 $resultado1=$db->query($query1);
 
-$query2="SELECT a.id, a.descripcion, a.jornada, a.FP, a.jornadaTotal, a.rendimiento, a.subTotal, c.version partidaVersion FROM lineamanoobra a INNER JOIN lineamanoobraPartida b ON a.id = b.idLinea INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE c.numero = ".$numeroPartida;
+$query2="SELECT a.id, a.descripcion, a.jornada, a.FP, a.jornadaTotal, a.rendimiento, a.subTotal, c.version partidaVersion FROM lineamanoobra a INNER JOIN lineamanoobrapartida b ON a.id = b.idLinea INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE c.numero = ".$numeroPartida;
   $resultado2=$db->query($query2);
 
-$query3="SELECT a.id, a.descripcion, a.tipo, a.capacidad, a.rendimiento, a.costoHora, a.subTotal, c.version partidaVersion FROM lineaequipoherramienta a INNER JOIN lineaequipoherramientaPartida b ON b.idLinea = a.id INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE c.numero = ".$numeroPartida;
+$query3="SELECT a.id, a.descripcion, a.tipo, a.capacidad, a.rendimiento, a.costoHora, a.subTotal, c.version partidaVersion FROM lineaequipoherramienta a INNER JOIN lineaequipoherramientapartida b ON b.idLinea = a.id INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE c.numero = ".$numeroPartida;
   $resultado3=$db->query($query3);
 
-$query4="SELECT a.id, a.descripcion, a.unidad, a.cantidad, a.valor, a.subTotal, c.version partidaVersion FROM  lineasubcontrato a INNER JOIN lineasubcontratoPartida b ON  b.idLinea = a.id INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE c.numero = ".$numeroPartida;
+$query4="SELECT a.id, a.descripcion, a.unidad, a.cantidad, a.valor, a.subTotal, c.version partidaVersion FROM  lineasubcontrato a INNER JOIN lineasubcontratopartida b ON  b.idLinea = a.id INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as c ON b.numPartida = c.numero AND b.versionPartida = c.version WHERE c.numero = ".$numeroPartida;
 $resultado4=$db->query($query4);
 
 ?>

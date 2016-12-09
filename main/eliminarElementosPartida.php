@@ -5,16 +5,16 @@ if (isset($_POST["id"], $_POST["opt"], $_POST["version"], $_POST["idPartida"])) 
 	$table = "";
 	if ($_POST["opt"] == 1) {
 		$table = "linearecurso";
-		$table2 = "linearecursoPartida";
+		$table2 = "linearecursopartida";
 	} elseif ($_POST["opt"] == 2) {
 		$table = "lineamanoobra";
-		$table2 = "lineamanoobraPartida";
+		$table2 = "lineamanoobrapartida";
 	} elseif ($_POST["opt"] == 3) {
 		$table = "lineaequipoherramienta";
-		$table2 = "lineaequipoherramientaPartida";
+		$table2 = "lineaequipoherramientapartida";
 	} elseif ($_POST["opt"] == 4) {
 		$table = "lineasubcontrato";
-		$table2 = "lineasubcontratoPartida";
+		$table2 = "lineasubcontratopartida";
 	}
 
 	// Revisamos si la linea de partida esta relacionada con alguna partida relacionada con algún proyecto finalizado
