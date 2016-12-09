@@ -14,7 +14,7 @@ session_write_close();
 
 error_reporting(0);
 
-     $etapa = $_GET['id'];
+$etapa = $_GET['id'];
    // echo $etapa;
 
     $proyecto = $_GET['idProyecto'];
