@@ -451,7 +451,7 @@ $etapa = $_GET['id'];
            <td><input type="hidden" name="fechaFinProgramadaa[]" value="<?php echo $resultado1['fechaFinProgramada']; ?>"/><span><?php echo $resultado1['fechaFinProgramada']; ?></span></td>       
            <td><input type="hidden" name="subTotal_etapa[]" value="<?php echo $resultado1['subTotal']; ?>"/><span class="subtotal"><?php echo $resultado1['subTotal']; ?></span></td>       
            <td>
-           <input style="max-width: 25px;" type="image" src="../Imagenes/eliminar.png" class="detele" id="delete<?php echo  $resultado1['idPartida']; ?><?php echo  $resultado1['versionPartida']; ?>">
+            <button type="button"  class="detele" id="delete<?php echo  $resultado1['idPartida']; ?><?php echo  $resultado1['versionPartida']; ?>" ><i class='icon icon-trash'></i></button>
            <button type="button" class="editar btn btn-info btn-sm"><i class="icon icon-edit" ></i></button></td>
           
 
@@ -488,7 +488,7 @@ $etapa = $_GET['id'];
 
               <div class="col-md-12">
               <div class="wdgt">
-                  <button id="principal" class="btn btn-success btn-lg" type="submit" name="enviarCambios" value="Guardar" disabled>Agregar Etapa</button>
+                  <button id="principal" class="btn btn-success btn-lg" type="submit" name="enviarCambios" value="Guardar" disabled>Guardar Cambios</button>
               </div>
             </div>
 
@@ -549,6 +549,24 @@ $etapa = $_GET['id'];
                 </div>
               </div>
 
+      <!--MODAL ELIMINAR-->
+            <div class="modal fade" id="modalEliminar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+          <div class="modal-dialog">
+           <div class="modal-content">
+            
+            <div class="modal-body">
+
+      <div class="alert alert-warning"><span class="icon icon-warning-sign"></span> 
+      <strong>Cuidado</strong> <span id="confirmMessage"></span></div>
+             
+            </div>
+            <div class="modal-footer">
+             <button type="button" class="btn btn-dark" id="cancel">Cancelar</button>
+             <button type="button" class="btn btn-warning"  id="accept">Aceptar</button>
+            </div>
+           </div>
+          </div>
+         </div> 
 
 
 <!--*********** MODAL PARA AGREGAR PARTIDAS A LA ETAPA *****************-->
@@ -762,20 +780,20 @@ while ($row = $sql->fetch_array()) {
               $("span", this).text(totalOtros.toFixed(2));
             }
             else if(index == 6){
-             $("input[type='hidden']", this).val(CD.toFixed(4));
-              $("span", this).text(CD.toFixed(4));
+             $("input[type='hidden']", this).val(CD.toFixed(2));
+              $("span", this).text(CD.toFixed(2));
             }
             else if(index == 7){
-             $("input[type='hidden']", this).val(CI.toFixed(4));
-              $("span", this).text(CI.toFixed(4));
+             $("input[type='hidden']", this).val(CI.toFixed(2));
+              $("span", this).text(CI.toFixed(2));
             }
             else if(index == 8){
-             $("input[type='hidden']", this).val(IVA1.toFixed(4));
-              $("span", this).text(IVA1.toFixed(4));
+             $("input[type='hidden']", this).val(IVA1.toFixed(2));
+              $("span", this).text(IVA1.toFixed(2));
             }
             else if(index == 9){
-             $("input[type='hidden']", this).val(precioUnitario.toFixed(4));
-              $("span", this).text(precioUnitario.toFixed(4));
+             $("input[type='hidden']", this).val(precioUnitario.toFixed(2));
+              $("span", this).text(precioUnitario.toFixed(2));
             }
           });
         $('#modalIngresarEtapaPartida').modal("show");
@@ -809,14 +827,14 @@ while ($row = $sql->fetch_array()) {
           $('#squarespaceModal').modal('show');
           var table = $("#table-mat-prima");
 
-          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='version[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span></span><input type='hidden' name='fechaInicioProgramadaa[]'/></td><td><span></span><input type='hidden' name='fechaFinProgramadaa[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='eliminar btn btn-info btn-sm'><i class='icon icon-trash'></i></button></td></tr>";
+          html = "<tr><td><span></span><input type='hidden' name='numero[]'/></td><td><span></span><input type='hidden' name='version[]'/></td><td><span></span><input type='hidden' name='cantidad[]'/></td><td><span></span></td><td><span></span></td><td><span></span></td><td><span></span><input type='hidden' name='CDD[]'/></td><td><span></span><input type='hidden' name='CII[]'/></td><td><span></span><input type='hidden' name='IVAA[]'/></td><td><span></span><input type='hidden' name='PUU[]'/></td><td><span></span><input type='hidden' name='fechaInicioProgramadaa[]'/></td><td><span></span><input type='hidden' name='fechaFinProgramadaa[]'/></td><td><span class='subtotal'></span><input type='hidden' name='subTotal_etapa[]'/></td><td><button class='delete'><i class='icon icon-trash'></i></button><button type='button' class='editar btn btn-info btn-sm'><i class='icon icon-edit'></i></button></td></tr>";
           table.append(html);
            $("#principal").prop("disabled", false);
         });
 
 
 
-        $("#modalIngresarEtapaPartida form button[name='agregar']").click(function(){
+        $("#modalIngresarEtapaPartida form button[name='agregar4']").click(function(){
           var cantidad = +$(this).parents("form").find("input[name='cantidad']").val();
           var fechaInicioProgramadaa =  $(this).parents("form").find("input[name='fechaInicioProgramadaa']").val();
           var fechaFinProgramadaa =  $(this).parents("form").find("input[name='fechaFinProgramadaa']").val();
@@ -842,8 +860,8 @@ while ($row = $sql->fetch_array()) {
               $("input[type='hidden']", this).val(fechaFinProgramadaa);
             }
              else if(index == 12){
-              $("input[type='hidden']", this).val(subtotal.toFixed(4));
-              $("span", this).text(subtotal.toFixed(4));
+              $("input[type='hidden']", this).val(subtotal.toFixed(2));
+              $("span", this).text(subtotal.toFixed(2));
             }
           });
           $('#modalIngresarEtapaPartida').modal('hide');
@@ -882,19 +900,36 @@ while ($row = $sql->fetch_array()) {
         
  
   
-
     $('.detele').click(function(){
         $('#alertaExito').hide();
         $('#AlertaError').hide();
-       var idPartida=$(this).parent().parent().attr('id');
-       var identificador=parseInt(idPartida);
-       var versionPartida=$(this).parent().parent().attr('version');
-       var identificador1=parseInt(versionPartida);       
+      var row = $(this).closest("tr");
+      var total1 = +$(this).parents("div.wdgt-primary").find("table tr td.subtotal").text();
+      var subtotal = +$(this).closest("tr").find("td span.subtotal").text();
+      confirmDialog("Esta seguro que desea eliminar el registro", function(){
+          $("button[name='enviarCambios']").prop("disabled", false);
+          total1 = total1 - subtotal;
+         // row.parents("div.wdgt-primary").find("table tr td.subtotal").text(total1.toFixed(2));
+          $("#sub-total-etapa").text(total1.toFixed(2));
+         
+          var identificador =  $("input[name='idpartida[]']").val();
+          var identificador1 = $("input[name='version[]']").val();
+
+      // var idPartida=$(this).parent().parent().attr('id');
+      // var identificador=parseInt(idPartida);
+      // var versionPartida=$(this).parent().parent().attr('version');
+       //var identificador1=parseInt(versionPartida);       
        var id3 = <?php echo $etapa; ?>;
       $.ajax({
-      type: "POST",
-       url: "eliminarElementosEtapaPartida.php?id1="+identificador+"&id3="+id3+"&versionPartida="+identificador1,
-       data: identificador
+
+            url: "eliminarElementosEtapaPartida.php",
+            method: "POST",
+            data: { "id1" : identificador , "id3" : id3, "versionPartida" : identificador1} 
+
+   //   type: "POST",
+     //  url: "eliminarElementosEtapaPartida.php?id1="+identificador+"&id3="+id3+"&versionPartida="+identificador1,
+     //  data: identificador
+
       }).done(function(info){
        
         var json_info=JSON.parse(info);
@@ -908,13 +943,24 @@ while ($row = $sql->fetch_array()) {
             
           }
 
-         
+
       }); 
 
+     row.remove();
+     });
+   });
       
-    });
-    
-
+ function confirmDialog(message, onConfirm){
+    var fClose = function(){
+        modal.modal("hide");
+    };
+    var modal = $("#modalEliminar");
+    modal.modal("show");
+    $("#confirmMessage").empty().append(message);
+    $("#accept").one('click', onConfirm);
+    $("#accept").one('click', fClose);
+    $("#cancel").one("click", fClose);
+  }
 
 
 
