@@ -635,7 +635,7 @@ while ($row = $sql->fetch_array()) {
         $('#squarespaceModal').modal('hide');
         if (cant != null) {
           var subtotal = valor * cant;
-         if (/^([0-9])*$/.test(cant)){
+         if (isNaN(cant)==false){
           $("#recursos tr:last td").each(function(index){
             if (index == 0){
               $("input[type='hidden']", this).val(codigo);
@@ -660,7 +660,7 @@ while ($row = $sql->fetch_array()) {
         }
          
         else {
-         alert("El valor " + cant + " no es un número");
+         alert("El valor ingresado no es un numero");
         }
         
        }
