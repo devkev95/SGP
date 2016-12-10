@@ -21,43 +21,31 @@ if (isset($_POST["version"])) {
   $queryTotales="SELECT totalMateriales, totalManoObra, totalEquipoHerramientas, totalSubContratos from partida WHERE numero=".$numeroPartida." AND version =".$_POST["version"];
 } else {
   $query= "SELECT a.numero, a.nombre FROM partida a INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as b ON a.numero = b.numero AND a.version = b.version WHERE a.numero=".$numeroPartida;
-<<<<<<< HEAD
-=======
-
->>>>>>> 372694827bb8495da7054b51bb99e9ba62ea3c0d
   $query1="SELECT a.nombre, a.unidad, b.cantidad, a.total, b.subTotal FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo AND a.version = b.version INNER JOIN linearecursoPartida c ON b.id = c.idLinea WHERE c.numPartida=".$numeroPartida." AND b.version = (SELECT MAX(versionPartida) FROM lineamanoobraPartida WHERE numPartida = ".$numeroPartida.")";
   $query2="SELECT a.descripcion, a.jornada, a.FP, a.jornadaTotal, a.rendimiento, a.subTotal FROM lineamanoobra a INNER JOIN lineamanoobraPartida as b ON a.id = b.idLinea WHERE b.numPartida =".$numeroPartida." AND b.versionPartida = (SELECT MAX(versionPartida) FROM lineamanoobraPartida WHERE numPartida = ".$numeroPartida.")";
   $query4="SELECT a.descripcion, a.unidad, a.cantidad, a.valor, a.subTotal FROM lineasubcontrato a INNER JOIN (SELECT idLinea, MAX(versionPartida) versionPartida, numPartida FROM lineamanoobraPartida GROUP BY numPartida) as b ON a.id = b.idLinea WHERE b.numPartida =".$numeroPartida." AND b.versionPartida = (SELECT MAX(versionPartida) FROM lineamanoobraPartida WHERE numPartida = ".$numeroPartida.")";
   $query3="SELECT a.descripcion, a.tipo, a.capacidad, a.rendimiento, a.costoHora, a.subTotal FROM  lineaequipoherramienta a inner join lineamanoobraPartida b ON a.id = b.idLinea WHERE b.numPartida =".$numeroPartida." AND b.versionPartida = (SELECT MAX(versionPartida) FROM lineamanoobraPartida WHERE numPartida = ".$numeroPartida.")";
-<<<<<<< HEAD
-=======
-
->>>>>>> 372694827bb8495da7054b51bb99e9ba62ea3c0d
   $query1="SELECT a.nombre, a.unidad, b.cantidad, a.total, b.subTotal FROM recurso a INNER JOIN linearecurso b ON a.codigo = b.codigo AND a.version = b.version INNER JOIN linearecursopartida c ON b.id = c.idLinea WHERE c.numPartida=".$numeroPartida." AND c.versionPartida = (SELECT MAX(versionPartida) FROM linearecursopartida WHERE numPartida = ".$numeroPartida.")";
   $query2="SELECT a.descripcion, a.jornada, a.FP, a.jornadaTotal, a.rendimiento, a.subTotal FROM lineamanoobra a INNER JOIN lineamanoobrapartida as b ON a.id = b.idLinea WHERE b.numPartida =".$numeroPartida." AND b.versionPartida = (SELECT MAX(versionPartida) FROM lineamanoobrapartida WHERE numPartida = ".$numeroPartida.")";
   $query4="SELECT a.descripcion, a.unidad, a.cantidad, a.valor, a.subTotal FROM lineasubcontrato a INNER JOIN (SELECT idLinea, MAX(versionPartida) versionPartida, numPartida FROM lineamanoobrapartida GROUP BY numPartida) as b ON a.id = b.idLinea WHERE b.numPartida =".$numeroPartida." AND b.versionPartida = (SELECT MAX(versionPartida) FROM lineamanoobrapartida WHERE numPartida = ".$numeroPartida.")";
   $query3="SELECT a.descripcion, a.tipo, a.capacidad, a.rendimiento, a.costoHora, a.subTotal FROM  lineaequipoherramienta a INNEr JOIN lineaequipoherramientapartida b ON a.id = b.idLinea WHERE b.numPartida =".$numeroPartida." AND b.versionPartida = (SELECT MAX(versionPartida) FROM lineaequipoherramientapartida WHERE numPartida = ".$numeroPartida.")";
-<<<<<<< HEAD
-=======
-
->>>>>>> 372694827bb8495da7054b51bb99e9ba62ea3c0d
   $queryC="SELECT a.totalCD, a.totalCF, a.precioUnitario from partida a INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as b ON a.numero = b.numero AND a.version = b.version WHERE a.numero=".$numeroPartida;
   $queryTotales="SELECT a.totalMateriales, a.totalManoObra, a.totalEquipoHerramientas, a.totalSubContratos from partida a INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as b ON a.numero = b.numero AND a.version = b.version WHERE a.numero=".$numeroPartida;
 }
 
 
-                $resultado= mysqli_query($db,$query);
-                $numrows = mysqli_num_rows($resultado);
+          $resultado= mysqli_query($db,$query);
+          $numrows = mysqli_num_rows($resultado);
 
           $resultado1=mysqli_query($db,$query1);
           $resultado2=mysqli_query($db,$query2);
-           $resultado3=mysqli_query($db,$query3);
-$resultado4=mysqli_query($db,$query4);
+          $resultado3=mysqli_query($db,$query3);
+          $resultado4=mysqli_query($db,$query4);
 
-$resultadoC=mysqli_query($db,$queryC);
+          $resultadoC=mysqli_query($db,$queryC);
 
-$resultadoTotales=mysqli_query($db,$queryTotales);
-$filaTotales = mysqli_fetch_array($resultadoTotales);
+          $resultadoTotales=mysqli_query($db,$queryTotales);
+          $filaTotales = mysqli_fetch_array($resultadoTotales);
 
 
 
