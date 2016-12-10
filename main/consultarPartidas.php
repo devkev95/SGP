@@ -186,11 +186,8 @@ $db = ConnectionFactory::getFactory("sgp_user", "56p_2016", "sgp_system")->getCo
     
      <tbody>
       <?php 
-<<<<<<< HEAD
                 $query= "SELECT a.numero, nombre FROM partida a INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as b ON a.numero = b.numero AND b.version = a.version";
-=======
                 $query= "SELECT a.numero,nombre FROM partida a INNER JOIN (SELECT numero, MAX(version) version FROM partida GROUP BY numero) as b ON a.numero = b.numero AND b.version = a.version";
->>>>>>> 2f13eca232f1fe6b2acf7d38dd3ed23b2e05b358
                 $resultado= mysqli_query($db,$query);
                
 
