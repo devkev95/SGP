@@ -27,7 +27,7 @@ $etapa = $_GET['id'];
         $resultado2 = mysql_fetch_array($query12);
         $porcentajeCI= $resultado2['porcentajeCI'];
 
-        echo $porcentajeCI;
+       // echo $porcentajeCI;
 
     $nombre = $_POST["nombre"];
     $detalle = $_POST["detalle"];
@@ -42,7 +42,7 @@ $etapa = $_GET['id'];
         $query12= mysql_query("SELECT totalEtapa FROM etapa WHERE idEtapa=".$etapa);
 
         $resultado2 = mysql_fetch_array($query12);
-        echo $resultado2['totalEtapa'];
+       // echo $resultado2['totalEtapa'];
    
       $total_etapa = 0;
       $valid = true;
@@ -488,7 +488,7 @@ $etapa = $_GET['id'];
 
               <div class="col-md-12">
               <div class="wdgt">
-                  <button id="principal" class="btn btn-success btn-lg" type="submit" name="enviarCambios" value="Guardar" disabled>Guardar Cambios</button>
+                  <button id="principal" class="btn btn-success btn-lg" type="submit" name="enviarCambios" value="Guardar" >Guardar Cambios</button>
               </div>
             </div>
 

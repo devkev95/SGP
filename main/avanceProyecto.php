@@ -284,6 +284,15 @@ $id=$_GET["id"];
       $datetime2 = date_create($row2['fechaFinProgramada']);
       $interval = date_diff($datetime1, $datetime2);
 
+
+      if ($row2['estado']=="Terminado"){
+
+        echo "<td bgcolor='#90ee90'>Terminado</td></tr>";
+
+      }
+
+        else{
+
       if ($interval->format('%R%a')<0)
 
               echo "<td bgcolor='#ff8a8a'>Atrasado ".$interval->format('%a dias')."</td></tr>";
@@ -298,10 +307,7 @@ $id=$_GET["id"];
       
 
     }
-
-
-
-
+}
 
 
 
@@ -309,14 +315,6 @@ $id=$_GET["id"];
 ?>
 
 
-
-    
-
-
-
-        
-        
-            
            
           </tbody>
          </table>

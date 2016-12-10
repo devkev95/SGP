@@ -118,7 +118,7 @@ if (isset($_POST["version"])) {
        </div></div>
       </div>
 
-      <div class="accordion-group">
+       <div class="accordion-group">
        <div class="accordion-heading">
         <a class="sbtn sbtn-default" data-toggle="collapse" href="#c-forms">
          <span class="fa fa-pencil-square-o"></span>
@@ -127,10 +127,11 @@ if (isset($_POST["version"])) {
         </a>
        </div>
        <div id="c-forms" class="accordion-body collapse"><div class="accordion-inner">
-        <a href="../main/tabla_recursos.php" class="sbtn sbtn-default active">Ver Recursos</a>
+        <a href="../main/tabla_recursos.php" class="sbtn sbtn-default">Ver Recursos</a>
         <a href="../main/ingresar.php" class="sbtn sbtn-default">Agregar Nuevo Recurso</a>
        </div></div>
       </div>
+
       <div class="accordion-group">
        <div class="accordion-heading">
         <a class="sbtn btn-default" href="proyectos.php">
